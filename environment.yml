@@ -1,0 +1,24 @@
+name: cfactor
+channels:
+  - defaults
+  - conda-forge
+dependencies:
+  - python=3.9
+  - pip
+  - pre-commit
+  - tox
+  ## Python data science stack
+  # - numpy
+  # - scipy
+  # - pandas
+  # - xarray
+  # - tqdm
+  # - click
+  # - ipython
+  ## Python visualisation
+  # - matplotlib
+  # - seaborn
+  # - bokeh
+  # - plotly
+  - pip:
+     - -e .  # install git checkout of cfactor in editable mode
