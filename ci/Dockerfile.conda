@@ -1,0 +1,2 @@
+# Docker image containing git and large requirements for drone
+FROM condaforge/mambaforge

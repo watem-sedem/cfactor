@@ -1,0 +1,6 @@
+ARG PYTHON_VERSION=3.9
+FROM python:${PYTHON_VERSION}-bullseye
+RUN apt-get update && apt-get install git-lfs && rm -rf /var/lib/apt/lists/*
+RUN python3 -m pip install --no-cache-dir --upgrade pip && pip install --no-cache-dir tox interrogate coverage-badge
+# add large requirements to have them pre-installed already
+# RUN pip install pandas scipy
