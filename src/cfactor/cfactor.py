@@ -2,7 +2,7 @@ import numpy as np
 from util import celc_to_fahr
 
 b = 0.035
-Rii = 6.096
+rii = 6.096
 
 R0 = 25.76  # minimum gemiddelde halfmaandelijks neerslag nodig voor afbraak
 # (opm. pagina 6?)
@@ -10,319 +10,397 @@ T0 = celc_to_fahr(37)
 A = celc_to_fahr(7.76)
 
 
-def compute_crop_management_factor(
-    Ri_tag, Ri, rain, Rhm, har_tag, bdate, edate, temp, p, Bsi, alpha, H, Fc, SM, PLU
+def compute_soil_loss_ratio(
+    roughness_period_id,
+    ri,
+    rain,
+    rhm,
+    harvest_period_id,
+    bdate,
+    edate,
+    temperature,
+    p,
+    bsi,
+    alpha,
+    H,
+    Fc,
+    SM,
+    PLU,
 ):
-    """
-    #TODO
+    """Computes subcomponents of soil loss ratio
+
+    The soil loss ratio (SLR) is computed by following formula:
+
+    ..math:
+
+        SLR = SC.CC.SR.SM.PLU
+
+    with
+
+    - $$SC$$: impact of surface cover (due to crop residu), see
+      :func:`cfactor.cfactor.compute_surface_cover`.
+    - $$CC$$: impact of canopy cover, :func:`cfactor.cfactor.compute_crop_cover`.
+    - $$SR$$: impact of surface roughness (due to farming operations)
+      :func:`cfactor.cfactor.compute_soil_roughness`.
+    - $$SM$$: impact of surface moisture
+    - $$PLU$$: impact of prior land use
+
+
+    Parameters
+    ----------
+    roughness_period_id: numpy.ndarray
+        See :func:`cfactor.cfactor.compute_soil_roughness`
+    ri: numpy.ndarray
+        See :func:`cfactor.cfactor.compute_soil_roughness`
+    rain: numpy.ndarray
+        See :func:`cfactor.cfactor.compute_soil_roughness`
+    rhm: numpy.ndarray
+        See :func:`cfactor.cfactor.compute_soil_roughness`
+    harvest_period_id: numpy.ndarray
+    bdate: numpy.ndarray
+    edate: numpy.ndarray
+    temperature: numpy.ndarray
+    p: numpy.ndarray
+    bsi: numpy.ndarray
+
+    Returns
+    -------
+    SLR:
 
     """
-    f1_N, f2_EI, Ru = compute_Ru(Ri_tag.values.flatten(), Ri, rain, Rhm)
-
-    SR = compute_SR(Ru)
-
-    a, Bsb, Sp, W, F, SC = compute_SC(
-        har_tag, bdate, edate, rain, temp, p, Bsi, alpha, Ru
+    f1_N, f2_EI, ru = compute_soil_roughness(
+        roughness_period_id.values.flatten(), ri, rain, rhm
     )
-
-    CC = compute_CC(H, Fc)
-
-    SM = compute_SM(SM)
-
-    PLU = compute_PLU(PLU)
-
-    SLR = compute_SLR(SC, CC, SR, SM, PLU)
+    SR = compute_surface_cover(ru)
+    a, Bsb, Sp, W, F, SC = compute_soil_cover(
+        harvest_period_id, bdate, edate, rain, temperature, p, bsi, alpha, ru
+    )
+    CC = compute_crop_cover(H, Fc)
+    SM = 1
+    PLU = 1
+    SLR = SC * CC * SR * SM * PLU
+    SLR[np.isnan(SLR)] = 1
 
     return SLR
 
 
-def compute_Ru(Ri_tag, Ri, rain, Rhm):
-    """
-    Computes parcel roughness  Ru = 6.096+[Dr*(Ri-6.096)]
+def compute_surface_cover(ru):
+    """Computes surface cover (SR)
+
+     Computes surface cover SR e(−0.026*(R-6.096))
 
     Parameters
     ----------
-    Ri_id (pd series, float): see series ``grid`` in :func:`ComputeCFactor`
-    and :func:`prepare_grid`
-    Ri (pd series, float): see series ``grid`` in :func:`ComputeCFactor` and
-    :func:`prepare_grid`
-    Rain (pd series, float): see series ``grid`` in :func:`ComputeCFactor`
-    EI30 (pd series, float): see series ``grid`` in :func:`ComputeCFactor`
+    ru: numpy.ndarray
+        Surface roughness, output from :func:`cfactor.cfactor.compute_soil_roughness`
 
     Returns
     -------
-    'Ru' (series, float): soil roughness
-    'f1_N' (series, float): first part formula, cumulative rainfall, weighted
-    with factor
-    'f2_EI' (series, float): second part formula, cumulative rainfall
-    erosivity, weighted with factor
+    numpy.ndarray
+        Surface roughness ([0,1])
+    """
+    return np.exp(-0.026 * (ru - rii))
 
-    (SG) Koen Verbist( 2004)
-    Dr = exp(0.5*(-0.0055*Pt)+0.5*(-0.0705*EIt))
-    met EIt in MJ mm/(ha jaar)
-    Koen Verbist, factor 0.0705 in documentatie is fout (zie hierboven),
-    gezien in codering: 0.012/17.02=0.000705
-    Dr[date] = Math.exp(0.5*(-0.14*(cumulOperationP/25.4))+0.5*(-0.012*(
-    cumulOperationEI/17.02)));
-    met EIt in (MJ m)/(mm jaar) (volgt uit code, maar deze eenheid klopt niet?)
-    Inputwaarden in code zijn erosiviteitswaarden (jaargemiddelden of jaar),
-    en deze kloppen volgens grootte-orde
-    (eenheid: (MJ mm)/(ha h) zoals in  Verstraeten, G., Poesen, J., Demarée, G.,
-    & Salles, C. (2006). Long-term (105 years) variability " \
-                in rain erosivity as derived from 10-min rainfall depth data for
-                Ukkel (Brussels, Belgium): Implications for assessing " \
-                soil erosion rates. Journal of Geophysical Research Atmospheres,
-                111(22), 1–11.)"""
-    # (SG) compute per Ri id
-    Dr = np.zeros([len(Ri_tag)])
-    f1_N = np.zeros([len(Ri_tag)])
-    f2_EI = np.zeros([len(Ri_tag)])
 
-    for i in np.unique(Ri_tag):
-        cond = Ri_tag == i
+def compute_soil_roughness(identifier, ri, rain, rhm):
+    """Compute soil roughness  per identifier (ri_tag).
+
+    This function computes the roughness for every roughness period id. The beginning
+    of a period is defined by a new roughness condition (i.e. prep for a new crop by
+    plowing):
+
+    The $$R_u$$ (-) is computed by:
+
+    ..math:
+
+        R_u = 6.096+(dr*(R_i-6.096))
+
+    The final roughness is referred to as $$r_{ii}$$, i.e. 6.096. The initial roughness
+    is crop dependent (soil preparation dependent).
+
+    The roughness decay function $$d_r$$ is defined as:
+
+    ..math:
+
+        dr = exp{0.5*\frac{-0.14}{25.4}P_t}+0.5*\frac{-0.012}{17.02}EI_t))
+
+    Under the influence of precipitation, the roughness of an agricultural field,
+    left undisturbed, will systematically decrease until an (average) minimum roughness
+    of 6.096 mm (0.24 inches) is reached. The decrease function Dr is defined to
+    compute this decrease (see [1]_)
+    #TODO: add refs to Reynard et al.
+
+    Parameters
+    ----------
+    identifier: numpy.ndarray
+        Period identifier, i.e. every +1 in the identifier marks the start of a new
+        'decay in roughness'-period.
+    ri:  numpy.ndarray
+        #TODO
+    rain:  numpy.ndarray
+        Amount of rainfall (in mm, during period).
+    rhm:  numpy.ndarray
+        Cumulative rainfall erosivity (in $$\frac{MJ.mm}{ha.year}$$)
+
+    Returns
+    -------
+    ru:  numpy.ndarray
+        Soil roughness (mm)
+    f1_N:  numpy.ndarray
+        Factor rainfall
+    f2_EI:  numpy.ndarray
+        Factor erosivity
+
+    Notes
+    -----
+    1. A slight different formulation is used from [1]_, where the parameter for EI is
+       defined as -0.0705, whereas here we use -0.00070505287 (-0.012 / 17.02)
+       #TODO: check.
+    2. The rhm is equal to EI, for guidelines computation, see [2]_ and #TODO: refer to
+       R-factor package via intersphinx.
+
+
+
+    References
+    ----------
+    .. [1] Verbist, K., Schiettecatte, W., Gabriels, D., n.d. Eindrapport:
+    “Computermodel RUSLE C-factor.”
+    .. [2] Verstraeten, G., Poesen, J., Demarée, G. & Salles, C. (2006). Long-term
+    (105 years) variability " in rain erosivity as derived from 10-min rainfall depth
+    data for Ukkel (Brussels, Belgium): Implications for assessing soil erosion rates.
+    Journal of Geophysical Research Atmospheres, 111(22), 1–11.
+
+    """
+    f1_N = np.zeros([len(identifier)])
+    f2_EI = np.zeros([len(identifier)])
+
+    for i in np.unique(identifier):
+        cond = identifier == i
         f1_N[cond] = -0.14 / 25.4 * rain[cond].cumsum()
-        f2_EI[cond] = -0.012 / 17.02 * Rhm[cond].cumsum()
+        f2_EI[cond] = -0.012 / 17.02 * rhm[cond].cumsum()
 
-    Dr = expDr(f1_N, f2_EI)
-    # Dr[cond] = [math.exp(0.5*f1_N[i] + 0.5*f2_EI[i]) for i in range(len(f1_N))]
+    dr = np.exp(0.5 * f1_N + 0.5 * f2_EI)
 
-    Ru = Rii + (Dr * (Ri - Rii))
+    ru = rii + (dr * (ri - rii))
+    ru[ru.isnull()] = rii
 
-    # (SG) set empy Ru equal to Ri
-    Ru[Ru.isnull()] = Rii
-
-    return f1_N, f2_EI, Ru
+    return f1_N, f2_EI, ru
 
 
-def expDr(f1_N, f2_EI):
-    """
-    #TODO
+def compute_soil_cover(
+    identifier,
+    begin_date,
+    end_date,
+    rain,
+    temperature,
+    maximum_speed,
+    initial_crop_residu,
+    alpha,
+    ru,
+):
+    """This subfactor is defined as the erosion limiting influence of the ground cover
+    by crop residues, stones and non-erodible material in direct contact with the soil
+    [1]_
 
-    Parameters
-    ----------
+    ..math:
 
-    Returns
-    -------
+        sc = exp{-b.sp.{\frac{6.096}{Ru}}^{0.08}}
 
-    """
-    return np.exp(0.5 * f1_N + 0.5 * f2_EI)
+    with sp being the amount of land being cover by residu
 
+    ..math:
 
-def compute_SR(Ru, Rii):
-    """
-    Computes Surface Roughness (SR): SR e(−0.026*(R-6.096))
+        sp = 100.(1-exp{-\alpha.B_s}})
 
-    Parameters
-    ----------
-    'Ru' (series, flloat): soil roughness
+    with
 
-    Returns
-    -------
-    'SR' (series float): surface roughness
-    """
-    SR = np.exp(-0.026 * (Ru - Rii))
-    return SR
-
-
-def compute_SC(har_id, bdate, edate, rain, temp, p, Bsi, alpha, Ru):
-    """
-    Computes soil cover from harvest remains (SC): exp(-b*Sp*(6.096/Ru)**0.08))
+    - $$alpha$$: soil cover in comparison to weight residu (m$$^2$$/kg)
+    - $$B_s$$: amount of residu per unit of area (kg/m$$^2$$), for definition,
+      see :func:`cfactor.cfactor.compute_crop_residu`
 
     Parameters
     ----------
-    har_id (pd series, int): see series ``grid`` in :func:`prepare_grid`
-    bdate_id (pd series, datetime): see series ``grid`` in
-    :func:`ComputeCFactor`
-    edate_id (pd series, datetime): see series ``grid`` in
-    :func:`ComputeCFactor`
-    rain (pd series, float): see series ``grid`` in :func:`ComputeCFactor`
-    temp (pd series, float): see series ``grid`` in :func:`ComputeCFactor`
-    p (pd series, float): see series ``grid`` in  :func:`prepare_grid`
-    Bsi (pd series, float): see series ``grid`` in :func:`prepare_grid`
-    alpha (pd series, float): see series ``grid`` in :func:`prepare_grid`
-    Ru (pd series, float): see series ``Ru`` in :func:compute_Ru
+    identifier: numpy.ndarray
+        Period identifier, i.e. every +1 in the identifier marks the start of a new
+        'crop residue'-period.
+    begin_date: pandas.Series
+        Begin dates of periods #TODO: checdk
+    end_date: pandas.Series
+        End dates of periods #TODO: checdk
+    rain: pandas.Series
+        Rainfall (in mm)
+    temperature: numpy.ndarray
+        Temperature (in °F)
+    maximum_speed: numpy.ndarray
+        Maximum decay speed (-)
+    initial_crop_residu: numpy.ndarray
+        Initial amount of crop residu (kg dry matter / ha) for harvest period id (one
+        number per period id)
+    alpha: numpy.ndarray
+        Soil cover in comparison to weight residu (m$$^2$$/kg)
+    ru: numpy.ndarray
+        Soil roughness (mm), see :func:`cfactor.cfactor.compute_soil_roughness`
 
     Returns
     -------
-    'a' ( pd series, float): harvest decay coefficient
-    'Bsi'(pd series, float): harvest remains per unit of area(kg/m2)
-    'Sp' (pd series, float): Percentage soil cover of harvest remains
-    'W' and 'F' (pd series, float): coefficients weighing rainfall and
-    temperature
-    'SC' (pd series, float): Surface cover (-)
-    """
-    a_val = np.zeros([len(har_id)])
-    Bsb = np.zeros([len(har_id)])
-    Sp = np.zeros([len(har_id)])
-    W = np.zeros([len(har_id)])
-    F = np.zeros([len(har_id)])
-    SC = np.ones([len(har_id)])
+    a: numpy.ndarray
+        Harvest decay coefficient
+    Bsi: numpy.ndarray
+        Harvest remains per unit of area(kg/m2)
+    sp: numpy.ndarray
+        Percentage soil cover of harvest remains
+    w: numpy.ndarray
+        Precipitation coefficient weighting (half-)monthly rainfall and minimum average
+        monthly rainfall.
+    f: numpy.ndarray
+        Coefficients computed based on temperature, used to define shape crop residu
+        decay rate.
+    sc: numpy.ndarray
+        Soil cover (-, [0,1])
 
-    for i in har_id.loc[har_id != 0].unique():
-        cond = (har_id == i).values.flatten()
-        # (SG) compute degradation rate
-        W[cond], F[cond], a_val[cond] = compute_a(
-            rain.loc[cond], temp.loc[cond], p.loc[cond]
+    References
+    ----------
+    .. [1] Verbist, K., Schiettecatte, W., Gabriels, D., n.d. Eindrapport:
+    “Computermodel RUSLE C-factor.”
+    """
+    a_val = np.zeros([len(identifier)])
+    crop_residu = np.zeros([len(identifier)])
+    sp = np.zeros([len(identifier)])
+    w = np.zeros([len(identifier)])
+    f = np.zeros([len(identifier)])
+    sc = np.ones([len(identifier)])
+
+    for i in identifier[identifier != 0].unique():
+        cond = (identifier == i).values.flatten()
+        w[cond], f[cond], a_val[cond] = compute_harvest_residu_decay_rate(
+            rain[cond], temperature[cond], maximum_speed[cond]
         )
-        # (SG) compute Bsi
-        Bsb[cond] = compute_Bsb(
-            bdate.loc[cond], edate.loc[cond], a_val[cond], Bsi.loc[cond]
+        crop_residu[cond] = compute_crop_residu(
+            begin_date[cond], end_date[cond], a_val[cond], initial_crop_residu[cond]
         )
-        # (SG) compute Sp (divide by 10 000 Bsi (kg/ha -> kg/m2)
-        Sp[cond] = 100 * (1 - np.exp(-alpha[cond] * Bsb[cond] / (100**2)))
-        # (SG) compute SC
-        SC[cond] = np.exp(-b * Sp[cond] * ((6.096 / (Ru[cond])) ** 0.08))
-        # SC[cond] = [math.exp(-b*Sp[i]*((6.069 / (Ru[i]**0.08)))) for i in
-        # range(len(Sp))]
-    return a_val, Bsb, Sp, W, F, SC
+        sp[cond] = 100 * (1 - np.exp(-alpha[cond] * crop_residu[cond] / (100**2)))
+        sc[cond] = np.exp(-b * sp[cond] * ((6.096 / (ru[cond])) ** 0.08))
+    return a_val, crop_residu, sp, w, f, sc
 
 
-def compute_CC(H, Fc):
-    """
-    Computes crop cover factor based on formula's Verbist, K. (2004).
-    Computermodel RUSLE C-factor.
+def compute_crop_cover(H, Fc):
+    """Computes crop cover factor based on soil cover crop and effective drop height:
+
+    ..math:
+
+        CC = 1-F_c.exp{-0.328H}
+
+    See [1]_
 
     Parameters
     ----------
-    'H' (pd series, float): see parameter ``ggg`` in :func:`ComputeCFactor`.
-    'F (pd series, float): see parameter ``ggg`` in :func:`ComputeCFactor`.
+    H: numpy.ndarray
+        Effective drop height (m): estimate of average height between rainfall capture
+        by crop and soil.
+    F: numpy.ndarray
+        Soil cover by crop (in %)
 
     Returns
     -------
-    'CC' (pd series, float): crop cover factor
-    """
+    CC: nump.ndarray
+        Crop cover factor (-, [0,1])
 
-    # (SG) compute CC
+    References
+    ----------
+    .. [1] Verbist, K., Schiettecatte, W., Gabriels, D., n.d. Eindrapport:
+    “Computermodel RUSLE C-factor.”
+    """
     CC = 1 - Fc * np.exp(-0.328 * H)
     return CC
 
 
-def compute_SM(grid):
+def compute_soil_moisture():
     """
-    Computes soil moisture factor based on formula's Verbist, K. (2004).
-    Computermodel RUSLE C-factor.
+    Computes soil moisture factor
+    """
+    raise NotImplementedError("compute soil moisture is not implemented")
+
+
+def compute_PLU():
+    """
+    Computes prior land use factor
+    """
+    raise NotImplementedError("compute prior land use is not implemented")
+
+
+def aggregate_slr_to_crop_factor(SLR, EI30):
+    """Aggregate  SLR according to erosivity
 
     Parameters
     ----------
-    'grid' (pd df): see parameter ``grid`` in :func:`ComputeCFactor`.
+    SLR: numpy.ndarray
+        Soil loss ratio, see :func:`cfactor.cfactor._ratio`
+    EI30: numpy.ndarray
+        #TODO: refer to R-factor package with intersphinx
 
     Returns
     -------
-    'SM' (pd series, float): soil moisture
-
-    Verbist et al. (2004): Deze factor brengt de invloed in rekening van het
-    bodemvochtgehalte op de watererosie.
-    Deze parameter moet enkel veranderd worden ingeval de bodemvochtsituatie
-    gedurende het jaar significant verschilt
-    van een situatie waarbij het perceel het hele jaar braak wordt gelaten en
-    jaarlijks wordt geploegd.
-    Voor een normaal akkerperceel wordt de waarde één voorgesteld.
-    Deze waarde wordt dan ook gebruikt bij de berekening van de gewasfactoren
-    voor akkerbouwpercelen in Vlaanderen,
-    zodat deze subfactor geen rol speelt in de berekeningen
+    C: float
+        C-factor (-, [0,1])
     """
-
-    return [1] * len(grid)
-
-
-def compute_PLU(grid):
-    """
-    Computes prior land use factor based on formula's Verbist, K. (2004).
-    Computermodel RUSLE C-factor.
-
-    Parameters
-    ----------
-    'grid' (pd df): see parameter ``grid`` in :func:`ComputeCFactor`.
-
-    Returns
-    -------
-    'PLU' (pd series, float): past land use
-    """
-
-    """
-    Verbist et al. (2004): Volgens Verstraeten et al. (2002) kan deze subfactor
-    geschat worden tussen 0,9 en 1 voor
-    een jaarlijks geploegde bodem. In de berekening van de gewasfactor wordt dan
-    ook verder een rekening gehouden met
-    deze subfactor (de subfactor PLU wordt gelijkgesteld aan 1).
-    """
-
-    return [1] * len(grid)
-
-
-def compute_SLR(SC, CC, SR, SM, PLU):
-    """
-    Computes soil loss ration factor based on formula's Verbist, K. (2004).
-    Computermodel RUSLE C-factor.
-
-    Parameters
-    ----------
-    SC (pd series, float): soil cover
-    CC (pd series, float): crop cover
-    SR (pd series, float): surface cover
-    SM (pd series, float): soil moistur
-    PLU (pd series, float): past land use
-
-    Returns
-    -------
-         'SLR' (pd series, float): soil loss ratio
-    """
-    SLR = SC * CC * SR * SM * PLU
-    SLR.loc[SLR.isnull()] = 1
-    return SLR
-
-
-def weight_SLR(SLR, EI30):
-    """
-    Weight SLR factor based on formula's Verbist, K. (2004). Computermodel RUSLE
-    C-factor.
-
-    Parameters
-    ----------
-    'SLR' (pd series, float): soil loss ratio
-    'EI30' (pd series, float): see series ``grid`` in :func:`ComputeCFactor`
-    'bdate' (pd series, float): see series ``grid`` in :func:`ComputeCFactor
-    'output_interval' (str): output interval for C-factor (!= interval
-    computation grid), either monthly 'M',
-                            semi-monthly'SMS' or yearly 'Y'
-    Returns
-    -------
-         'grid' (pd df): see parameter ``grid`` in :func:`ComputeCFactor`.
-    """
-    # (SG) compute sum of average EI30 values
     sumR = np.sum(EI30)
     product = SLR * EI30
-    # (SG) compute weighted C according to to output interval
     C = np.sum(product / sumR)
     return C
 
 
-def compute_a(rain, temp, p):
+def compute_harvest_residu_decay_rate(rain, temperature, p):
     """
-    Computes decay coefficient.
+    Computes crop residu decay coefficient [1]_
+
+    ..math:
+
+        a = p[min(W,F)]
+
+    with:
+
+    ..math:
+
+        W = \frac{R}{R_0} \\
+        F = \frac{2(T_a+A)^2.(T_0+A)^2-(T_a+A)^4}{(T_0+A)^4}
+
+    with:
+
+    ..math:
+
+        R_0: minimum half-monthly average rainfall
+        T_a: average temperature in half-montlhy period
+        T_0: optimal temperature for decay
+        A: coefficient used to express shapr of decay function as a function of temp.
 
     Parameters
     ----------
-    'rain' (pd series, float): see parameter ``grid`` in :func:`ComputeCfactor`.
-    'temp' (pd series, float): see parameter ``grid`` in :func:`ComputeCfactor`.
-    'p' (pd series, float): see parameter ``grid`` in :func:`ComputeCFactor`.
+    rain: numpy.ndarray
+        (Summed) rainfall (mm)
+    temperature: numpy.ndarray
+        (Average) temperatyre (°F)
+    p: numpy.ndarray
+        Maximum decay speed (-) #TODO: check unit
 
     Returns
     -------
-    'a' ( pd series, float): harvest decay coefficient
-    'W' and 'F' (pd series, float): coefficients weighing rainfall and
-    temperature
-    """
-    # (opm. pagina 6?)
+    a: numpy.ndarray
+        Harvest decay coefficient (-)
+    W: numpy.ndarray
+        Coefficients weighing rainfall
+    F: numpy.ndarray
+        Coefficients weighing temperature
 
-    # (SG) compute W
+    References
+    ----------
+    .. [1] Verbist, K., Schiettecatte, W., Gabriels, D., n.d. Eindrapport:
+    “Computermodel RUSLE C-factor.”
+    """
     W = rain / R0
-    # (SG) compute F (in fahr!)
-    temp = celc_to_fahr(temp)
-    F = (2 * ((temp + A) ** 2) * ((T0 + A) ** 2) - (temp + A) ** 4) / ((T0 + A) ** 4)
-    # (SG) compute degradation speed (page 6 Verbist, K. (2004). Computermodel
-    # RUSLE C-factor.)
-    # (SG) special case if only one record
+    temperature = celc_to_fahr(temperature)
+    F = (2 * ((temperature + A) ** 2) * ((T0 + A) ** 2) - (temperature + A) ** 4) / (
+        (T0 + A) ** 4
+    )
     a = (
         p * np.min([W, F], axis=0)
         if len(W) > 1
@@ -331,38 +409,58 @@ def compute_a(rain, temp, p):
     return W, F, a
 
 
-def compute_Bsb(bdate, edate, a, Bsi):
+def compute_crop_residu(bdate, edate, a, initial_crop_residu):
     """
-    Computes harvest remains per unit of area over nodes
+    Computes harvest remains per unit of area over nodes [1]_:
+
+    ..math::
+
+        Bse = Bsb.exp{-a.D}
+
+
+    with
+    - Bse: amount of crop residu at end of period (kg dry matter m$^{-2}$)
+    - Bsb: amount of crop residu at start of period (kg dry matter m$^{-2}$)
+    - a: harvest decay coefficient, see
+        :func:`cfactor.cfactor.compute_harvest_residu_decay_rate`.
+    - D: number of days #TODO: check unit
 
     Parameters
     ----------
-    'edate' (pd series,timedate): see series ``grid`` in
-    :func:`ComputeCFactor` and :func:`prepare_grid`
-    'a' (pd series,float): see series ``grid`` in :func:`ComputeCFactor` and
-    :func:`prepare_grid`
-    'Bsi' (pd series,float): see series ``grid`` in :func:`ComputeCFactor`
-    and :func:`prepare_grid`
-    'bd' (datetime): begin date of series harvest remains with index har_id
+    bdate: #TODO
+    edate: #TODO
+    a: numpy.ndarray
+        Harvest decay coefficient (-), see
+        :func:`cfactor.cfactor.compute_harvest_residu_decay_rate`. #TODO: check unit
+    initial_crop_residu: numpy.ndarray
+        Initial amount of crop residu (kg dry matter / ha)
 
     Returns
     -------
-    'Bsi' (pd series, float): harvest remains per unit area on time step i (
-    kg/m2)
+    crop_residu: numpy.ndarray
+        Crop residu (kg/m2)
+
+    References
+    ----------
+    .. [1] Verbist, K., Schiettecatte, W., Gabriels, D., n.d. Eindrapport:
+    “Computermodel RUSLE C-factor.”
+
     """
-    Bsb = np.zeros(len(a))
+    crop_residu = np.zeros(len(a))
     # (SG) compute remains on middle of computational node
     D = [7] + [
         (
-            bdate.iloc[i]
-            + (edate.iloc[i] - bdate.iloc[i]) / 2
-            - (bdate.iloc[i - 1] + (edate.iloc[i - 1] - bdate.iloc[i - 1]) / 2)
+            bdate[i]
+            + (edate[i] - bdate[i]) / 2
+            - (bdate[i - 1] + (edate[i - 1] - bdate[i - 1]) / 2)
         ).days
         for i in range(1, len(edate), 1)
     ]
     exp = np.exp(-a * D)
     # (SG) compute harvest remains
     for i in range(len(exp)):
-        Bsb[i] = Bsb[i - 1] * exp[i] if i != 0 else Bsi.iloc[i] * exp[i]
+        crop_residu[i] = (
+            crop_residu[i - 1] * exp[i] if i != 0 else initial_crop_residu[i] * exp[i]
+        )
 
-    return Bsb
+    return crop_residu
