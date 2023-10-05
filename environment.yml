@@ -7,10 +7,9 @@ dependencies:
   - pip
   - pre-commit
   - tox
-  ## Python data science stack
   - numpy
   - pandas
+  - matplotlib
   - geopandas
-  - matplotlib  
   - pip:
      - -e .  # install git checkout of cfactor in editable mode

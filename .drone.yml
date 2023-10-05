@@ -8,7 +8,7 @@ steps:
     image: registry.fluves.net/drone/cfactor/venv-3.9
     failure: ignore
     commands:
-      - tox -e pre-commit
+      - SKIP=no-commit-to-branch tox -e pre-commit
 
   - name: unit-tests
     image: registry.fluves.net/drone/cfactor/venv-3.9
@@ -68,7 +68,6 @@ steps:
     when:
       branch:
         - master
-        - badges
       event:
         exclude:
           - pull_request
@@ -150,4 +149,4 @@ steps:
     image: registry.fluves.net/drone/cfactor/venv-3.9
     failure: ignore
     commands:
-      - interrogate src -vv -I -i -M
+      - interrogate src -vv -I -M

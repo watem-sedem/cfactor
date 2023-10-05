@@ -1,2 +1,2 @@
 # Docker image containing git and large requirements for drone
-FROM continuumio/miniconda3
+FROM condaforge/mambaforge

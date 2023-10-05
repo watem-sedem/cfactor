@@ -28,7 +28,7 @@ run the following command:
 ::
 
     pip install --upgrade pip
-    pip install --extra-index-url https://repo.fluves.net/fluves cfactor
+    pip install --extra-index-url https://repo.fluves.net/fluves --extra-index-url https://repo.fluves.net/marlinks cfactor
 
 When all goes well, you have the package installed and ready to use.
 
@@ -151,11 +151,11 @@ Drone CI
 --------
 
 Apart from these tools you can run locally, we use drone continuous integration to run these checks also
-on our servers. See https://drone.fluves.net/Fluves/cfactor for the results.
+on our servers. See https://drone.fluves.net/fluves/cfactor for the results.
 
 The drone provides reports that can be checked:
 
-- The docstring coverage of the functions, see the ``report docstring`` step of the `drone output <https://drone.fluves.net/Fluves/cfactor>`_.
+- The docstring coverage of the functions, see the ``report docstring`` step of the `drone output <https://drone.fluves.net/fluves/cfactor>`_.
 - An `interactive unit test coverage report <https://drone-coverage-report.static.fluves.net/cfactor/>`_ with the unit test covered code for each of the files.
 
 https://drone-coverage-report.static.fluves.net/cfactor/
@@ -173,7 +173,7 @@ straight forward. In order to publish a new release, the following steps:
 - ``git commit -m 'Update changelog for release X.X.X' CHANGELOG.rst``
 - ``git push origin master``
 - Add git tags: ``git tag X.X.X``
-- Push the git tags: ``git push --tags``
+- Push the git tags: ``git push X.X.X``
 
 When all test pass, drone CI will publish a pre-release on gitea. To convert this to release:
 
@@ -187,4 +187,4 @@ Note
 
 This project has been set up using PyScaffold 4.0.1 and the fluves-extension. For details and usage
 information on PyScaffold see https://pyscaffold.org/ and the Fluves extension
-see https://git.fluves.net/Fluves/pyscaffoldext-fluves/.
+see https://git.fluves.net/fluves/pyscaffoldext-fluves/.
