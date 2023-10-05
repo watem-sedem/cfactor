@@ -8,16 +8,8 @@ dependencies:
   - pre-commit
   - tox
   - numpy
-  # - scipy
-   - pandas
-  # - xarray
-  # - tqdm
-  # - click
-  # - ipython
-  ## Python visualisation
-  # - matplotlib
-  # - seaborn
-  # - bokeh
-  # - plotly
+  - pandas
+  - matplotlib
+  - geopandas
   - pip:
      - -e .  # install git checkout of cfactor in editable mode

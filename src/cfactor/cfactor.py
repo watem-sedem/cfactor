@@ -1,7 +1,18 @@
 import numpy as np
-import pandas as pd
+from util import celc_to_fahr
 
-def compute_crop_management_factor(grid):
+b = 0.035
+Rii = 6.096
+
+R0 = 25.76  # minimum gemiddelde halfmaandelijks neerslag nodig voor afbraak
+# (opm. pagina 6?)
+T0 = celc_to_fahr(37)
+A = celc_to_fahr(7.76)
+
+
+def compute_crop_management_factor(
+    Ri_tag, Ri, rain, Rhm, har_tag, bdate, edate, temp, p, Bsi, alpha, H, Fc, SM, PLU
+):
     """
     #TODO
 
@@ -10,7 +21,9 @@ def compute_crop_management_factor(grid):
 
     SR = compute_SR(Ru)
 
-    a, Bsb, Sp, W, F, SC = compute_SC(har_tag, bdate, edate, rain, temp, p, Bsi, alpha, Ru)
+    a, Bsb, Sp, W, F, SC = compute_SC(
+        har_tag, bdate, edate, rain, temp, p, Bsi, alpha, Ru
+    )
 
     CC = compute_CC(H, Fc)
 
@@ -29,20 +42,20 @@ def compute_Ru(Ri_tag, Ri, rain, Rhm):
 
     Parameters
     ----------
-        Ri_id (pd series, float): see series ``grid`` in :func:`ComputeCFactor`
-        and :func:`prepare_grid`
-        Ri (pd series, float): see series ``grid`` in :func:`ComputeCFactor` and
-        :func:`prepare_grid`
-        Rain (pd series, float): see series ``grid`` in :func:`ComputeCFactor`
-        EI30 (pd series, float): see series ``grid`` in :func:`ComputeCFactor`
+    Ri_id (pd series, float): see series ``grid`` in :func:`ComputeCFactor`
+    and :func:`prepare_grid`
+    Ri (pd series, float): see series ``grid`` in :func:`ComputeCFactor` and
+    :func:`prepare_grid`
+    Rain (pd series, float): see series ``grid`` in :func:`ComputeCFactor`
+    EI30 (pd series, float): see series ``grid`` in :func:`ComputeCFactor`
 
     Returns
     -------
-        'Ru' (series, float): soil roughness
-        'f1_N' (series, float): first part formula, cumulative rainfall, weighted
-        with factor
-        'f2_EI' (series, float): second part formula, cumulative rainfall
-        erosivity, weighted with factor
+    'Ru' (series, float): soil roughness
+    'f1_N' (series, float): first part formula, cumulative rainfall, weighted
+    with factor
+    'f2_EI' (series, float): second part formula, cumulative rainfall
+    erosivity, weighted with factor
 
     (SG) Koen Verbist( 2004)
     Dr = exp(0.5*(-0.0055*Pt)+0.5*(-0.0705*EIt))
@@ -80,22 +93,36 @@ def compute_Ru(Ri_tag, Ri, rain, Rhm):
 
     return f1_N, f2_EI, Ru
 
+
 def expDr(f1_N, f2_EI):
+    """
+    #TODO
+
+    Parameters
+    ----------
+
+    Returns
+    -------
+
+    """
     return np.exp(0.5 * f1_N + 0.5 * f2_EI)
 
-def compute_SR(Ru):
+
+def compute_SR(Ru, Rii):
     """
     Computes Surface Roughness (SR): SR e(−0.026*(R-6.096))
 
     Parameters
     ----------
-        'Ru' (series, flloat): soil roughness
+    'Ru' (series, flloat): soil roughness
+
     Returns
     -------
-        'SR' (series float): surface roughness
+    'SR' (series float): surface roughness
     """
     SR = np.exp(-0.026 * (Ru - Rii))
     return SR
+
 
 def compute_SC(har_id, bdate, edate, rain, temp, p, Bsi, alpha, Ru):
     """
@@ -103,26 +130,26 @@ def compute_SC(har_id, bdate, edate, rain, temp, p, Bsi, alpha, Ru):
 
     Parameters
     ----------
-        har_id (pd series, int): see series ``grid`` in :func:`prepare_grid`
-        bdate_id (pd series, datetime): see series ``grid`` in
-        :func:`ComputeCFactor`
-        edate_id (pd series, datetime): see series ``grid`` in
-        :func:`ComputeCFactor`
-        rain (pd series, float): see series ``grid`` in :func:`ComputeCFactor`
-        temp (pd series, float): see series ``grid`` in :func:`ComputeCFactor`
-        p (pd series, float): see series ``grid`` in  :func:`prepare_grid`
-        Bsi (pd series, float): see series ``grid`` in :func:`prepare_grid`
-        alpha (pd series, float): see series ``grid`` in :func:`prepare_grid`
-        Ru (pd series, float): see series ``Ru`` in :func:compute_Ru
+    har_id (pd series, int): see series ``grid`` in :func:`prepare_grid`
+    bdate_id (pd series, datetime): see series ``grid`` in
+    :func:`ComputeCFactor`
+    edate_id (pd series, datetime): see series ``grid`` in
+    :func:`ComputeCFactor`
+    rain (pd series, float): see series ``grid`` in :func:`ComputeCFactor`
+    temp (pd series, float): see series ``grid`` in :func:`ComputeCFactor`
+    p (pd series, float): see series ``grid`` in  :func:`prepare_grid`
+    Bsi (pd series, float): see series ``grid`` in :func:`prepare_grid`
+    alpha (pd series, float): see series ``grid`` in :func:`prepare_grid`
+    Ru (pd series, float): see series ``Ru`` in :func:compute_Ru
 
     Returns
     -------
-        'a' ( pd series, float): harvest decay coefficient
-        'Bsi'(pd series, float): harvest remains per unit of area(kg/m2)
-        'Sp' (pd series, float): Percentage soil cover of harvest remains
-        'W' and 'F' (pd series, float): coefficients weighing rainfall and
-        temperature
-        'SC' (pd series, float): Surface cover (-)
+    'a' ( pd series, float): harvest decay coefficient
+    'Bsi'(pd series, float): harvest remains per unit of area(kg/m2)
+    'Sp' (pd series, float): Percentage soil cover of harvest remains
+    'W' and 'F' (pd series, float): coefficients weighing rainfall and
+    temperature
+    'SC' (pd series, float): Surface cover (-)
     """
     a_val = np.zeros([len(har_id)])
     Bsb = np.zeros([len(har_id)])
@@ -134,18 +161,21 @@ def compute_SC(har_id, bdate, edate, rain, temp, p, Bsi, alpha, Ru):
     for i in har_id.loc[har_id != 0].unique():
         cond = (har_id == i).values.flatten()
         # (SG) compute degradation rate
-        W[cond], F[cond], a_val[cond] = compute_a(rain.loc[cond], temp.loc[cond],
-                                                  p.loc[cond])
+        W[cond], F[cond], a_val[cond] = compute_a(
+            rain.loc[cond], temp.loc[cond], p.loc[cond]
+        )
         # (SG) compute Bsi
-        Bsb[cond] = compute_Bsb(bdate.loc[cond], edate.loc[cond], a_val[cond],
-                                Bsi.loc[cond])
+        Bsb[cond] = compute_Bsb(
+            bdate.loc[cond], edate.loc[cond], a_val[cond], Bsi.loc[cond]
+        )
         # (SG) compute Sp (divide by 10 000 Bsi (kg/ha -> kg/m2)
-        Sp[cond] = 100 * (1 - np.exp(-alpha[cond] * Bsb[cond] / (100 ** 2)))
+        Sp[cond] = 100 * (1 - np.exp(-alpha[cond] * Bsb[cond] / (100**2)))
         # (SG) compute SC
         SC[cond] = np.exp(-b * Sp[cond] * ((6.096 / (Ru[cond])) ** 0.08))
         # SC[cond] = [math.exp(-b*Sp[i]*((6.069 / (Ru[i]**0.08)))) for i in
         # range(len(Sp))]
     return a_val, Bsb, Sp, W, F, SC
+
 
 def compute_CC(H, Fc):
     """
@@ -154,17 +184,18 @@ def compute_CC(H, Fc):
 
     Parameters
     ----------
-        'H' (pd series, float): see parameter ``ggg`` in :func:`ComputeCFactor`.
-        'F (pd series, float): see parameter ``ggg`` in :func:`ComputeCFactor`.
+    'H' (pd series, float): see parameter ``ggg`` in :func:`ComputeCFactor`.
+    'F (pd series, float): see parameter ``ggg`` in :func:`ComputeCFactor`.
 
     Returns
     -------
-        'CC' (pd series, float): crop cover factor
+    'CC' (pd series, float): crop cover factor
     """
 
     # (SG) compute CC
     CC = 1 - Fc * np.exp(-0.328 * H)
     return CC
+
 
 def compute_SM(grid):
     """
@@ -173,25 +204,26 @@ def compute_SM(grid):
 
     Parameters
     ----------
-        'grid' (pd df): see parameter ``grid`` in :func:`ComputeCFactor`.
+    'grid' (pd df): see parameter ``grid`` in :func:`ComputeCFactor`.
+
     Returns
     -------
-        'SM' (pd series, float): soil moisture
-    """
-    """
-    Verbist et al. (2004): Deze factor brengt de invloed in rekening van het 
+    'SM' (pd series, float): soil moisture
+
+    Verbist et al. (2004): Deze factor brengt de invloed in rekening van het
     bodemvochtgehalte op de watererosie.
-    Deze parameter moet enkel veranderd worden ingeval de bodemvochtsituatie 
+    Deze parameter moet enkel veranderd worden ingeval de bodemvochtsituatie
     gedurende het jaar significant verschilt
-    van een situatie waarbij het perceel het hele jaar braak wordt gelaten en 
+    van een situatie waarbij het perceel het hele jaar braak wordt gelaten en
     jaarlijks wordt geploegd.
     Voor een normaal akkerperceel wordt de waarde één voorgesteld.
-    Deze waarde wordt dan ook gebruikt bij de berekening van de gewasfactoren 
+    Deze waarde wordt dan ook gebruikt bij de berekening van de gewasfactoren
     voor akkerbouwpercelen in Vlaanderen,
     zodat deze subfactor geen rol speelt in de berekeningen
     """
 
     return [1] * len(grid)
+
 
 def compute_PLU(grid):
     """
@@ -200,21 +232,23 @@ def compute_PLU(grid):
 
     Parameters
     ----------
-        'grid' (pd df): see parameter ``grid`` in :func:`ComputeCFactor`.
+    'grid' (pd df): see parameter ``grid`` in :func:`ComputeCFactor`.
+
     Returns
     -------
-        'PLU' (pd series, float): past land use
+    'PLU' (pd series, float): past land use
     """
 
     """
-    Verbist et al. (2004): Volgens Verstraeten et al. (2002) kan deze subfactor 
+    Verbist et al. (2004): Volgens Verstraeten et al. (2002) kan deze subfactor
     geschat worden tussen 0,9 en 1 voor
-    een jaarlijks geploegde bodem. In de berekening van de gewasfactor wordt dan 
+    een jaarlijks geploegde bodem. In de berekening van de gewasfactor wordt dan
     ook verder een rekening gehouden met
     deze subfactor (de subfactor PLU wordt gelijkgesteld aan 1).
     """
 
     return [1] * len(grid)
+
 
 def compute_SLR(SC, CC, SR, SM, PLU):
     """
@@ -223,11 +257,12 @@ def compute_SLR(SC, CC, SR, SM, PLU):
 
     Parameters
     ----------
-        SC (pd series, float): soil cover
-        CC (pd series, float): crop cover
-        SR (pd series, float): surface cover
-        SM (pd series, float): soil moistur
-        PLU (pd series, float): past land use
+    SC (pd series, float): soil cover
+    CC (pd series, float): crop cover
+    SR (pd series, float): surface cover
+    SM (pd series, float): soil moistur
+    PLU (pd series, float): past land use
+
     Returns
     -------
          'SLR' (pd series, float): soil loss ratio
@@ -236,29 +271,31 @@ def compute_SLR(SC, CC, SR, SM, PLU):
     SLR.loc[SLR.isnull()] = 1
     return SLR
 
-def weight_SLR(SLR, EI30, bdate, output_interval):
+
+def weight_SLR(SLR, EI30):
     """
     Weight SLR factor based on formula's Verbist, K. (2004). Computermodel RUSLE
     C-factor.
 
     Parameters
     ----------
-        'SLR' (pd series, float): soil loss ratio
-        'EI30' (pd series, float): see series ``grid`` in :func:`ComputeCFactor`
-        'bdate' (pd series, float): see series ``grid`` in :func:`ComputeCFactor
-        'output_interval' (str): output interval for C-factor (!= interval
-        computation grid), either monthly 'M',
-                                semi-monthly'SMS' or yearly 'Y'
+    'SLR' (pd series, float): soil loss ratio
+    'EI30' (pd series, float): see series ``grid`` in :func:`ComputeCFactor`
+    'bdate' (pd series, float): see series ``grid`` in :func:`ComputeCFactor
+    'output_interval' (str): output interval for C-factor (!= interval
+    computation grid), either monthly 'M',
+                            semi-monthly'SMS' or yearly 'Y'
     Returns
     -------
          'grid' (pd df): see parameter ``grid`` in :func:`ComputeCFactor`.
     """
     # (SG) compute sum of average EI30 values
     sumR = np.sum(EI30)
-    product = (SLR * EI30)
+    product = SLR * EI30
     # (SG) compute weighted C according to to output interval
     C = np.sum(product / sumR)
     return C
+
 
 def compute_a(rain, temp, p):
     """
@@ -266,35 +303,33 @@ def compute_a(rain, temp, p):
 
     Parameters
     ----------
-        'rain' (pd series, float): see parameter ``grid`` in :func:`ComputeCfactor`.
-        'temp' (pd series, float): see parameter ``grid`` in :func:`ComputeCfactor`.
-        'p' (pd series, float): see parameter ``grid`` in :func:`ComputeCFactor`.
+    'rain' (pd series, float): see parameter ``grid`` in :func:`ComputeCfactor`.
+    'temp' (pd series, float): see parameter ``grid`` in :func:`ComputeCfactor`.
+    'p' (pd series, float): see parameter ``grid`` in :func:`ComputeCFactor`.
 
     Returns
     -------
-        'a' ( pd series, float): harvest decay coefficient
-        'W' and 'F' (pd series, float): coefficients weighing rainfall and
-        temperature
+    'a' ( pd series, float): harvest decay coefficient
+    'W' and 'F' (pd series, float): coefficients weighing rainfall and
+    temperature
     """
-    R0 = 25.76  # minimum gemiddelde halfmaandelijks neerslag nodig voor afbraak
     # (opm. pagina 6?)
-    T0 = 32.22  # celsius!
-    A = 7.78  # celsius!
 
-    T0 = celc_to_fahr(T0)
-    A = celc_to_fahr(A)
     # (SG) compute W
     W = rain / R0
     # (SG) compute F (in fahr!)
     temp = celc_to_fahr(temp)
-    F = (2 * ((temp + A) ** 2) * ((T0 + A) ** 2) - (temp + A) ** 4) / (
-                (T0 + A) ** 4)
+    F = (2 * ((temp + A) ** 2) * ((T0 + A) ** 2) - (temp + A) ** 4) / ((T0 + A) ** 4)
     # (SG) compute degradation speed (page 6 Verbist, K. (2004). Computermodel
     # RUSLE C-factor.)
     # (SG) special case if only one record
-    a = p * np.min([W, F], axis=0) if len(W) > 1 else p * np.min(
-        [W.values[0], F.values[0]])
+    a = (
+        p * np.min([W, F], axis=0)
+        if len(W) > 1
+        else p * np.min([W.values[0], F.values[0]])
+    )
     return W, F, a
+
 
 def compute_Bsb(bdate, edate, a, Bsi):
     """
@@ -302,28 +337,32 @@ def compute_Bsb(bdate, edate, a, Bsi):
 
     Parameters
     ----------
-        'edate' (pd series,timedate): see series ``grid`` in
-        :func:`ComputeCFactor` and :func:`prepare_grid`
-        'a' (pd series,float): see series ``grid`` in :func:`ComputeCFactor` and
-        :func:`prepare_grid`
-        'Bsi' (pd series,float): see series ``grid`` in :func:`ComputeCFactor`
-        and :func:`prepare_grid`
-        'bd' (datetime): begin date of series harvest remains with index har_id
+    'edate' (pd series,timedate): see series ``grid`` in
+    :func:`ComputeCFactor` and :func:`prepare_grid`
+    'a' (pd series,float): see series ``grid`` in :func:`ComputeCFactor` and
+    :func:`prepare_grid`
+    'Bsi' (pd series,float): see series ``grid`` in :func:`ComputeCFactor`
+    and :func:`prepare_grid`
+    'bd' (datetime): begin date of series harvest remains with index har_id
 
     Returns
     -------
-        'Bsi' (pd series, float): harvest remains per unit area on time step i (
-        kg/m2)
+    'Bsi' (pd series, float): harvest remains per unit area on time step i (
+    kg/m2)
     """
     Bsb = np.zeros(len(a))
     # (SG) compute remains on middle of computational node
-    D = [7] + [(bdate.iloc[i] + (edate.iloc[i] - bdate.iloc[i]) /
-                2 - (bdate.iloc[i - 1] + (
-                        edate.iloc[i - 1] - bdate.iloc[i - 1]) / 2)).days for i in
-               range(1, len(edate), 1)]
+    D = [7] + [
+        (
+            bdate.iloc[i]
+            + (edate.iloc[i] - bdate.iloc[i]) / 2
+            - (bdate.iloc[i - 1] + (edate.iloc[i - 1] - bdate.iloc[i - 1]) / 2)
+        ).days
+        for i in range(1, len(edate), 1)
+    ]
     exp = np.exp(-a * D)
     # (SG) compute harvest remains
     for i in range(len(exp)):
         Bsb[i] = Bsb[i - 1] * exp[i] if i != 0 else Bsi.iloc[i] * exp[i]
 
-    return Bs
+    return Bsb
