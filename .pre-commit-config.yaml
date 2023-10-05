@@ -101,4 +101,3 @@ repos:
         - --ignore-magic
         - --ignore-property-decorators
         - --fail-under=90
-    

@@ -1,0 +1,88 @@
+,groep_id,subgroep_id,referenties,voorwaarde,teeltwisseling,zaaidatum,oogstdatum,Bsi,alpha,p,D,Ri,Spi,default,opmerking
+0,1,2001,ILVO2019,,,19000501,19001001,365.0,1.41,0.01,30.0,10.2,5,1,verloop gewasgroeicurves geinterpoleerd met verloop gewasgroeicurve opgelijst in Verbist et al. (2004) en data Verstraeten et al. (2001) (zie code GV)
+1,2,2001,ILVO2019,,,19000501,19001015,9860.0,3.04,0.01,30.0,10.2,95,1,verloop gewasgroeicurves geinterpoleerd met verloop gewasgroeicurve opgelijst in Verbist et al. (2004) en data Verstraeten et al. (2001) (zie code GV)
+2,3,1003,ILVO2019,,,19000415,19001001,2000.0,0.3,0.03,10.0,10.2,6,1,
+3,4,1003,ILVO2019,,,19000401,19000815,2000.0,0.3,0.03,10.0,10.2,6,1,
+4,5,1003,ILVO2019,,,19000401,19000801,2000.0,0.3,0.03,10.0,10.2,6,1,
+5,6,2006,ILVO2019,,,19000401,19001101,2600.0,2.3,0.02,15.0,7.6,45,1,verloop gewasgroeicurves geinterpoleerd met verloop gewasgroeicurve opgelijst in Verbist et al. (2004) en data Verstraeten et al. (2001) (zie code GV)
+6,7,1007,ILVO2019,,,19000401,19001101,5270.0,1.78,0.03,10.0,7.6,61,1,verloop gewasgroeicurves geinterpoleerd met verloop gewasgroeicurve opgelijst in Verbist et al. (2004) en data Verstraeten et al. (2001) (zie code GV)
+7,8,1008,Verbist2004;Gabriels2003;KMI2003;ILVO2019;Gobin2013,"inzaaidatum=[1015,1030]",,19001015,19000801,3600.0,1.2,0.01,30.0,10.2,100,1,
+8,8,2008,Verbist2004;Gabriels2003;KMI2003;ILVO2019;Gobin2013,"inzaaidatum=[1101,1231]",,19001101,19000801,3600.0,1.2,0.01,30.0,10.2,100,0,
+9,9,1009,Verbist2004;Gabriels2003;KMI2003;ILVO2019;Gobin2013,"inzaaidatum=[0915,1015]",,19000915,19000715,3600.0,1.2,0.01,30.0,10.2,100,1,
+10,9,1008,Verbist2004;Gabriels2003;KMI2003;ILVO2019;Gobin2013,"inzaaidatum=[1015,1030]",,19001015,19000715,3600.0,1.2,0.01,30.0,10.2,100,0,
+11,9,2008,Verbist2004;Gabriels2003;KMI2003;ILVO2019;Gobin2013,"inzaaidatum=[1030,1231]",,19001030,19000715,3600.0,1.2,0.01,30.0,10.2,100,0,
+12,10,1009,Verbist2004;Gabriels2003;KMI2003;ILVO2019;Gobin2013,"inzaaidatum=[0915,1015]",nateelt,19000915,19000715,3600.0,1.2,0.01,30.0,10.2,100,1,overerving wintergerst: (Als er nateelt(jaar i-1) == brouwersgerst en-of voorteelt (jaar i)== brouwersgerst ) en hoofdteelt (jaar i) == brouwersgerst
+13,10,1008,Verbist2004;Gabriels2003;KMI2003;ILVO2019;Gobin2013,"inzaaidatum=[1015,1030]",nateelt,19001015,19000715,3600.0,1.2,0.01,30.0,10.2,100,0,overerving wintergerst: (Als er nateelt(jaar i-1) == brouwersgerst en-of voorteelt (jaar i)== brouwersgerst ) en hoofdteelt (jaar i) == brouwersgerst
+14,10,2008,Verbist2004;Gabriels2003;KMI2003;ILVO2019;Gobin2013,"inzaaidatum=[1030,1231]",nateelt,19001030,19000715,3600.0,1.2,0.01,30.0,10.2,100,0,overerving wintergerst: (Als er nateelt(jaar i-1) == brouwersgerst en-of voorteelt (jaar i)== brouwersgerst ) en hoofdteelt (jaar i) == brouwersgerst
+15,10,1010,Verbist2004;Gabriels2003;KMI2003;ILVO2019;Gobin2013,,hoofdteelt,19000315,19000815,3600.0,1.2,0.01,30.0,10.2,100,0,overerving zomergerst: andere gevallen
+16,11,1010,Verbist2004;Gabriels2003;KMI2003;ILVO2019;Gobin2013,,,19000315,19000815,3600.0,1.2,0.01,30.0,10.2,100,1,
+17,12,1010,Verbist2004;Gabriels2003;KMI2003;ILVO2019;Gobin2013,,,19000315,19000801,3600.0,1.2,0.01,30.0,10.2,100,1,
+18,13,1013,ILVO2019;RUSLE,,,19000228,19000815,376.0,2.55,0.02,15.0,7.6,9,1,
+19,14,1014,Bodemkundige Dienst van Belgie,,,19000315,19000701,0.0,0.0,0.0,0.0,7.6,0,1,
+20,15,1015,ILVO2019,,,19000315,19000901,0.0,0.0,0.0,0.0,10.2,0,1,
+21,16,1016,Gabriels2003;KMI2003;RUSLE;ILVO2019,,hoofdteelt,19000401,-9999,2500.0,11.98,0.01,30.0,7.6,95,0,
+22,16,2016,Gabriels2003;KMI2003;RUSLE;ILVO2019,"inzaaidatum=[0901,0930]",nateelt,19000901,-9999,2500.0,11.98,0.01,30.0,7.6,95,1,
+23,16,3016,Gabriels2003;KMI2003;RUSLE;ILVO2019,"inzaaidatum=[1001,1014]",nateelt,19001001,-9999,2500.0,11.98,0.01,30.0,7.6,95,0,
+24,16,4016,Gabriels2003;KMI2003;RUSLE;ILVO2019,"inzaaidatum=[1015,1030]",nateelt,19001015,-9999,2500.0,11.98,0.01,30.0,7.6,95,0,
+25,16,5016,Gabriels2003;KMI2003;RUSLE;ILVO2019,"inzaaidatum=[1101,1231]",nateelt,19001101,-9999,2500.0,11.98,0.01,30.0,7.6,95,0,
+26,17,2016,Gabriels2003;KMI2003;RUSLE;ILVO2019,"inzaaidatum=[0901,0930]",,19000901,-9999,2500.0,11.98,0.01,30.0,7.6,95,1,
+27,17,3016,Gabriels2003;KMI2003;RUSLE;ILVO2019,"inzaaidatum=[1001,1014]",,19001001,-9999,2500.0,11.98,0.01,30.0,7.6,95,0,
+28,17,4016,Gabriels2003;KMI2003;RUSLE;ILVO2019,"inzaaidatum=[1015,1030]",,19001015,-9999,2500.0,11.98,0.01,30.0,7.6,95,0,
+29,17,5016,Gabriels2003;KMI2003;RUSLE;ILVO2019,"inzaaidatum=[1101,1231]",,19001101,-9999,2500.0,11.98,0.01,30.0,7.6,95,0,
+30,18,1018,ILVO2019;RUSLE,,,19000915,19000615,2200.0,4.18,0.03,10.0,7.6,100,1,
+31,19,1019,ILVO2019;RUSLE,,,19000315,19000915,3000.0,4.18,0.02,15.0,7.6,71,1,
+32,20,1020,KMI2003;RUSLE;ILVO2019,"inzaaidatum=[0801,0915]",,19000801,-9999,2000.0,3.47,0.05,6.0,7.6,50,1,
+33,20,2020,KMI2003;RUSLE;ILVO2019,"inzaaidatum=[0915,1029]",,19000915,-9999,2000.0,3.47,0.05,6.0,7.6,50,0,
+34,20,3020,KMI2003;RUSLE;ILVO2019,"inzaaidatum=[1030,1231]",,19001030,-9999,2000.0,3.47,0.05,6.0,7.6,50,0,
+35,21,1020,KMI2003;RUSLE;ILVO2019,"inzaaidatum=[0801,0814]",,19000801,-9999,2000.0,3.47,0.05,6.0,7.6,50,1,
+36,21,2020,KMI2003;RUSLE;ILVO2019,"inzaaidatum=[0815,1231]",,19000815,-9999,2000.0,3.47,0.05,6.0,7.6,50,0,
+37,22,1022,,,,19000000,19000000,,,,,7.6,0,1,
+38,25,1025,ILVO2019.RUSLE,,,19000315,19000815,0.0,0.0,0.0,0.0,6.1,0,1,
+39,26,1025,ILVO2019.RUSLE,,,19000401,19000915,0.0,0.0,0.0,0.0,6.1,0,1,
+40,27,1027,ILVO2019;RUSLE,,,19000415,19001001,2200.0,4.18,0.03,10.0,7.6,60,1,verloop gewasgroeicurves geinterpoleerd met cumulatieve stikstofopname curve geraporteerd in Coopman et al. (2013)
+41,28,1027,ILVO2019;RUSLE,,,19000225,19000801,2200.0,4.18,0.03,10.0,7.6,60,1,verloop gewasgroeicurves geinterpoleerd met cumulatieve stikstofopname curve geraporteerd in Coopman et al. (2013)
+42,29,1027,ILVO2019;RUSLE,,,19000501,19001115,2200.0,4.18,0.03,10.0,7.6,60,1,verloop gewasgroeicurves geinterpoleerd met cumulatieve stikstofopname curve geraporteerd in Coopman et al. (2013)
+43,30,1027,ILVO2019;RUSLE,,,19000501,19001025,2200.0,4.18,0.03,10.0,7.6,60,1,verloop gewasgroeicurves geinterpoleerd met cumulatieve stikstofopname curve geraporteerd in Coopman et al. (2013)
+44,31,1031,ILVO2019,,,19000415,19001015,1000.0,2.23,0.03,10.0,6.1,20,1,
+45,32,1032,Gabriels2003;ILVO2019,,,19000515,19001025,2019.0,4.46,0.01,30.0,7.6,59,1,
+46,33,1033,Gabriels2003;ILVO2019;DeNeve2019,,voorteelt,19000315,19000715,3500.0,1.07,0.03,10.0,6.1,28,0,verloop gewasgroeicurves geinterpoleerd met cumulatieve stikstofopname curve geraporteerd in Coopman et al. (2013)
+47,33,2033,Gabriels2003;ILVO2019;DeNeve2019,,hoofdteelt,19000615,19001101,3000.0,1.07,0.03,10.0,6.1,28,1,verloop gewasgroeicurves geinterpoleerd met cumulatieve stikstofopname curve geraporteerd in Coopman et al. (2013)
+48,33,3033,Gabriels2003;ILVO2019;DeNeve2019,,nateelt,19000715,19000115,3000.0,1.07,0.03,10.0,6.1,28,0,verloop gewasgroeicurves geinterpoleerd met cumulatieve stikstofopname curve geraporteerd in Coopman et al. (2013)
+49,34,1034,ILVO2019,,voorteelt,19000401,19000515,0.0,0.0,0.0,0.0,7.6,0,0,
+50,34,2034,ILVO2019,,hoofdteelt,19000802,19001012,0.0,0.0,0.0,0.0,7.6,0,1,
+51,34,2034,ILVO2019,,nateelt,19001001,19000405,0.0,0.0,0.0,0.0,7.6,0,0,
+52,35,1036,ILVO2019;DeNeve2019,,voorteelt,19000415,19000701,5000.0,9.21,0.05,6.0,10.2,99,0,
+53,35,1036,ILVO2019;DeNeve2019,,hoofdteelt,19000615,19001015,5000.0,9.21,0.05,6.0,10.2,99,1,
+54,35,1036,ILVO2019;DeNeve2019,,nateelt,19000615,19001015,5000.0,9.21,0.05,6.0,10.2,99,1,
+55,36,1036,ILVO2019;DeNeve2019,,,19000215,19001215,5000.0,9.21,0.05,6.0,10.2,99,1,
+56,37,1037,ILVO2019,,,19000501,19001201,8000.0,5.76,0.05,6.0,10.2,99,1,
+57,38,1037,ILVO2019,,,19000501,19001201,8000.0,5.76,0.05,6.0,10.2,99,1,
+58,39,1039,ILVO2019,,,19000515,19001015,7000.0,6.58,0.05,6.0,10.2,99,1,
+59,40,1040,ILVO2019,,,19000601,19001015,7000.0,6.58,0.05,6.0,10.2,99,1,
+60,41,1041,ILVO2019,,,19000501,19001201,3000.0,15.35,0.05,6.0,10.2,80,1,verloop gewasgroeicurves geinterpoleerd met cumulatieve stikstofopname curve geraporteerd in Coopman et al. (2013)
+61,42,1041,ILVO2019 ,,,19000301,19000701,3000.0,15.35,0.05,6.0,10.2,80,1,verloop gewasgroeicurves geinterpoleerd met cumulatieve stikstofopname curve geraporteerd in Coopman et al. (2013)
+62,43,1043,ILVO2019,,,19000501,19000215,0.0,0.0,0.0,0.0,6.1,0,1,
+63,44,1044,ILVO2019,,,19000501,19000215,0.0,0.0,0.0,0.0,6.1,0,1,
+64,45,1045,ILVO2019,,,19000501,19000915,1500.0,0.0,0.0,0.0,7.6,0,1,verloop gewasgroeicurves geinterpoleerd met cumulatieve stikstofopname curve geraporteerd in Coopman et al. (2013)
+65,46,1046,ILVO2019,,,19000615,19001115,0.0,0.0,0.0,0.0,7.6,0,1,
+66,47,1047,ILVO2019,,,19000601,19001001,0.0,0.0,0.0,0.0,7.6,0,1,
+67,48,1048,ILVO2019,,voorteelt,19000501,19000915,0.0,0.0,0.0,0.0,7.6,0,0,
+68,48,1048,ILVO2019,,hoofdteelt,19000701,19001001,0.0,0.0,0.0,0.0,7.6,0,1,
+69,48,1048,ILVO2019,,nateelt,19000701,19001001,0.0,0.0,0.0,0.0,7.6,0,0,
+70,49,1049,ILVO2019,,,19000615,19000901,5000.0,9.21,,,7.6,99,1,
+71,50,1050,ILVO2019,,voorteelt,19000325,19000901,2000.0,23.03,0.01,30.0,10.2,99,0,
+72,50,1050,ILVO2019,,hoofdteelt,19000325,19000901,2000.0,23.03,0.01,30.0,10.2,99,1,
+73,50,2050,ILVO2019,,nateelt,19001101,19000801,2000.0,23.03,0.01,30.0,10.2,99,0,
+74,51,1051,ILVO2019,,,19000401,19000801,0.0,0.0,0.0,0.0,10.2,0,1,
+75,52,1052,ILVO2019;Verbist2004;RUSLE,,,19000401,19000701,6020.0,5.53,0.03,10.0,6.1,96,1,
+76,53,1053,ILVO2019,,,19001116,-9999,0.0,0.0,0.0,0.0,10.2,0,1,
+77,54,1054,ILVO2019,,,19001116,-9999,0.0,0.0,0.0,0.0,10.2,0,1,
+78,55,1055,ILVO2019,,,19000415,-9999,,,0.04,7.5,7.6,0,1,
+79,56,1056,ILVO2019,,,19000415,-9999,0.0,0.0,0.0,0.0,7.6,0,1,
+80,57,1056,ILVO2019,,,19000415,-9999,0.0,0.0,0.0,0.0,10.2,0,1,
+81,58,1058,ILVO2019,,,19000615,19001015,0.0,0.0,0.0,0.0,10.2,0,1,
+82,59,1059,RUSLE;ILVO2019,,,19000831,19000615,0.0,0.0,0.0,0.0,0.0,0,1,"worst-case scenario, overgrote areaal plastiek koker over aardbeien, gewasgroei en resten gelijk aan 0 geplaatst!"
+83,60,1060,ILVO2019,,,19001115,-9999,1000.0,,,,10.2,0,1,
+84,61,1060,ILVO2019,,,19001115,-9999,0.0,0.0,0.0,0.0,10.2,0,1,
+85,62,1062,ILVO2019;RUSLE,,,19000505,19000915,376.0,2.55,0.01,30.0,7.6,10,1,
+86,63,1063,ILVO2019,,,19000420,19000825,,,,,,0,1,
