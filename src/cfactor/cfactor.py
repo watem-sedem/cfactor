@@ -164,11 +164,12 @@ def compute_soil_roughness(identifier, ri, rain, rhm):
     References
     ----------
     .. [1] Verbist, K., Schiettecatte, W., Gabriels, D., n.d. Eindrapport:
-    “Computermodel RUSLE C-factor.”
+     “Computermodel RUSLE C-factor.”
+
     .. [2] Verstraeten, G., Poesen, J., Demarée, G. & Salles, C. (2006). Long-term
-    (105 years) variability " in rain erosivity as derived from 10-min rainfall depth
-    data for Ukkel (Brussels, Belgium): Implications for assessing soil erosion rates.
-    Journal of Geophysical Research Atmospheres, 111(22), 1–11.
+     (105 years) variability " in rain erosivity as derived from 10-min rainfall depth
+     data for Ukkel (Brussels, Belgium): Implications for assessing soil erosion rates.
+     Journal of Geophysical Research Atmospheres, 111(22), 1–11.
 
     """
     f1_N = np.zeros([len(identifier)])
@@ -261,7 +262,7 @@ def compute_soil_cover(
     References
     ----------
     .. [1] Verbist, K., Schiettecatte, W., Gabriels, D., n.d. Eindrapport:
-    “Computermodel RUSLE C-factor.”
+     “Computermodel RUSLE C-factor.”
     """
     a_val = np.zeros([len(identifier)])
     crop_residu = np.zeros([len(identifier)])
@@ -308,7 +309,8 @@ def compute_crop_cover(H, Fc):
     References
     ----------
     .. [1] Verbist, K., Schiettecatte, W., Gabriels, D., n.d. Eindrapport:
-    “Computermodel RUSLE C-factor.”
+     “Computermodel RUSLE C-factor.”
+
     """
     CC = 1 - Fc * np.exp(-0.328 * H)
     return CC
@@ -394,7 +396,7 @@ def compute_harvest_residu_decay_rate(rain, temperature, p):
     References
     ----------
     .. [1] Verbist, K., Schiettecatte, W., Gabriels, D., n.d. Eindrapport:
-    “Computermodel RUSLE C-factor.”
+     “Computermodel RUSLE C-factor.”
     """
     W = rain / R0
     temperature = celc_to_fahr(temperature)
@@ -443,7 +445,7 @@ def compute_crop_residu(bdate, edate, a, initial_crop_residu):
     References
     ----------
     .. [1] Verbist, K., Schiettecatte, W., Gabriels, D., n.d. Eindrapport:
-    “Computermodel RUSLE C-factor.”
+     “Computermodel RUSLE C-factor.”
 
     """
     crop_residu = np.zeros(len(a))
