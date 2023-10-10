@@ -1,5 +1,5 @@
 import numpy as np
-from util import celc_to_fahr
+from cfactor.util import celc_to_fahr
 
 b = 0.035
 rii = 6.096
