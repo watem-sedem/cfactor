@@ -1,26 +1,3 @@
-
-Logo
-Issues
-Pull Requests
-Milestones
-Explore
-182
-[Sacha Gobeyn]
-fluves
-/
-pycnws
-Private
-Code
-Issues 63
-Pull Requests 8
-Releases 16
-Wiki
-Activity
-Settings
-pycnws/pycnws/.pre-commit-config.yaml
-83 lines
-2.0 KiB
-YAML
 exclude: '^docs/conf.py'
 
 repos:
@@ -103,6 +80,3 @@ repos:
     - id: interrogate
       name: check docstring coverage of functions
       args: [-I, -i, -M, --quiet, --fail-under=85, --verbose]
-Powered by Gitea
-Licenses
-API
