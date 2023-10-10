@@ -31,7 +31,7 @@ def compute_soil_loss_ratio(
 
     The soil loss ratio (SLR) is computed by following formula:
 
-    ..math:
+    .. math::
 
         SLR = SC.CC.SR.SM.PLU
 
@@ -111,7 +111,7 @@ def compute_soil_roughness(identifier, ri, rain, rhm):
 
     The $$R_u$$ (-) is computed by:
 
-    ..math:
+    .. math::
 
         R_u = 6.096+(dr*(R_i-6.096))
 
@@ -120,7 +120,7 @@ def compute_soil_roughness(identifier, ri, rain, rhm):
 
     The roughness decay function $$d_r$$ is defined as:
 
-    ..math:
+    .. math::
 
         dr = exp{0.5*\frac{-0.14}{25.4}P_t}+0.5*\frac{-0.012}{17.02}EI_t))
 
@@ -199,23 +199,27 @@ def compute_soil_cover(
     alpha,
     ru,
 ):
-    """This subfactor is defined as the erosion limiting influence of the ground cover
+    """Computes soil cover (SC) subfactor
+
+    This subfactor is defined as the erosion limiting influence of the ground cover
     by crop residues, stones and non-erodible material in direct contact with the soil
     [1]_
 
-    ..math:
+    .. math::
 
         sc = exp{-b.sp.{\frac{6.096}{Ru}}^{0.08}}
 
+
     with sp being the amount of land being cover by residu
 
-    ..math:
+    .. math::
 
         sp = 100.(1-exp{-\alpha.B_s}})
 
     with
 
     - $$alpha$$: soil cover in comparison to weight residu (m$$^2$$/kg)
+
     - $$B_s$$: amount of residu per unit of area (kg/m$$^2$$), for definition,
       see :func:`cfactor.cfactor.compute_crop_residu`
 
@@ -287,7 +291,7 @@ def compute_soil_cover(
 def compute_crop_cover(H, Fc):
     """Computes crop cover factor based on soil cover crop and effective drop height:
 
-    ..math:
+    .. math::
 
         CC = 1-F_c.exp{-0.328H}
 
@@ -338,7 +342,7 @@ def aggregate_slr_to_crop_factor(SLR, EI30):
     SLR: numpy.ndarray
         Soil loss ratio, see :func:`cfactor.cfactor._ratio`
     EI30: numpy.ndarray
-        #TODO: refer to R-factor package with intersphinx
+        # TODO: refer to R-factor package with intersphinx
 
     Returns
     -------
@@ -352,28 +356,28 @@ def aggregate_slr_to_crop_factor(SLR, EI30):
 
 
 def compute_harvest_residu_decay_rate(rain, temperature, p):
-    """
-    Computes crop residu decay coefficient [1]_
+    """Computes crop residu decay coefficient [1]_
 
-    ..math:
+    .. math::
 
         a = p[min(W,F)]
 
     with:
 
-    ..math:
+    .. math::
 
         W = \frac{R}{R_0} \\
         F = \frac{2(T_a+A)^2.(T_0+A)^2-(T_a+A)^4}{(T_0+A)^4}
 
     with:
 
-    ..math:
+    .. math::
 
         R_0: minimum half-monthly average rainfall
         T_a: average temperature in half-montlhy period
         T_0: optimal temperature for decay
         A: coefficient used to express shapr of decay function as a function of temp.
+
 
     Parameters
     ----------
@@ -415,25 +419,25 @@ def compute_crop_residu(bdate, edate, a, initial_crop_residu):
     """
     Computes harvest remains per unit of area over nodes [1]_:
 
-    ..math::
-
+    .. math::
         Bse = Bsb.exp{-a.D}
 
 
     with
+
     - Bse: amount of crop residu at end of period (kg dry matter m$^{-2}$)
     - Bsb: amount of crop residu at start of period (kg dry matter m$^{-2}$)
     - a: harvest decay coefficient, see
         :func:`cfactor.cfactor.compute_harvest_residu_decay_rate`.
-    - D: number of days #TODO: check unit
+    - D: number of days # TODO: check unit
 
     Parameters
     ----------
-    bdate: #TODO
-    edate: #TODO
+    bdate: # TODO
+    edate: # TODO
     a: numpy.ndarray
         Harvest decay coefficient (-), see
-        :func:`cfactor.cfactor.compute_harvest_residu_decay_rate`. #TODO: check unit
+        :func:`cfactor.cfactor.compute_harvest_residu_decay_rate`. # TODO: check unit
     initial_crop_residu: numpy.ndarray
         Initial amount of crop residu (kg dry matter / ha)
 
