@@ -11,7 +11,7 @@ import numpy as np
 import pandas as pd
 from matplotlib.ticker import FormatStrFormatter
 
-from cfactor.cfactor import Rii
+from cfactor.cfactor import rii
 from cfactor.util import create_dir
 
 
@@ -1183,7 +1183,7 @@ def prepare_grid(
     # (SG) assign properties
     cp = cp[["groep_id", "subgroep_id", "alpha", "Bsi", "p", "Ri"]].drop_duplicates()
     grid = grid.merge(cp, on=["groep_id", "subgroep_id"], how="left")
-    grid.loc[np.isnan(grid["Ri"]), "Ri"] = Rii
+    grid.loc[np.isnan(grid["Ri"]), "Ri"] = rii
 
     # (SG) assign growth curves
     grid = assign_growth_curvs(grid, ggg)
