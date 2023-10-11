@@ -1,4 +1,5 @@
 import numpy as np
+
 from cfactor.util import celc_to_fahr
 
 b = 0.035
@@ -157,7 +158,7 @@ def compute_soil_roughness(identifier, ri, rain, rhm):
 
     Notes
     -----
-    1. A slight different formulation is used from [1]_, where the parameter for EI is
+    1. A slight different formulation is used from [1]_ where the parameter for EI is
        defined as -0.0705, whereas here we use -0.00070505287 (-0.012 / 17.02)
        #TODO: check.
     2. The rhm is equal to EI, for guidelines computation, see [2]_ and #TODO: refer to
@@ -165,11 +166,12 @@ def compute_soil_roughness(identifier, ri, rain, rhm):
 
     References
     ----------
+
     .. [1] Verbist, K., Schiettecatte, W., Gabriels, D., n.d. Eindrapport:
      “Computermodel RUSLE C-factor.”
 
     .. [2] Verstraeten, G., Poesen, J., Demarée, G. & Salles, C. (2006). Long-term
-     (105 years) variability " in rain erosivity as derived from 10-min rainfall depth
+     (105 years) variability in rain erosivity as derived from 10-min rainfall depth
      data for Ukkel (Brussels, Belgium): Implications for assessing soil erosion rates.
      Journal of Geophysical Research Atmospheres, 111(22), 1–11.
 
@@ -386,7 +388,8 @@ def compute_harvest_residu_decay_rate(rain, temperature, p):
 
         - $$T_0$$: optimal temperature for decay
 
-        - $$A$$: coefficient used to express shapr of decay function as a function of temp.
+        - $$A$$: coefficient used to express shapr of decay function as a function
+        of temp.
 
 
     Parameters
