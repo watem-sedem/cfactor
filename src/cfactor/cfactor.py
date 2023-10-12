@@ -1,5 +1,6 @@
 import numpy as np
-from util import celc_to_fahr
+
+from cfactor.util import celc_to_fahr
 
 b = 0.035
 rii = 6.096
@@ -31,19 +32,23 @@ def compute_soil_loss_ratio(
 
     The soil loss ratio (SLR) is computed by following formula:
 
-    ..math:
+    .. math::
 
         SLR = SC.CC.SR.SM.PLU
 
     with
 
-    - $$SC$$: impact of surface cover (due to crop residu), see
+    - :math:`SC`: impact of surface cover (due to crop residu), see
       :func:`cfactor.cfactor.compute_surface_cover`.
-    - $$CC$$: impact of canopy cover, :func:`cfactor.cfactor.compute_crop_cover`.
-    - $$SR$$: impact of surface roughness (due to farming operations)
+
+    - :math:`CC`: impact of canopy cover, :func:`cfactor.cfactor.compute_crop_cover`.
+
+    - :math:`SR`: impact of surface roughness (due to farming operations)
       :func:`cfactor.cfactor.compute_soil_roughness`.
-    - $$SM$$: impact of surface moisture
-    - $$PLU$$: impact of prior land use
+
+    - :math:`SM`: impact of surface moisture
+
+    - :math:`PLU`: impact of prior land use
 
 
     Parameters
@@ -85,9 +90,16 @@ def compute_soil_loss_ratio(
 
 
 def compute_surface_cover(ru):
-    """Computes surface cover (SR)
+    """Computes surface cover SR
 
-     Computes surface cover SR e(−0.026*(R-6.096))
+    Computes surface cover :math:`SR` as
+
+    .. math::
+
+        SR = e(−0.026*(R-6.096))
+
+
+    With :math:`R` as TODO
 
     Parameters
     ----------
@@ -98,6 +110,7 @@ def compute_surface_cover(ru):
     -------
     numpy.ndarray
         Surface roughness ([0,1])
+
     """
     return np.exp(-0.026 * (ru - rii))
 
@@ -109,26 +122,25 @@ def compute_soil_roughness(identifier, ri, rain, rhm):
     of a period is defined by a new roughness condition (i.e. prep for a new crop by
     plowing):
 
-    The $$R_u$$ (-) is computed by:
+    The :math:`R_u` (-) is computed by:
 
-    ..math:
+    .. math::
 
         R_u = 6.096+(dr*(R_i-6.096))
 
-    The final roughness is referred to as $$r_{ii}$$, i.e. 6.096. The initial roughness
-    is crop dependent (soil preparation dependent).
+    The final roughness is referred to as :math:`r_{ii}`, i.e. 6.096.
+    The initial roughness is crop dependent (soil preparation dependent).
 
-    The roughness decay function $$d_r$$ is defined as:
+    The roughness decay function :math:`d_r` is defined as:
 
-    ..math:
+    .. math::
 
-        dr = exp{0.5*\frac{-0.14}{25.4}P_t}+0.5*\frac{-0.012}{17.02}EI_t))
+        dr = exp{0.5*\\frac{-0.14}{25.4}P_t}+0.5*\\frac{-0.012}{17.02}EI_t))
 
     Under the influence of precipitation, the roughness of an agricultural field,
     left undisturbed, will systematically decrease until an (average) minimum roughness
     of 6.096 mm (0.24 inches) is reached. The decrease function Dr is defined to
-    compute this decrease (see [1]_)
-    #TODO: add refs to Reynard et al.
+    compute this decrease (see [1]_). # TODO: add refs to Reynard et al.
 
     Parameters
     ----------
@@ -140,7 +152,7 @@ def compute_soil_roughness(identifier, ri, rain, rhm):
     rain:  numpy.ndarray
         Amount of rainfall (in mm, during period).
     rhm:  numpy.ndarray
-        Cumulative rainfall erosivity (in $$\frac{MJ.mm}{ha.year}$$)
+        Cumulative rainfall erosivity (in :math:`\\frac{MJ.mm}{ha.year}`)
 
     Returns
     -------
@@ -153,22 +165,22 @@ def compute_soil_roughness(identifier, ri, rain, rhm):
 
     Notes
     -----
-    1. A slight different formulation is used from [1]_, where the parameter for EI is
+    1. A slight different formulation is used from [1]_ where the parameter for EI is
        defined as -0.0705, whereas here we use -0.00070505287 (-0.012 / 17.02)
        #TODO: check.
     2. The rhm is equal to EI, for guidelines computation, see [2]_ and #TODO: refer to
        R-factor package via intersphinx.
 
-
-
     References
     ----------
+
     .. [1] Verbist, K., Schiettecatte, W., Gabriels, D., n.d. Eindrapport:
-    “Computermodel RUSLE C-factor.”
+     “Computermodel RUSLE C-factor.”
+
     .. [2] Verstraeten, G., Poesen, J., Demarée, G. & Salles, C. (2006). Long-term
-    (105 years) variability " in rain erosivity as derived from 10-min rainfall depth
-    data for Ukkel (Brussels, Belgium): Implications for assessing soil erosion rates.
-    Journal of Geophysical Research Atmospheres, 111(22), 1–11.
+     (105 years) variability in rain erosivity as derived from 10-min rainfall depth
+     data for Ukkel (Brussels, Belgium): Implications for assessing soil erosion rates.
+     Journal of Geophysical Research Atmospheres, 111(22), 1–11.
 
     """
     f1_N = np.zeros([len(identifier)])
@@ -198,25 +210,32 @@ def compute_soil_cover(
     alpha,
     ru,
 ):
-    """This subfactor is defined as the erosion limiting influence of the ground cover
+    """Computes soil cover (SC) subfactor
+
+    This subfactor is defined as the erosion limiting influence of the ground cover
     by crop residues, stones and non-erodible material in direct contact with the soil
     [1]_
 
-    ..math:
 
-        sc = exp{-b.sp.{\frac{6.096}{Ru}}^{0.08}}
+    .. math::
+
+        sc = exp{-b.sp.{\\frac{6.096}{Ru}}^{0.08}}
+
 
     with sp being the amount of land being cover by residu
 
-    ..math:
 
-        sp = 100.(1-exp{-\alpha.B_s}})
+    .. math::
+
+        sp = 100.(1-exp{-\\alpha.B_s})
 
     with
 
-    - $$alpha$$: soil cover in comparison to weight residu (m$$^2$$/kg)
-    - $$B_s$$: amount of residu per unit of area (kg/m$$^2$$), for definition,
-      see :func:`cfactor.cfactor.compute_crop_residu`
+    - :math:`alpha`: soil cover in comparison to weight residu (:math:`m^2/kg`)
+
+    - :math:`B_s`: amount of residu per unit of area (:math:`kg/m^2`), for definition,
+       see :func:`cfactor.cfactor.compute_crop_residu`
+
 
     Parameters
     ----------
@@ -237,7 +256,7 @@ def compute_soil_cover(
         Initial amount of crop residu (kg dry matter / ha) for harvest period id (one
         number per period id)
     alpha: numpy.ndarray
-        Soil cover in comparison to weight residu (m$$^2$$/kg)
+        Soil cover in comparison to weight residu (:math:`m^2/kg`)
     ru: numpy.ndarray
         Soil roughness (mm), see :func:`cfactor.cfactor.compute_soil_roughness`
 
@@ -261,7 +280,8 @@ def compute_soil_cover(
     References
     ----------
     .. [1] Verbist, K., Schiettecatte, W., Gabriels, D., n.d. Eindrapport:
-    “Computermodel RUSLE C-factor.”
+     “Computermodel RUSLE C-factor.”
+
     """
     a_val = np.zeros([len(identifier)])
     crop_residu = np.zeros([len(identifier)])
@@ -284,9 +304,9 @@ def compute_soil_cover(
 
 
 def compute_crop_cover(H, Fc):
-    """Computes crop cover factor based on soil cover crop and effective drop height:
+    """Computes crop cover factor based on soil cover crop and effective drop height
 
-    ..math:
+    .. math::
 
         CC = 1-F_c.exp{-0.328H}
 
@@ -308,7 +328,8 @@ def compute_crop_cover(H, Fc):
     References
     ----------
     .. [1] Verbist, K., Schiettecatte, W., Gabriels, D., n.d. Eindrapport:
-    “Computermodel RUSLE C-factor.”
+     “Computermodel RUSLE C-factor.”
+
     """
     CC = 1 - Fc * np.exp(-0.328 * H)
     return CC
@@ -336,12 +357,13 @@ def aggregate_slr_to_crop_factor(SLR, EI30):
     SLR: numpy.ndarray
         Soil loss ratio, see :func:`cfactor.cfactor._ratio`
     EI30: numpy.ndarray
-        #TODO: refer to R-factor package with intersphinx
+        # TODO: refer to R-factor package with intersphinx
 
     Returns
     -------
     C: float
         C-factor (-, [0,1])
+
     """
     sumR = np.sum(EI30)
     product = SLR * EI30
@@ -350,28 +372,36 @@ def aggregate_slr_to_crop_factor(SLR, EI30):
 
 
 def compute_harvest_residu_decay_rate(rain, temperature, p):
-    """
-    Computes crop residu decay coefficient [1]_
+    """Computes crop residu decay coefficient [1]_
 
-    ..math:
+
+    .. math::
 
         a = p[min(W,F)]
 
     with:
 
-    ..math:
+    .. math::
 
-        W = \frac{R}{R_0} \\
-        F = \frac{2(T_a+A)^2.(T_0+A)^2-(T_a+A)^4}{(T_0+A)^4}
+        W = \\frac{R}{R_0}
+
+    and
+
+    .. math::
+
+        F = \\frac{2(T_a+A)^2.(T_0+A)^2-(T_a+A)^4}{(T_0+A)^4}
 
     with:
 
-    ..math:
+        - :math:`R_0`: minimum half-monthly average rainfall
 
-        R_0: minimum half-monthly average rainfall
-        T_a: average temperature in half-montlhy period
-        T_0: optimal temperature for decay
-        A: coefficient used to express shapr of decay function as a function of temp.
+        - :math:`T_a`: average temperature in half-montlhy period
+
+        - :math:`T_0`: optimal temperature for decay
+
+        - :math:`A`: coefficient used to express shapr of decay function as a function
+         of temperature.
+
 
     Parameters
     ----------
@@ -394,7 +424,8 @@ def compute_harvest_residu_decay_rate(rain, temperature, p):
     References
     ----------
     .. [1] Verbist, K., Schiettecatte, W., Gabriels, D., n.d. Eindrapport:
-    “Computermodel RUSLE C-factor.”
+     “Computermodel RUSLE C-factor.”
+
     """
     W = rain / R0
     temperature = celc_to_fahr(temperature)
@@ -413,25 +444,25 @@ def compute_crop_residu(bdate, edate, a, initial_crop_residu):
     """
     Computes harvest remains per unit of area over nodes [1]_:
 
-    ..math::
-
+    .. math::
         Bse = Bsb.exp{-a.D}
 
 
     with
-    - Bse: amount of crop residu at end of period (kg dry matter m$^{-2}$)
-    - Bsb: amount of crop residu at start of period (kg dry matter m$^{-2}$)
+
+    - Bse: amount of crop residu at end of period (kg dry matter . :math:`m^{-2}`)
+    - Bsb: amount of crop residu at start of period (kg dry matter . :math:`m^{-2}`)
     - a: harvest decay coefficient, see
         :func:`cfactor.cfactor.compute_harvest_residu_decay_rate`.
-    - D: number of days #TODO: check unit
+    - D: number of days # TODO: check unit
 
     Parameters
     ----------
-    bdate: #TODO
-    edate: #TODO
+    bdate: # TODO
+    edate: # TODO
     a: numpy.ndarray
         Harvest decay coefficient (-), see
-        :func:`cfactor.cfactor.compute_harvest_residu_decay_rate`. #TODO: check unit
+        :func:`cfactor.cfactor.compute_harvest_residu_decay_rate`. # TODO: check unit
     initial_crop_residu: numpy.ndarray
         Initial amount of crop residu (kg dry matter / ha)
 
@@ -443,7 +474,7 @@ def compute_crop_residu(bdate, edate, a, initial_crop_residu):
     References
     ----------
     .. [1] Verbist, K., Schiettecatte, W., Gabriels, D., n.d. Eindrapport:
-    “Computermodel RUSLE C-factor.”
+     “Computermodel RUSLE C-factor.”
 
     """
     crop_residu = np.zeros(len(a))

@@ -5,7 +5,7 @@ cfactor
 .. image:: https://drone.fluves.net/api/badges/fluves/cfactor/status.svg
     :target: https://drone.fluves.net/fluves/cfactor
 
-This is the documentation of **cfactor**, a Fluves/Marlinks package to...
+This is the documentation of **cfactor**, a python package to calculate the RUSLE C-factor.
 
 Installation
 =============

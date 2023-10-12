@@ -730,21 +730,20 @@ def near_identical_parcels(parcels1, parcels2, output_folder, tag, perc_overlap=
 def load_perceelskaart_for_compute_C(percelenshp, jaar):
     """
     functie die percelenshp omzet naar perceelslist nodig voor initialisatie functie
-     ```init'''
 
     Parameters
     ----------
-        'percelenshp' (dict): dictionary met keys jaar (vb. 2016, 2017 en 2018).
-        Elke bevatten ze de perceelskaart
-        waarbij
-        het perceelsnummer 'NR' aangegeven is, alsook het nummer van het bijna-gelijk
-        perceel (80% overeenstemming in
+    percelenshp: dictionary met keys jaar (vb. 2016, 2017 en 2018).
+        Elke bevatten ze de perceelskaart waarbij het perceelsnummer 'NR' aangegeven is,
+        alsook het nummer van het bijna-gelijk perceel (80% overeenstemming in
         oppervlakte) van het jaar ervoor ('NR_pr') en erna ('NR_po').
-        'jaar' (int): simulatiejaar
+    jaar:  int
+        simulatiejaar
 
     Returns
     -------
-        'perceelslijst' nodig voor initialisatie functie ```init'''
+    'perceelslijst' nodig voor initialisatie functie init
+
     """
     parcel_list = []
     cols = ["GWSCOD_V", "GWSCOD_H", "GWSCOD_N", "GWSNAM_V", "GWSNAM_H", "GWSNAM_N"]
@@ -1138,30 +1137,43 @@ def prepare_grid(
 
     Parameters
     ----------
-        'parcel': considered parcels, see parameter ``parcel_list`` in
+    parcel: considered parcels, see parameter ``parcel_list`` in
         :func:`ComputeCFactor`.
-        'grid': see parameter ``grid`` in :func:`ComputeCFactor`.
-        'ggg' (pd df): see parameter ``ggg`` in :func:`ComputeCFactor`.
-        'gts' (pd df): see parameters 'gts in :func:`ComputeCFactor`
-        'cp' (pd df): see parameters 'cp' in :func:`ComputeCFactor`
-        'year' (int): see parameters 'year' in :func:`ComputeCFactor`
+    grid: see parameter ``grid`` in :func:`ComputeCFactor`.
+    ggg: pandas.DataFrame
+        see parameter ``ggg`` in :func:`ComputeCFactor`.
+    gts: pandas.DataFrame
+        see parameters 'gts in :func:`ComputeCFactor`
+    cp: pandas.DataFrame
+        see parameters 'cp' in :func:`ComputeCFactor`
+    year: int
+        see parameters 'year' in :func:`ComputeCFactor`
 
     Returns
     -------
-         'grid' (pd df): see parameter ``grid`` in :func:`ComputeCFactor`.
-            ...
-            'GWSCOD': see parameter ``parcel_list`` in :func:`ComputeCFactor`.
-            'Ri': see parameter ``parcel_list`` in :func:`ComputeCFactor`.
-            'ggg_id': see parameter ``parcel_list`` in :func:`ComputeCFactor`.
-            'har_tag'(int): number/id of harvest remains (sequential in time).
-            'Ri_tag'(int): number/id of roughness class (sequential in time,
-            != Ri_id!!!).
-            'H'(float): see see parameter ``ggg'` in :func:`ComputeCFactor`.
-            'Fc'(int):  see see parameter ``ggg'` in :func:`ComputeCFactor`.
-            'alpha'(float):  see see parameter ``cp'` in :func:`ComputeCFactor`.
-            'beta'(float):  see see parameter ``cp'` in :func:`ComputeCFactor`.
-            'p'(float):  see see parameter ``cp'` in :func:`ComputeCFactor`.
-            'Ri'(float):  see see parameter ``cp'` in :func:`ComputeCFactor`.
+    grid: pandas.DataFrame:
+        see parameter ``grid`` in :func:`ComputeCFactor`
+        DataFrame Needs to contain the following columns:
+
+        - *GWSCOD*: see parameter ``parcel_list`` in :func:`ComputeCFactor`.
+        - *Ri*: see parameter ``parcel_list`` in :func:`ComputeCFactor`.
+        - *ggg_id*: see parameter ``parcel_list`` in :func:`ComputeCFactor`.
+        - *har_tag*: int
+            number/id of harvest remains (sequential in time).
+        - *Ri_tag*: int
+            number/id of roughness class (sequential in time, != Ri_id!!!).
+        - *H*: float
+            see parameter ``ggg`` in :func:`ComputeCFactor`.
+        - *Fc*: int
+            see parameter ``ggg`` in :func:`ComputeCFactor`.
+        - *alpha*: float
+            see parameter ``cp`` in :func:`ComputeCFactor`.
+        - *beta*: float
+            see parameter ``cp`` in :func:`ComputeCFactor`.
+        - *p*: float
+            see parameter ``cp`` in :func:`ComputeCFactor`.
+        - *Ri*: float
+            see parameter ``cp`` in :func:`ComputeCFactor`.
 
     """
 
@@ -1273,9 +1285,9 @@ def adjust_rotation_scheme(parcel, year, output_map, parcel_id, ffull_output=Fal
 
     Parameters
     ----------
-        'parcel': (pd df)  considered parcel, see parameter ``parcel_list``
-        in :func:`ComputeCFactor`.
-        'year' (int): see parameters 'year' in :func:`ComputeCFactor`
+    parcel: (pd df)  considered parcel, see parameter ``parcel_list``
+          in :func:`ComputeCFactor`.
+    year (int): see parameters 'year' in :func:`ComputeCFactor`
 
     Returns
     -------
