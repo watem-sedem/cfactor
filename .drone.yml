@@ -54,17 +54,17 @@ steps:
       - coverage-badge >htmlcov/coverage.svg
 
   - name: upload test coverage
-    image: plugins/s3
+    image: drillster/drone-rsync
     settings:
-      access_key: drone-coverage-report
-      secret_key:
-        from_secret: minio_secret_key
-      bucket: drone-coverage-report
+      hosts:
+        - 10.28.0.24
+      user: docs
+      key:
+        from_secret: rsync_key
       source: htmlcov/*
-      target: /cfactor
-      path_style: true
-      endpoint: https://minio.fluves.net
-      strip_prefix: htmlcov/
+      recursive: true
+      target: /appdata/static/coverage/${DRONE_REPO_NAME}
+      secrets: [rsync_key]
     when:
       branch:
         - master
