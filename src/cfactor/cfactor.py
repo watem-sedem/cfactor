@@ -338,6 +338,8 @@ def compute_crop_cover(H, Fc):
 def compute_soil_moisture():
     """
     Computes soil moisture factor
+
+    This function is not yet implemented
     """
     raise NotImplementedError("compute soil moisture is not implemented")
 
@@ -345,6 +347,8 @@ def compute_soil_moisture():
 def compute_PLU():
     """
     Computes prior land use factor
+
+    This function is not yet implemented
     """
     raise NotImplementedError("compute prior land use is not implemented")
 
