@@ -333,7 +333,7 @@ def compute_crop_cover(H, Fc):
 
     Returns
     -------
-    CC: nump.ndarray
+    cc: nump.ndarray
         Crop cover factor (-, [0,1])
 
     References
@@ -342,8 +342,14 @@ def compute_crop_cover(H, Fc):
      “Computermodel RUSLE C-factor.”
 
     """
-    CC = 1 - Fc * np.exp(-0.328 * H)
-    return CC
+    if (Fc > 1) or (Fc < 0):
+        raise ValueError("Soil cover must be between 0 and 1")
+
+    if H < 0:
+        raise ValueError("Effective drop height cannot be negative")
+
+    cc = 1 - Fc * np.exp(-0.328 * H)
+    return cc
 
 
 def compute_soil_moisture():
