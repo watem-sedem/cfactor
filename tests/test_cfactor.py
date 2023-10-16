@@ -39,42 +39,49 @@ def test_compute_crop_cover():
     assert ("Soil cover must be between 0 and 1") in str(excinfo.value)
 
 
+@pytest.mark.skip(reason="not yet implemented")
 def test_compute_soil_roughness():
     """Test calculation of soil roughness"""
     # TO DO
     # cfactor.compute_soil_roughness()
 
 
+@pytest.mark.skip(reason="not yet implemented")
 def test_compute_surface_roughness():
     """Test calculation of surface roughness"""
     # TO DO
     # cfactor.compute_surface_roughness()
 
 
+@pytest.mark.skip(reason="not yet implemented")
 def test_compute_crop_residu():
     """Test calculation of crop residu"""
     # TO DO
     # cfactor.compute_crop_residu()
 
 
+@pytest.mark.skip(reason="not yet implemented")
 def test_compute_harvest_residu_decay_rate():
     """Test calculation of harvest residu decay rate"""
     # TO DO
     # cfactor.compute_harvest_residu_decay_rate()
 
 
+@pytest.mark.skip(reason="not yet implemented")
 def test_compute_soil_cover():
     """Test calculation of soil cover"""
     # TO DO
     # cfactor.compute_soil_cover()
 
 
+@pytest.mark.skip(reason="not yet implemented")
 def test_compute_soil_loss_ratio():
     """Test calculation of soil loss ration"""
     # TO DO
     # cfactor.compute_soil_loss_ratio()
 
 
+@pytest.mark.skip(reason="not yet implemented")
 def test_aggregate_slr_to_crop_factor():
     """Test aggregation of SLR to C-factor"""
     # TO DO
