@@ -315,10 +315,10 @@ def compute_crop_cover(H, Fc):
      “Computermodel RUSLE C-factor.”
 
     """
-    if (Fc > 1) or (Fc < 0):
+    if (np.any(Fc > 1)) or (np.any(Fc < 0)):
         raise ValueError("Soil cover must be between 0 and 1")
 
-    if H < 0:
+    if np.any(H < 0):
         raise ValueError("Effective drop height cannot be negative")
 
     cc = 1 - Fc * np.exp(-0.328 * H)
