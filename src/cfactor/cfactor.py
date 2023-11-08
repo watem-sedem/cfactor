@@ -325,15 +325,15 @@ def compute_crop_cover(H, Fc):
 
     Parameters
     ----------
-    H: numpy.ndarray
+    H: float or numpy.ndarray
         Effective drop height (m): estimate of average height between rainfall capture
         by crop and soil.
-    Fc: numpy.ndarray
+    Fc: float or numpy.ndarray
         Soil cover by crop (in %)
 
     Returns
     -------
-    cc: nump.ndarray
+    cc: float or nump.ndarray
         Crop cover factor (-, [0,1])
 
     References
@@ -432,14 +432,14 @@ def compute_harvest_residu_decay_rate(rain, temperature, p, R0=R0, T0=T0):
 
     Parameters
     ----------
-    rain: numpy.ndarray
+    rain: float or numpy.ndarray
         (Summed) half monthly rainfall (mm)
-    temperature: numpy.ndarray
+    temperature: float or numpy.ndarray
         (Average) temperature (°C)
-    p: numpy.ndarray
+    p: float or numpy.ndarray
         Maximum decay speed (-) #TODO: check unit
     R0: float
-        Average half montly rainfall (mm)
+        Average half monthly rainfall (mm)
     T0: float
         Optimal temperature for decay (°C)
 
@@ -467,11 +467,7 @@ def compute_harvest_residu_decay_rate(rain, temperature, p, R0=R0, T0=T0):
         (T0 + A) ** 4
     )
 
-    a = (
-        p * np.min([W, F], axis=0)
-        if len(W) > 1
-        else p * np.min([W.values[0], F.values[0]])
-    )
+    a = p * np.min([W, F], axis=0)
 
     return W, F, a
 
