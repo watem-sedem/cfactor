@@ -1,3 +1,4 @@
+import numpy as np
 import pytest
 
 from cfactor import cfactor
@@ -91,11 +92,25 @@ def test_compute_soil_cover():
     # cfactor.compute_soil_cover()
 
 
-@pytest.mark.skip(reason="not yet implemented")
 def test_compute_soil_loss_ratio():
     """Test calculation of soil loss ration"""
-    # TO DO
-    # cfactor.compute_soil_loss_ratio()
+    # Typical case float
+    sc = 0.03768204712884102
+    sr = 0.9999092973948398
+    cc = 1
+    expected_slr = 0.03767862926899866
+    slr = cfactor.compute_soil_loss_ratio(sc, sr, cc)
+    assert expected_slr == slr
+
+    # Typical case np.ndarray
+    sc = np.array([1, 0.03768204712884102, 1])
+    sr = np.array([0.9999671539111016, 0.9999092973948398, 0.9999037924066257])
+    cc = np.array([1, 1, 0.99])
+    expected_slr = np.array(
+        [0.9999671539111016, 0.03767862926899866, 0.9899047544825594]
+    )
+    slr = cfactor.compute_soil_loss_ratio(sc, sr, cc)
+    assert expected_slr == slr
 
 
 @pytest.mark.skip(reason="not yet implemented")

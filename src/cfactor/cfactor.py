@@ -11,23 +11,7 @@ T0 = 37  # degree C
 A = 7.76  # degree C
 
 
-def compute_soil_loss_ratio(
-    roughness_period_id,
-    ri,
-    rain,
-    rhm,
-    harvest_period_id,
-    bdate,
-    edate,
-    temperature,
-    p,
-    bsi,
-    alpha,
-    H,
-    Fc,
-    SM,
-    PLU,
-):
+def compute_soil_loss_ratio(sc, sr, cc, sm=1, plu=1):
     """Computes subcomponents of soil loss ratio
 
     The soil loss ratio (SLR) is computed by following formula:
@@ -53,40 +37,25 @@ def compute_soil_loss_ratio(
 
     Parameters
     ----------
-    roughness_period_id: numpy.ndarray
-        See :func:`cfactor.cfactor.compute_soil_roughness`
-    ri: numpy.ndarray
-        See :func:`cfactor.cfactor.compute_soil_roughness`
-    rain: numpy.ndarray
-        See :func:`cfactor.cfactor.compute_soil_roughness`
-    rhm: numpy.ndarray
-        See :func:`cfactor.cfactor.compute_soil_roughness`
-    harvest_period_id: numpy.ndarray
-    bdate: numpy.ndarray
-    edate: numpy.ndarray
-    temperature: numpy.ndarray
-    p: numpy.ndarray
-    bsi: numpy.ndarray
+    sc: float or np.ndarray
+        soil cover subfactor, see `cfactor.cfactor.compute_soil_cover`
+    sr: float or np.ndarray
+        surface roughness subfactor, see `cfactor.cfactor.compute_surface_roughness`
+    cc: float or np.ndarray
+        canopy cover subfactor, see `cfactor.cfactor.compute_crop_cover`
+    sm: float or np.ndarray
+        soil moisture subfactor, see `cfactor.cfactor.compute_soil_moisture`
+    plu: float or np.ndarray
+        prior land use subfactor, see `cfactr.cfactor.compute_PLU`
 
     Returns
     -------
-    SLR:
-
+    float or np.ndarray
+        soil loss ratio
     """
-    f1_N, f2_EI, ru = compute_soil_roughness(
-        roughness_period_id.values.flatten(), ri, rain, rhm
-    )
-    SR = compute_surface_roughness(ru)
-    a, Bsb, Sp, W, F, SC = compute_soil_cover(
-        harvest_period_id, bdate, edate, rain, temperature, p, bsi, alpha, ru
-    )
-    CC = compute_crop_cover(H, Fc)
-    SM = 1
-    PLU = 1
-    SLR = SC * CC * SR * SM * PLU
-    SLR[np.isnan(SLR)] = 1
 
-    return SLR
+    slr = sc * cc * sr * sm * plu
+    return slr
 
 
 def compute_surface_roughness(ru):
