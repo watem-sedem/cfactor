@@ -110,7 +110,7 @@ def test_compute_soil_loss_ratio():
         [0.9999671539111016, 0.03767862926899866, 0.9899047544825594]
     )
     slr = cfactor.compute_soil_loss_ratio(sc, sr, cc)
-    assert expected_slr == slr
+    np.testing.assert_array_equal(expected_slr, slr)
 
 
 @pytest.mark.skip(reason="not yet implemented")
