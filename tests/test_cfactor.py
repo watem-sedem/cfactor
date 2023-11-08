@@ -112,6 +112,22 @@ def test_compute_soil_loss_ratio():
     slr = cfactor.compute_soil_loss_ratio(sc, sr, cc)
     np.testing.assert_array_equal(expected_slr, slr)
 
+    # Test error handling float
+    sc = 0.03768204712884102
+    sr = -10
+    cc = 0.99
+    with pytest.raises(ValueError) as excinfo:
+        slr = cfactor.compute_soil_loss_ratio(sc, sr, cc)
+    assert ("All SLR subfactors must lie between 0 and 1") in str(excinfo.value)
+
+    # Test error handling np.ndarray
+    sc = np.array([1, 0.03768204712884102, 1])
+    sr = np.array([0.9999671539111016, -10, 0.9999037924066257])
+    cc = np.array([1, 1, 0.99])
+    with pytest.raises(ValueError) as excinfo:
+        slr = cfactor.compute_soil_loss_ratio(sc, sr, cc)
+    assert ("All SLR subfactors must lie between 0 and 1") in str(excinfo.value)
+
 
 @pytest.mark.skip(reason="not yet implemented")
 def test_aggregate_slr_to_crop_factor():
