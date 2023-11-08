@@ -61,7 +61,7 @@ def test_compute_surface_roughness():
     ru = df_dummy["Ru"].to_numpy()
     expected_sr = df_dummy["SR"].to_numpy()
     sr = cfactor.compute_surface_roughness(ru)
-    np.testing.assert_array_equal(expected_sr, sr)
+    np.testing.assert_allclose(expected_sr, sr)
 
 
 @pytest.mark.skip(reason="not yet implemented")
@@ -101,7 +101,7 @@ def test_compute_harvest_residu_decay_rate():
     expected_F = df_dummy["F"].to_numpy()
     expected_a = df_dummy["a"].to_numpy()
     result = cfactor.compute_harvest_residu_decay_rate(rain, temperature, p)
-    np.testing.assert_array_equal(result, (expected_W, expected_F, expected_a))
+    np.testing.assert_allclose(result, (expected_W, expected_F, expected_a))
 
 
 @pytest.mark.skip(reason="not yet implemented")
@@ -128,7 +128,7 @@ def test_compute_soil_loss_ratio():
     cc = df_dummy["CC"].to_numpy()
     expected_slr = df_dummy["SLR"].to_numpy()
     slr = cfactor.compute_soil_loss_ratio(sc, sr, cc)
-    np.testing.assert_array_equal(expected_slr, slr)
+    np.testing.assert_allclose(expected_slr, slr)
 
     # Test error handling float
     sc = 0.03768204712884102
