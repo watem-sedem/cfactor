@@ -198,7 +198,7 @@ def compute_soil_roughness(identifier, ri, rain, rhm):
     ru = rii + (dr * (ri - rii))
     ru[ru.isnull()] = rii
 
-    return f1_N, f2_EI, ru
+    return ru, f1_N, f2_EI
 
 
 def compute_soil_cover(
