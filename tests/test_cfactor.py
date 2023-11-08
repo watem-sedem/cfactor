@@ -60,11 +60,26 @@ def test_compute_crop_residu():
     # cfactor.compute_crop_residu()
 
 
-@pytest.mark.skip(reason="not yet implemented")
 def test_compute_harvest_residu_decay_rate():
     """Test calculation of harvest residu decay rate"""
-    # TO DO
-    # cfactor.compute_harvest_residu_decay_rate()
+
+    # Typical case
+    rain = 73.56
+    temperature = 4.5
+    p = 0.05
+    expected_W = 2.8555900621118013
+    expected_F = 0.6031098997537535
+    expected_a = 0.030155494987687676
+
+    result = cfactor.compute_harvest_residu_decay_rate(rain, temperature, p)
+    assert result == (expected_W, expected_F, expected_a)
+
+    # Out of bound value rain
+    rain = -10
+
+    with pytest.raises(ValueError) as excinfo:
+        result = cfactor.compute_harvest_residu_decay_rate(rain, temperature, p)
+    assert ("Halfmonthly rainfall cannot be negative") in str(excinfo.value)
 
 
 @pytest.mark.skip(reason="not yet implemented")
