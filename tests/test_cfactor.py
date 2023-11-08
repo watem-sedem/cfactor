@@ -1,5 +1,6 @@
 import numpy as np
 import pytest
+from conftest import load_calculated_dummy_data
 
 from cfactor import cfactor
 
@@ -66,7 +67,7 @@ def test_compute_crop_residu():
 def test_compute_harvest_residu_decay_rate():
     """Test calculation of harvest residu decay rate"""
 
-    # Typical case
+    # Typical case - float
     rain = 73.56
     temperature = 4.5
     p = 0.05
@@ -83,6 +84,17 @@ def test_compute_harvest_residu_decay_rate():
     with pytest.raises(ValueError) as excinfo:
         result = cfactor.compute_harvest_residu_decay_rate(rain, temperature, p)
     assert ("Halfmonthly rainfall cannot be negative") in str(excinfo.value)
+
+    # Typical case - np.ndarray
+    df_dummy = load_calculated_dummy_data()
+    rain = df_dummy["rain"].to_numpy()
+    temperature = df_dummy["temp"].to_numpy()
+    p = df_dummy["p"].to_numpy()
+    expected_W = df_dummy["p"].to_numpy()
+    expected_F = df_dummy["W"].to_numpy()
+    expected_a = df_dummy["a"].to_numpy()
+    result = cfactor.compute_harvest_residu_decay_rate(rain, temperature, p)
+    np.testing.assert_array_equal(result, (expected_W, expected_F, expected_a))
 
 
 @pytest.mark.skip(reason="not yet implemented")
