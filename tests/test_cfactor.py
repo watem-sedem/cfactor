@@ -50,11 +50,18 @@ def test_compute_soil_roughness():
 
 def test_compute_surface_roughness():
     """Test calculation of surface roughness"""
-    # Typical case
+    # Typical case - float
     ru = 8.918848956028448
     expected_SR = 0.9292345717420408
     SR = cfactor.compute_surface_roughness(ru)
     assert SR == expected_SR
+
+    # Typical case - np.ndaraay
+    df_dummy = load_calculated_dummy_data()
+    ru = df_dummy["Ru"].to_numpy()
+    expected_sr = df_dummy["SR"].to_numpy()
+    sr = cfactor.compute_surface_roughness(ru)
+    np.testing.assert_array_equal(expected_sr, sr)
 
 
 @pytest.mark.skip(reason="not yet implemented")
@@ -90,8 +97,8 @@ def test_compute_harvest_residu_decay_rate():
     rain = df_dummy["rain"].to_numpy()
     temperature = df_dummy["temp"].to_numpy()
     p = df_dummy["p"].to_numpy()
-    expected_W = df_dummy["p"].to_numpy()
-    expected_F = df_dummy["W"].to_numpy()
+    expected_W = df_dummy["W"].to_numpy()
+    expected_F = df_dummy["F"].to_numpy()
     expected_a = df_dummy["a"].to_numpy()
     result = cfactor.compute_harvest_residu_decay_rate(rain, temperature, p)
     np.testing.assert_array_equal(result, (expected_W, expected_F, expected_a))
