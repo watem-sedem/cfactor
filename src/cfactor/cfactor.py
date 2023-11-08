@@ -46,13 +46,17 @@ def compute_soil_loss_ratio(sc, sr, cc, sm=1, plu=1):
     sm: float or np.ndarray
         soil moisture subfactor, see `cfactor.cfactor.compute_soil_moisture`
     plu: float or np.ndarray
-        prior land use subfactor, see `cfactr.cfactor.compute_PLU`
+        prior land use subfactor, see `cfactor.cfactor.compute_PLU`
 
     Returns
     -------
     float or np.ndarray
         soil loss ratio
     """
+
+    for i in [sc, cc, sr, sm, plu]:
+        if (np.any(i > 1)) or (np.any(i < 0)):
+            raise ValueError("All SLR subfactors must lie between 0 and 1")
 
     slr = sc * cc * sr * sm * plu
     return slr
