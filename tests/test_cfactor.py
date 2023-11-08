@@ -40,6 +40,14 @@ def test_compute_crop_cover():
         cc = cfactor.compute_crop_cover(H, Fc)
     assert ("Soil cover must be between 0 and 1") in str(excinfo.value)
 
+    # Typical case numpy
+    df_dummy = load_calculated_dummy_data()
+    H = df_dummy["H"].to_numpy()
+    Fc = df_dummy["Fc"].to_numpy()
+    expected_cc = df_dummy["CC"].to_numpy()
+    cc = cfactor.compute_crop_cover(H, Fc)
+    np.testing.assert_allclose(cc, expected_cc)
+
 
 @pytest.mark.skip(reason="not yet implemented")
 def test_compute_soil_roughness():
