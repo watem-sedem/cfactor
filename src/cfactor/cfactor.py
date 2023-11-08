@@ -461,6 +461,9 @@ def compute_harvest_residu_decay_rate(rain, temperature, p, R0=R0, T0=T0, A=A):
      “Computermodel RUSLE C-factor.”
 
     """
+    if np.any(np.asarray(rain) < 0):
+        raise ValueError("Halfmonthly rainfall cannot be negative")
+
     W = rain / R0
 
     temperature = celc_to_fahr(temperature)
