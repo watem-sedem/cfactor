@@ -398,7 +398,7 @@ def aggregate_slr_to_c_factor(SLR, EI30):
     return C
 
 
-def compute_harvest_residu_decay_rate(rain, temperature, p, R0=R0, T0=T0):
+def compute_harvest_residu_decay_rate(rain, temperature, p, R0=R0, T0=T0, A=A):
     """Computes crop residu decay coefficient [1]_
 
     The soil cover by harvest residues changes in time by decay processes.
@@ -442,6 +442,9 @@ def compute_harvest_residu_decay_rate(rain, temperature, p, R0=R0, T0=T0):
         Average half monthly rainfall (mm)
     T0: float
         Optimal temperature for decay (°C)
+    A: float
+        coefficient used to express the shape of the decay function
+        as a function of temperature (°C)
 
     Returns
     -------
