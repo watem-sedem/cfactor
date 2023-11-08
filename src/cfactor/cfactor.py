@@ -105,12 +105,12 @@ def compute_surface_roughness(ru):
 
     Parameters
     ----------
-    ru: numpy.ndarray
+    ru: float or numpy.ndarray
         Surface roughness, output from :func:`cfactor.cfactor.compute_soil_roughness`
 
     Returns
     -------
-    numpy.ndarray
+    float or numpy.ndarray
         Surface roughness ([0,1])
 
     """

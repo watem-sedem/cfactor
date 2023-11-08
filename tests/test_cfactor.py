@@ -46,11 +46,13 @@ def test_compute_soil_roughness():
     # cfactor.compute_soil_roughness()
 
 
-@pytest.mark.skip(reason="not yet implemented")
 def test_compute_surface_roughness():
     """Test calculation of surface roughness"""
-    # TO DO
-    # cfactor.compute_surface_roughness()
+    # Typical case
+    ru = 8.918848956028448
+    expected_SR = 0.9292345717420408
+    SR = cfactor.compute_surface_roughness(ru)
+    assert SR == expected_SR
 
 
 @pytest.mark.skip(reason="not yet implemented")
