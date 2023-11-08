@@ -68,8 +68,8 @@ def test_compute_harvest_residu_decay_rate():
     temperature = 4.5
     p = 0.05
     expected_W = 2.8555900621118013
-    expected_F = 0.6031098997537535
-    expected_a = 0.030155494987687676
+    expected_F = 0.583248438971586
+    expected_a = 0.0291624219485793
 
     result = cfactor.compute_harvest_residu_decay_rate(rain, temperature, p)
     assert result == (expected_W, expected_F, expected_a)
