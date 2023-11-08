@@ -115,12 +115,11 @@ def test_compute_soil_loss_ratio():
     assert expected_slr == slr
 
     # Typical case np.ndarray
-    sc = np.array([1, 0.03768204712884102, 1])
-    sr = np.array([0.9999671539111016, 0.9999092973948398, 0.9999037924066257])
-    cc = np.array([1, 1, 0.99])
-    expected_slr = np.array(
-        [0.9999671539111016, 0.03767862926899866, 0.9899047544825594]
-    )
+    df_dummy = load_calculated_dummy_data()
+    sc = df_dummy["SC"].to_numpy()
+    sr = df_dummy["SR"].to_numpy()
+    cc = df_dummy["CC"].to_numpy()
+    expected_slr = df_dummy["SLR"].to_numpy()
     slr = cfactor.compute_soil_loss_ratio(sc, sr, cc)
     np.testing.assert_array_equal(expected_slr, slr)
 
