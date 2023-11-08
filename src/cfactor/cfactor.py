@@ -7,8 +7,8 @@ rii = 6.096
 
 R0 = 25.76  # minimum gemiddelde halfmaandelijks neerslag nodig voor afbraak
 # (opm. pagina 6?)
-T0 = 37  # ° C
-A = celc_to_fahr(7.76)
+T0 = 37  # degree C
+A = 7.76  # degree C
 
 
 def compute_soil_loss_ratio(
@@ -250,7 +250,7 @@ def compute_soil_cover(
     rain: pandas.Series
         Rainfall (in mm)
     temperature: numpy.ndarray
-        Temperature (in °F)
+        Temperature (in degree F)
     maximum_speed: numpy.ndarray
         Maximum decay speed (-)
     initial_crop_residu: numpy.ndarray
@@ -424,8 +424,8 @@ def compute_harvest_residu_decay_rate(rain, temperature, p, R0=R0, T0=T0, A=A):
 
         - :math:`R`: half-monthly rainfall (mm)
         - :math:`R_0`: minimum half-monthly average rainfall (mm)
-        - :math:`T_a`: average temperature in half-montlhy period (°F)
-        - :math:`T_0`: optimal temperature for decay (°F)
+        - :math:`T_a`: average temperature in half-montlhy period (degree F)
+        - :math:`T_0`: optimal temperature for decay (degree F)
         - :math:`A`: coefficient used to express the shape of the decay function
          as a function of temperature.
 
@@ -435,20 +435,20 @@ def compute_harvest_residu_decay_rate(rain, temperature, p, R0=R0, T0=T0, A=A):
     rain: float or numpy.ndarray
         (Summed) half monthly rainfall (mm)
     temperature: float or numpy.ndarray
-        (Average) temperature (°C)
+        (Average) temperature (degree C)
     p: float or numpy.ndarray
         Maximum decay speed (-) #TODO: check unit
     R0: float
         Average half monthly rainfall (mm)
     T0: float
-        Optimal temperature for decay (°C)
+        Optimal temperature for decay (degree C)
     A: float
         coefficient used to express the shape of the decay function
-        as a function of temperature (°C)
+        as a function of temperature (degree C)
 
     Returns
     -------
-    a: numpy.ndarray
+    a: numpy.ndarrayg
         Harvest decay coefficient (-)
     W: numpy.ndarray
         Coefficients weighing rainfall
@@ -468,6 +468,7 @@ def compute_harvest_residu_decay_rate(rain, temperature, p, R0=R0, T0=T0, A=A):
 
     temperature = celc_to_fahr(temperature)
     T0 = celc_to_fahr(T0)
+    A = celc_to_fahr(A)
 
     F = (2 * ((temperature + A) ** 2) * ((T0 + A) ** 2) - (temperature + A) ** 4) / (
         (T0 + A) ** 4
