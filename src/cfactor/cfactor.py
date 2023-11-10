@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 
 from cfactor.util import celc_to_fahr
 
@@ -367,7 +368,7 @@ def aggregate_slr_to_c_factor(SLR, EI30):
     """
     sumR = np.sum(EI30)
     product = SLR * EI30
-    C = np.sum(product / sumR)
+    C = np.sum(product) / sumR
     return C
 
 
@@ -421,11 +422,11 @@ def compute_harvest_residu_decay_rate(rain, temperature, p, R0=R0, T0=T0, A=A):
 
     Returns
     -------
-    a: numpy.ndarrayg
+    a: float or numpy.ndarray
         Harvest decay coefficient (-)
-    W: numpy.ndarray
+    W: float or numpy.ndarray
         Coefficients weighing rainfall
-    F: numpy.ndarray
+    F: float or numpy.ndarray
         Coefficients weighing temperature
 
     References
@@ -470,17 +471,19 @@ def compute_crop_residu(bdate, edate, a, initial_crop_residu):
 
     Parameters
     ----------
-    bdate: # TODO
-    edate: # TODO
-    a: numpy.ndarray
+    bdate: str or int
+        timestamp of the start of the period
+    edate: str or int
+        timestamp of the end of the period
+    a: float
         Harvest decay coefficient (-), see
-        :func:`cfactor.cfactor.compute_harvest_residu_decay_rate`. # TODO: check unit
-    initial_crop_residu: numpy.ndarray
+        :func:`cfactor.cfactor.compute_harvest_residu_decay_rate`
+    initial_crop_residu: float
         Initial amount of crop residu (kg dry matter / ha)
 
     Returns
     -------
-    crop_residu: numpy.ndarray
+    crop_residu: float
         Crop residu (kg/m2)
 
     References
@@ -489,21 +492,9 @@ def compute_crop_residu(bdate, edate, a, initial_crop_residu):
      “Computermodel RUSLE C-factor.”
 
     """
-    crop_residu = np.zeros(len(a))
-    # (SG) compute remains on middle of computational node
-    D = [7] + [
-        (
-            bdate[i]
-            + (edate[i] - bdate[i]) / 2
-            - (bdate[i - 1] + (edate[i - 1] - bdate[i - 1]) / 2)
-        ).days
-        for i in range(1, len(edate), 1)
-    ]
-    exp = np.exp(-a * D)
-    # (SG) compute harvest remains
-    for i in range(len(exp)):
-        crop_residu[i] = (
-            crop_residu[i - 1] * exp[i] if i != 0 else initial_crop_residu[i] * exp[i]
-        )
+
+    D = (pd.to_datetime(edate) - pd.to_datetime(bdate)).days
+
+    crop_residu = initial_crop_residu * np.exp(-a * D)
 
     return crop_residu
