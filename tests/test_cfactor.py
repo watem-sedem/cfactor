@@ -80,8 +80,10 @@ def test_compute_crop_residu():
     initial_crop_residu = 5000
     a = 0.02518464958645108
     expected_residu = 3426.9414870271776
-    cfactor.compute_crop_residu(start_date, end_date, a, initial_crop_residu)
-    assert expected_residu == initial_crop_residu
+    calculated_residu = cfactor.compute_crop_residu(
+        start_date, end_date, a, initial_crop_residu
+    )
+    assert expected_residu == calculated_residu
 
 
 def test_compute_harvest_residu_decay_rate():
