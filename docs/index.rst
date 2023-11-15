@@ -1,6 +1,4 @@
-.. _readme:
-.. include:: ../README.rst
-
+.. _index:
 
 Contents
 ========
