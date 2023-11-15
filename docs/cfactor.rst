@@ -22,7 +22,7 @@ The C-factor is calculated as
 with
  - :math:`R_i`: rainfall erosivity factor (:math:`\frac{\text{J.mm}}{\text{m}^2.\text{h.TR}}`) with :math:`\text{TR}`: temporal resolution.
  - :math:`t`: the maximum number of the increments.
- - :math:`SLR`: the soil loss ratio (-).
+ - :math:`SLR`: the soil loss ratio (-)
 
 The soil loss ratio :math:`SLR` is calculated as
 
@@ -30,11 +30,11 @@ The soil loss ratio :math:`SLR` is calculated as
     SLR = PLU.CC.SC.SR.SM
 
 with
-- math:`PLU`: Prior-land-use subfactor
-- math:`CC`: Canopy-cover subfactor
-- math:`SC`: Surface-cover subfactor
-- math:`SR`: Surface-roughness subfactor
-- math:`SM`: Soil-moisture subfactor
+ - :math:`PLU`: Prior-land-use subfactor
+ - :math:`CC`: Canopy-cover subfactor
+ - :math:`SC`: Surface-cover subfactor
+ - :math:`SR`: Surface-roughness subfactor
+ - :math:`SM`: Soil-moisture subfactor
 
 In the following paragraphs we discuss these subfactors.
 
@@ -83,8 +83,8 @@ with sp being the amount of land being covered by residu
     sp = 100.(1-exp{-\\alpha.B_s})
 
 with
-- :math:`alpha`: soil cover in comparison to weight residu (:math:`m^2/kg`)
-- :math:`B_s`: amount of residu per unit of area (:math:`kg/m^2`)
+ - :math:`alpha`: soil cover in comparison to weight residu (:math:`m^2/kg`)
+ - :math:`B_s`: amount of residu per unit of area (:math:`kg/m^2`)
 
 The crop residu `B_s` can be calculated with an exponention decay function:
 
@@ -93,10 +93,10 @@ The crop residu `B_s` can be calculated with an exponention decay function:
 
 
 with
-- :math:`B_se`: amount of crop residu at end of period (kg dry matter . :math:`m^{-2}`)
-- :math:`B_sb`: amount of crop residu at start of period (kg dry matter . :math:`m^{-2}`)
-- :math:`a`: harvest decay coefficient
-- :math:`D`: number of days
+ - :math:`B_se`: amount of crop residu at end of period (kg dry matter . :math:`m^{-2}`)
+ - :math:`B_sb`: amount of crop residu at start of period (kg dry matter . :math:`m^{-2}`)
+ - :math:`a`: harvest decay coefficient
+ - :math:`D`: number of days
 
 The harvest decay coefficient :math:`a` is calculated as
 
@@ -123,7 +123,7 @@ with:
     - :math:`T_a`: average temperature in half-montlhy period (°F)
     - :math:`T_0`: optimal temperature for decay (°F)
     - :math:`A`: coefficient used to express the shape of the decay function
-     as a function of temperature.
+      as a function of temperature.
 
 Surface-roughness subfactor (SR)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
