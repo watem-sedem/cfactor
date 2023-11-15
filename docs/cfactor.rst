@@ -1,0 +1,174 @@
+.. _cfactor:
+
+Cover-Management Factor
+=======================
+
+Introduction
+------------
+
+The crop or cover management factor (C-factor) is based on the concept of deviation
+from a standard, in this case defined by a parcel under clean-tilled
+continuous-fallow conditions (Renard et al., 1997). It can be quantified
+as the ratio of the soil loss of a specific parcel with crop cover -
+cultivated under specific conditions - and soil loss that would occur on the
+same parcel without crop growth (with plowing perpendicular to the
+contour lines) (Verbist et al., 2004).
+
+The C-factor is calculated as
+
+.. math::
+    C = \frac{\sum_i^t{R_i} \cdot SLR_i}{\sum_i^t{R_i}}
+
+with
+ - :math:`R_i`: rainfall erosivity factor (:math:`\frac{\text{J.mm}}{\text{m}^2.\text{h.TR}}`) with :math:`\text{TR}`: temporal resolution.
+ - :math:`t`: the maximum number of the increments.
+ - :math:`SLR`: the soil loss ratio (-).
+
+The soil loss ratio :math:`SLR` is calculated as
+
+.. math::
+    SLR = PLU.CC.SC.SR.SM
+
+with
+- math:`PLU`: Prior-land-use subfactor
+- math:`CC`: Canopy-cover subfactor
+- math:`SC`: Surface-cover subfactor
+- math:`SR`: Surface-roughness subfactor
+- math:`SM`: Soil-moisture subfactor
+
+In the following paragraphs we discuss these subfactors.
+
+Subfactors
+----------
+
+Prior-land-use subfactor (PLU)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+TO DO
+
+Canopy-cover subfactor (CC)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The crop cover or canopy cover subfactor (:math:`CC`) represents the ability of a
+crop to reduce the erosivity of falling raindrops on the soil. The effect of the crop
+cover is expressed as:
+
+.. math::
+
+    CC = 1-F_c.exp{-0.328H}
+
+With:
+ - :math:`F_c (m²/m²)`: the amount of coverage of the soil by the crop
+ - :math:`H (m)`: Effective drop height, the average heigt of falling raindrops
+    after they have been intercepted by the crop
+
+This subfactor changes considerably during the growth of a crop due to the
+increasing crop cover and effective drop height.
+
+Surface-cover subfactor (SC)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This subfactor is defined as the erosion limiting influence of the ground cover
+by crop residues, stones and non-erodible material in direct contact with the soil
+
+.. math::
+
+    SC = exp{-b.sp.{\\frac{6.096}{Ru}}^{0.08}}
+
+
+with sp being the amount of land being covered by residu
+
+.. math::
+
+    sp = 100.(1-exp{-\\alpha.B_s})
+
+with
+- :math:`alpha`: soil cover in comparison to weight residu (:math:`m^2/kg`)
+- :math:`B_s`: amount of residu per unit of area (:math:`kg/m^2`)
+
+The crop residu `B_s` can be calculated with an exponention decay function:
+
+.. math::
+        B_se = B_sb.exp{-a.D}
+
+
+with
+- :math:`B_se`: amount of crop residu at end of period (kg dry matter . :math:`m^{-2}`)
+- :math:`B_sb`: amount of crop residu at start of period (kg dry matter . :math:`m^{-2}`)
+- :math:`a`: harvest decay coefficient
+- :math:`D`: number of days
+
+The harvest decay coefficient :math:`a` is calculated as
+
+.. math::
+
+    a = p[min(W,F)]
+
+with:
+
+.. math::
+
+    W = \\frac{R}{R_0}
+
+and
+
+.. math::
+
+    F = \\frac{2(T_a+A)^2.(T_0+A)^2-(T_a+A)^4}{(T_0+A)^4}
+
+with:
+
+    - :math:`R`: half-monthly rainfall (mm)
+    - :math:`R_0`: minimum half-monthly average rainfall (mm)
+    - :math:`T_a`: average temperature in half-montlhy period (°F)
+    - :math:`T_0`: optimal temperature for decay (°F)
+    - :math:`A`: coefficient used to express the shape of the decay function
+     as a function of temperature.
+
+Surface-roughness subfactor (SR)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The surface roughness :math:`SR` is caluclated as
+
+.. math::
+
+    SR = e(−0.026*(R_u-6.096))
+
+
+With :math:`R_u` is a measure for roughness of a parcell (mm).
+:math:`R_u` (-) is calculated by:
+
+.. math::
+
+    R_u = 6.096+(D_r*(R_i-6.096))
+
+The final roughness is referred to as :math:`r_{ii}`, i.e. 6.096.
+The initial roughness is crop dependent (soil preparation dependent).
+
+The roughness decay function :math:`D_r` is defined as:
+
+.. math::
+
+    D_r = exp{0.5*\\frac{-0.14}{25.4}P_t}+0.5*\\frac{-0.012}{17.02}EI_t))
+
+Under the influence of precipitation, the roughness of an agricultural field,
+left undisturbed, will systematically decrease until an (average) minimum roughness
+of 6.096 mm (0.24 inches) is reached. The decrease function :math:`D_r` is defined to
+compute this decrease.
+
+Soil-moisture subfactor (SM)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+TO DO
+
+References
+----------
+
+Renard, K.G., Foster, G.R., Weesies, G.A., McCool, D.K., Yoder, D.C.,
+1997, Predicting soil erosion by water: a guide to conservation planning with
+the revised universal soil loss equation (RUSLE), Agriculture Handbook. U.S.
+Department of Agriculture, Washington.
+https://www.ars.usda.gov/ARSUserFiles/64080530/RUSLE/AH_703.pdf
+
+Verbist, K., Schiettecatte, W., Gabriels, D., 2004, End report.
+Computermodel RUSLE c-factor. Universiteit Gent, Gent.
