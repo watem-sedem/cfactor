@@ -2,9 +2,10 @@
 Changelog
 =========
 
-Version 0.1
+Version 0..1
 ===========
 
-- Feature A added
-- FIX: nasty bug #1729 fixed
-- add your changes here!
+- Implemented C-factor Python processing functions
+- Set-up package
+- Added tests and testdata
+- Added documentation page
