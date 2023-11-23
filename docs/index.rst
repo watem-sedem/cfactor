@@ -1,6 +1,4 @@
-.. _readme:
-.. include:: ../README.rst
-
+.. _index:
 
 Contents
 ========
@@ -9,16 +7,21 @@ Contents
    :caption: User guide
    :maxdepth: 1
 
-   Getting Started <gettingstarted>
+   C-factor <cfactor>
+   Installation <installation.rst>
+   Tutorial <gettingstarted>
    Module overview <api/modules>
 
 .. toctree::
    :caption: Developer guide
    :maxdepth: 1
 
+   Contribute <contributing>
+   Code of conduct <conduct>
+   License <license>
    Authors <authors>
    Changelog <changelog>
-   License <license>
+
 
 
 
