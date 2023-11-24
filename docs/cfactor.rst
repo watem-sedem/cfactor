@@ -6,7 +6,13 @@ Cover-Management Factor
 Introduction
 ------------
 
-The crop or cover management factor (C-factor) is based on the concept of deviation
+The crop or cover management factor (C-factor)  is a measure used in erosion and
+(overland) sediment modelling to quantify the effect of of crop cover and soil management
+on soil loss. It is typically defined in the context of the Revised Soil Loss Equation
+(RUSLE - Renard et al., 1997), in whech gross erosion for an agricultural parcel is
+estimated.
+
+Specifically, the C-factor is based on the concept of deviation
 from a standard, in this case defined by a parcel under clean-tilled
 continuous-fallow conditions (Renard et al., 1997). It can be quantified
 as the ratio of the soil loss of a specific parcel with crop cover -
@@ -44,7 +50,13 @@ Subfactors
 Prior-land-use subfactor (PLU)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-TO DO
+The influence of crop residues and prior soil management practices on soil erosion is
+represented by the Prior-land-use subfactor (:math:`PLU`).
+
+According to Verstraeten et al. (2002), a value between 0.9 and 1 is a good estimate for
+the PLU subfactor for a soil that expierences tillage every year. In this package we do
+not take this factor into account due to this reason. More information about this
+subfactor and how to calculate it, can be found in Renard et al. (1997).
 
 Canopy-cover subfactor (CC)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -172,3 +184,9 @@ https://www.ars.usda.gov/ARSUserFiles/64080530/RUSLE/AH_703.pdf
 
 Verbist, K., Schiettecatte, W., Gabriels, D., 2004, End report.
 Computermodel RUSLE c-factor. Universiteit Gent, Gent.
+
+Verstraeten, G., Van Oost, K., Van Rompaey, A., Poesen, J. & Govers, G. 2002.
+Integraal land- en waterbeheer in landelijke gebieden met het oog op het beperken
+van erosie en modderoverlast (proefproject gemeente Gingelom). Ministerie van de
+Vlaamse Gemeenschap, Departement Leefmilieu en Infrastructuur, AMINAL,
+Afdeling Land, Brussel, 69p
