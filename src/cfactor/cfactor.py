@@ -486,6 +486,9 @@ def compute_crop_residu_array(d, a, bsi):
         Crop residu (kg/m²) at the end of each period
 
     """
+    if not (d.shape == a.shape == bsi.shape):
+        raise ValueError("dimension mismatch")
+
     bse = np.zeros(d.shape[0])
     bse[0] = compute_crop_residu(d[0], a[0], bsi[0])
     for i in range(1, d.shape[0]):
