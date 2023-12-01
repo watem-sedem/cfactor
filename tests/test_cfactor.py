@@ -83,8 +83,8 @@ def test_calculate_number_of_days():
 
     # Typical case - np.array
     df_dummy = load_calculated_dummy_data()
-    start_dates = df_dummy["bday"].to_numpy()
-    end_dates = df_dummy["eday"].to_numpy()
+    start_dates = df_dummy["bdate"].to_numpy()
+    end_dates = df_dummy["edate"].to_numpy()
     expected_days = df_dummy["D"].to_numpy()
     calculated_days = cfactor.calculate_number_of_days(start_dates, end_dates)
     np.testing.assert_allclose(expected_days, calculated_days)
