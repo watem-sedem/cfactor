@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+from numba import jit
 
 from cfactor.util import celc_to_fahr
 
@@ -459,6 +460,17 @@ def calculate_number_of_days(bdate, edate):
     return d
 
 
+@jit(nopython=True)
+def compute_crop_residu_array(d, a, bsi):
+    bse = np.zeros(d.shape[0])
+    bse[0] = compute_crop_residu(d[0], a[0], bsi[0])
+    for i in range(1, d.shape[0]):
+        bsi[i] = bse[i - 1]
+        bse[i] = compute_crop_residu(d[i], a[i], bsi[i])
+    return bsi, bse
+
+
+@jit(nopython=True)
 def compute_crop_residu(d, a, initial_crop_residu):
     """
     Computes harvest remains per unit of area over nodes [1]_:
