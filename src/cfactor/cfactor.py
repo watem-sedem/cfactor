@@ -453,7 +453,13 @@ def compute_harvest_residu_decay_rate(rain, temperature, p, R0=R0, T0=T0, A=A):
     return W, F, a
 
 
-def compute_crop_residu(bdate, edate, a, initial_crop_residu):
+def calculate_number_of_days(bdate, edate):
+    """Computes the number of days between two timestamps"""
+    d = (pd.to_datetime(edate) - pd.to_datetime(bdate)).days
+    return d
+
+
+def compute_crop_residu(d, a, initial_crop_residu):
     """
     Computes harvest remains per unit of area over nodes [1]_:
 
@@ -467,14 +473,13 @@ def compute_crop_residu(bdate, edate, a, initial_crop_residu):
     - Bsb: amount of crop residu at start of period (kg dry matter . :math:`m^{-2}`)
     - a: harvest decay coefficient, see
         :func:`cfactor.cfactor.compute_harvest_residu_decay_rate`.
-    - D: number of days # TODO: check unit
+    - d: number of days
 
     Parameters
     ----------
-    bdate: str or int
-        timestamp of the start of the period
-    edate: str or int
-        timestamp of the end of the period
+    d: int
+        number of days, see
+        :func:`cfactor.cfactor.calculate_number_of_days`
     a: float
         Harvest decay coefficient (-), see
         :func:`cfactor.cfactor.compute_harvest_residu_decay_rate`
@@ -492,9 +497,6 @@ def compute_crop_residu(bdate, edate, a, initial_crop_residu):
      “Computermodel RUSLE C-factor.”
 
     """
-
-    D = (pd.to_datetime(edate) - pd.to_datetime(bdate)).days
-
-    crop_residu = initial_crop_residu * np.exp(-a * D)
+    crop_residu = initial_crop_residu * np.exp(-a * d)
 
     return crop_residu
