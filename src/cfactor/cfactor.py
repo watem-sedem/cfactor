@@ -89,7 +89,7 @@ def compute_surface_roughness(ru):
         Surface roughness ([0,1])
 
     """
-    return np.exp(-0.026 * (ru - rii))
+    return np.exp(-0.026 * (ru - 6.096))
 
 
 def compute_soil_roughness(identifier, ri, rain, rhm):
@@ -170,8 +170,8 @@ def compute_soil_roughness(identifier, ri, rain, rhm):
 
     dr = np.exp(0.5 * f1_N + 0.5 * f2_EI)
 
-    ru = rii + (dr * (ri - rii))
-    ru[ru.isnull()] = rii
+    ru = 6.096 + (dr * (ri - 6.096))
+    ru[ru.isnull()] = 6.096
 
     return ru, f1_N, f2_EI
 
