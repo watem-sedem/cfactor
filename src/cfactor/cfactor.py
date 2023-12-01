@@ -462,6 +462,30 @@ def calculate_number_of_days(bdate, edate):
 
 @jit(nopython=True)
 def compute_crop_residu_array(d, a, bsi):
+    """Computes harvest remains on timeseries
+
+    The function :func:`cfactor.cfactor.compute_crop_residu`. is applied on numpy
+    arrays.
+
+    Parameters
+    ----------
+    d: np.array
+        number of days, see
+        :func:`cfactor.cfactor.calculate_number_of_days`
+    a: np.array
+        Harvest decay coefficient (-), see
+        :func:`cfactor.cfactor.compute_harvest_residu_decay_rate`
+    initial_crop_residu: np.array
+        Initial amount of crop residu (kg dry matter / ha)
+
+    Returns
+    -------
+    bsi: np.array
+        Crop residu (kg/m2) at the start of each period
+    bse: np.array
+        Crop residu (kg/m²) at the end of each period
+
+    """
     bse = np.zeros(d.shape[0])
     bse[0] = compute_crop_residu(d[0], a[0], bsi[0])
     for i in range(1, d.shape[0]):
