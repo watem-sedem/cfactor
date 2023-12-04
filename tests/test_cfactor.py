@@ -101,6 +101,22 @@ def test_compute_crop_residu():
     assert expected_residu == calculated_residu
 
 
+def test_compute_crop_residu_timeseries():
+    """Test calculation of crop residu on timeseries"""
+    # Typical case
+    df_dummy = load_calculated_dummy_data()
+    days = df_dummy["D"].to_numpy()
+    a = df_dummy["a"].to_numpy()
+    initial_crop_residu = 5000
+    expected_residu_start = df_dummy["Bsi"].to_numpy()
+    expected_residu_end = df_dummy["Bse"].to_numpy()
+    expected_result = (expected_residu_start, expected_residu_end)
+    calculated_result = cfactor.compute_crop_residu_timeseries(
+        days, a, initial_crop_residu
+    )
+    np.testing.assert_allclose(expected_result, calculated_result)
+
+
 def test_compute_harvest_residu_decay_rate():
     """Test calculation of harvest residu decay rate"""
 
