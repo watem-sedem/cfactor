@@ -72,18 +72,49 @@ def test_compute_surface_roughness():
     np.testing.assert_allclose(expected_sr, sr)
 
 
+def test_calculate_number_of_days():
+    """Test calculation of number of days"""
+    # Typical case - string
+    start_date = "2016-02-15"
+    end_date = "2016-03-01"
+    expected_days = 15
+    calculated_days = cfactor.calculate_number_of_days(start_date, end_date)
+    assert expected_days == calculated_days
+
+    # Typical case - np.array
+    df_dummy = load_calculated_dummy_data()
+    start_dates = df_dummy["bdate"].to_numpy()
+    end_dates = df_dummy["edate"].to_numpy()
+    expected_days = df_dummy["D"].to_numpy()
+    calculated_days = cfactor.calculate_number_of_days(start_dates, end_dates)
+    np.testing.assert_allclose(expected_days, calculated_days)
+
+
 def test_compute_crop_residu():
     """Test calculation of crop residu"""
     # Typical case
-    start_date = "2016-02-15"
-    end_date = "2016-03-01"
+    days = 15
     initial_crop_residu = 5000
     a = 0.02518464958645108
     expected_residu = 3426.9414870271776
-    calculated_residu = cfactor.compute_crop_residu(
-        start_date, end_date, a, initial_crop_residu
-    )
+    calculated_residu = cfactor.compute_crop_residu(days, a, initial_crop_residu)
     assert expected_residu == calculated_residu
+
+
+def test_compute_crop_residu_timeseries():
+    """Test calculation of crop residu on timeseries"""
+    # Typical case
+    df_dummy = load_calculated_dummy_data()
+    days = df_dummy["D"].to_numpy()
+    a = df_dummy["a"].to_numpy()
+    initial_crop_residu = 5000
+    expected_residu_start = df_dummy["Bsi"].to_numpy()
+    expected_residu_end = df_dummy["Bse"].to_numpy()
+    expected_result = (expected_residu_start, expected_residu_end)
+    calculated_result = cfactor.compute_crop_residu_timeseries(
+        days, a, initial_crop_residu
+    )
+    np.testing.assert_allclose(expected_result, calculated_result)
 
 
 def test_compute_harvest_residu_decay_rate():

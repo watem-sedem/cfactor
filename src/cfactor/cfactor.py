@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+from numba import jit
 
 from cfactor.util import celc_to_fahr
 
@@ -88,7 +89,7 @@ def compute_surface_roughness(ru):
         Surface roughness ([0,1])
 
     """
-    return np.exp(-0.026 * (ru - rii))
+    return np.exp(-0.026 * (ru - 6.096))
 
 
 def compute_soil_roughness(identifier, ri, rain, rhm):
@@ -169,8 +170,8 @@ def compute_soil_roughness(identifier, ri, rain, rhm):
 
     dr = np.exp(0.5 * f1_N + 0.5 * f2_EI)
 
-    ru = rii + (dr * (ri - rii))
-    ru[ru.isnull()] = rii
+    ru = 6.096 + (dr * (ri - 6.096))
+    ru[ru.isnull()] = 6.096
 
     return ru, f1_N, f2_EI
 
@@ -453,7 +454,67 @@ def compute_harvest_residu_decay_rate(rain, temperature, p, R0=R0, T0=T0, A=A):
     return W, F, a
 
 
-def compute_crop_residu(bdate, edate, a, initial_crop_residu):
+def calculate_number_of_days(bdate, edate):
+    """Computes the number of days between two timestamps
+
+    Parameters
+    ----------
+    bdate: str or np.array
+
+    edate: str or np.array
+
+    Returns
+    -------
+    d: int
+        number of days between two timestamps
+
+    """
+    d = (pd.to_datetime(edate) - pd.to_datetime(bdate)).days
+    return d
+
+
+@jit(nopython=True)
+def compute_crop_residu_timeseries(d, a, initial_crop_residu):
+    """Computes harvest remains on timeseries
+
+    The function :func:`cfactor.cfactor.compute_crop_residu`. is applied on numpy
+    arrays. An intial crop residu is given to the function and for every timestep
+    the remaining crop residu after decay is calculated
+
+    Parameters
+    ----------
+    d: np.array
+        number of days, see
+        :func:`cfactor.cfactor.calculate_number_of_days`
+    a: np.array
+        Harvest decay coefficient (-), see
+        :func:`cfactor.cfactor.compute_harvest_residu_decay_rate`
+    initial_crop_residu: float
+        Initial amount of crop residu (kg dry matter / ha)
+
+    Returns
+    -------
+    bsi: np.array
+        Crop residu (kg/m2) at the start of each period
+    bse: np.array
+        Crop residu (kg/m²) at the end of each period
+
+    """
+    if not (d.shape == a.shape):
+        raise ValueError("dimension mismatch")
+
+    bse = np.zeros(d.shape[0])
+    bsi = np.zeros(d.shape[0])
+    bsi[0] = initial_crop_residu
+    bse[0] = compute_crop_residu(d[0], a[0], initial_crop_residu)
+    for i in range(1, d.shape[0]):
+        bsi[i] = bse[i - 1]
+        bse[i] = compute_crop_residu(d[i], a[i], bsi[i])
+    return bsi, bse
+
+
+@jit(nopython=True)
+def compute_crop_residu(d, a, initial_crop_residu):
     """
     Computes harvest remains per unit of area over nodes [1]_:
 
@@ -467,14 +528,13 @@ def compute_crop_residu(bdate, edate, a, initial_crop_residu):
     - Bsb: amount of crop residu at start of period (kg dry matter . :math:`m^{-2}`)
     - a: harvest decay coefficient, see
         :func:`cfactor.cfactor.compute_harvest_residu_decay_rate`.
-    - D: number of days # TODO: check unit
+    - d: number of days
 
     Parameters
     ----------
-    bdate: str or int
-        timestamp of the start of the period
-    edate: str or int
-        timestamp of the end of the period
+    d: int
+        number of days, see
+        :func:`cfactor.cfactor.calculate_number_of_days`
     a: float
         Harvest decay coefficient (-), see
         :func:`cfactor.cfactor.compute_harvest_residu_decay_rate`
@@ -492,9 +552,6 @@ def compute_crop_residu(bdate, edate, a, initial_crop_residu):
      “Computermodel RUSLE C-factor.”
 
     """
-
-    D = (pd.to_datetime(edate) - pd.to_datetime(bdate)).days
-
-    crop_residu = initial_crop_residu * np.exp(-a * D)
+    crop_residu = initial_crop_residu * np.exp(-a * d)
 
     return crop_residu

@@ -11,5 +11,6 @@ dependencies:
   - pandas
   - matplotlib
   - geopandas
+  - numba
   - pip:
      - -e .  # install git checkout of cfactor in editable mode
