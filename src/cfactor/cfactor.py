@@ -455,17 +455,31 @@ def compute_harvest_residu_decay_rate(rain, temperature, p, R0=R0, T0=T0, A=A):
 
 
 def calculate_number_of_days(bdate, edate):
-    """Computes the number of days between two timestamps"""
+    """Computes the number of days between two timestamps
+
+    Parameters
+    ----------
+    bdate: str or np.array
+
+    edate: str or np.array
+
+    Returns
+    -------
+    d: int
+        number of days between two timestamps
+
+    """
     d = (pd.to_datetime(edate) - pd.to_datetime(bdate)).days
     return d
 
 
 @jit(nopython=True)
-def compute_crop_residu_array(d, a, bsi):
+def compute_crop_residu_timeseries(d, a, initial_crop_residu):
     """Computes harvest remains on timeseries
 
     The function :func:`cfactor.cfactor.compute_crop_residu`. is applied on numpy
-    arrays.
+    arrays. An intial crop residu is given to the function and for every timestep
+    the remaining crop residu after decay is calculated
 
     Parameters
     ----------
@@ -475,7 +489,7 @@ def compute_crop_residu_array(d, a, bsi):
     a: np.array
         Harvest decay coefficient (-), see
         :func:`cfactor.cfactor.compute_harvest_residu_decay_rate`
-    initial_crop_residu: np.array
+    initial_crop_residu: float
         Initial amount of crop residu (kg dry matter / ha)
 
     Returns
@@ -486,11 +500,13 @@ def compute_crop_residu_array(d, a, bsi):
         Crop residu (kg/m²) at the end of each period
 
     """
-    if not (d.shape == a.shape == bsi.shape):
+    if not (d.shape == a.shape):
         raise ValueError("dimension mismatch")
 
     bse = np.zeros(d.shape[0])
-    bse[0] = compute_crop_residu(d[0], a[0], bsi[0])
+    bsi = np.zeros(d.shape[0])
+    bsi[0] = initial_crop_residu
+    bse[0] = compute_crop_residu(d[0], a[0], initial_crop_residu)
     for i in range(1, d.shape[0]):
         bsi[i] = bse[i - 1]
         bse[i] = compute_crop_residu(d[i], a[i], bsi[i])
