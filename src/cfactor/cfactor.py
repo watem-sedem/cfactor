@@ -171,13 +171,7 @@ def compute_soil_roughness(ri, rain, rhm):
 
 
 def compute_soil_cover(
-    identifier,
-    begin_date,
-    end_date,
-    rain,
-    temperature,
-    maximum_speed,
-    initial_crop_residu,
+    crop_residu,
     alpha,
     ru,
 ):
@@ -209,41 +203,18 @@ def compute_soil_cover(
 
     Parameters
     ----------
-    identifier: numpy.ndarray
-        Period identifier, i.e. every +1 in the identifier marks the start of a new
-        'crop residue'-period.
-    begin_date: pandas.Series
-        Begin dates of periods #TODO: checdk
-    end_date: pandas.Series
-        End dates of periods #TODO: checdk
-    rain: pandas.Series
-        Rainfall (in mm)
-    temperature: numpy.ndarray
-        Temperature (in degree F)
-    maximum_speed: numpy.ndarray
-        Maximum decay speed (-)
-    initial_crop_residu: numpy.ndarray
-        Initial amount of crop residu (kg dry matter / ha) for harvest period id (one
-        number per period id)
-    alpha: numpy.ndarray
+    crop_residu: float or numpy.ndarray
+        crop residu (kg dry matter / ha) for harvest period,
+        see :func:`cfactor.cfactor.compute_crop_residu`
+    alpha: floar or numpy.ndarray
         Soil cover in comparison to weight residu (:math:`m^2/kg`)
-    ru: numpy.ndarray
+    ru: float or numpy.ndarray
         Soil roughness (mm), see :func:`cfactor.cfactor.compute_soil_roughness`
 
     Returns
     -------
-    a: numpy.ndarray
-        Harvest decay coefficient
-    Bsi: numpy.ndarray
-        Harvest remains per unit of area(kg/m2)
     sp: numpy.ndarray
         Percentage soil cover of harvest remains
-    w: numpy.ndarray
-        Precipitation coefficient weighting (half-)monthly rainfall and minimum average
-        monthly rainfall.
-    f: numpy.ndarray
-        Coefficients computed based on temperature, used to define shape crop residu
-        decay rate.
     sc: numpy.ndarray
         Soil cover (-, [0,1])
 
@@ -253,24 +224,9 @@ def compute_soil_cover(
      “Computermodel RUSLE C-factor.”
 
     """
-    a_val = np.zeros([len(identifier)])
-    crop_residu = np.zeros([len(identifier)])
-    sp = np.zeros([len(identifier)])
-    w = np.zeros([len(identifier)])
-    f = np.zeros([len(identifier)])
-    sc = np.ones([len(identifier)])
-
-    for i in identifier[identifier != 0].unique():
-        cond = (identifier == i).values.flatten()
-        w[cond], f[cond], a_val[cond] = compute_harvest_residu_decay_rate(
-            rain[cond], temperature[cond], maximum_speed[cond]
-        )
-        crop_residu[cond] = compute_crop_residu(
-            begin_date[cond], end_date[cond], a_val[cond], initial_crop_residu[cond]
-        )
-        sp[cond] = 100 * (1 - np.exp(-alpha[cond] * crop_residu[cond] / (100**2)))
-        sc[cond] = np.exp(-b * sp[cond] * ((6.096 / (ru[cond])) ** 0.08))
-    return a_val, crop_residu, sp, w, f, sc
+    sp = 100 * (1 - np.exp(-alpha * crop_residu / (100**2)))
+    sc = np.exp(-b * sp * ((6.096 / ru) ** 0.08))
+    return sp, sc
 
 
 def compute_crop_cover(H, Fc):

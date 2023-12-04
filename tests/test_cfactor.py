@@ -174,8 +174,25 @@ def test_compute_harvest_residu_decay_rate():
 @pytest.mark.skip(reason="not yet implemented")
 def test_compute_soil_cover():
     """Test calculation of soil cover"""
-    # TO DO
-    # cfactor.compute_soil_cover()
+    # Typical case float
+    crop_residu = 5000
+    alpha = 5.53
+    ru = 6.096
+    expected_sp = 93.7023900651985
+    expected_sc = 0.037643926507827864
+    sp, sc = cfactor.compute_soil_cover(crop_residu, alpha, ru)
+    assert (expected_sp, expected_sc) == (sp, sc)
+
+    # Typical case np.array
+    df_dummy = load_calculated_dummy_data()
+    crop_residu = df_dummy["Bse"].to_numpy()
+    alpha = df_dummy["alpha"].to_numpy()
+    ru = df_dummy["Ru"].to_numpy()
+    expected_sp = df_dummy["Sp"].to_numpy()
+    expected_sc = df_dummy["SC"].to_numpy()
+    expected_result = (expected_sp, expected_sc)
+    calculated_result = cfactor.compute_soil_cover(crop_residu, alpha, ru)
+    np.testing.assert_allclose(expected_result, calculated_result)
 
 
 def test_compute_soil_loss_ratio():
@@ -215,7 +232,7 @@ def test_compute_soil_loss_ratio():
 
 
 @pytest.mark.skip(reason="not yet implemented")
-def test_aggregate_slr_to_crop_factor():
+def test_aggregate_slr_to_c_factor():
     """Test aggregation of SLR to C-factor"""
     # TO DO
     # cfactor.aggregate_slr_to_c_factor()
