@@ -92,7 +92,7 @@ def compute_surface_roughness(ru):
     return np.exp(-0.026 * (ru - 6.096))
 
 
-def compute_soil_roughness(identifier, ri, rain, rhm):
+def compute_soil_roughness(ri, rain, rhm):
     """Compute soil roughness subfactor per identifier (ri_tag).
 
     This function computes the roughness for every roughness period id. The beginning
@@ -121,14 +121,11 @@ def compute_soil_roughness(identifier, ri, rain, rhm):
 
     Parameters
     ----------
-    identifier: numpy.ndarray
-        Period identifier, i.e. every +1 in the identifier marks the start of a new
-        'decay in roughness'-period.
-    ri:  numpy.ndarray
+    ri: float or numpy.ndarray
         #TODO
-    rain:  numpy.ndarray
+    rain: float or numpy.ndarray
         Amount of rainfall (in mm, during period).
-    rhm:  numpy.ndarray
+    rhm: float or numpy.ndarray
         Cumulative rainfall erosivity (in :math:`\\frac{MJ.mm}{ha.year}`)
 
     Returns
@@ -160,18 +157,15 @@ def compute_soil_roughness(identifier, ri, rain, rhm):
      Journal of Geophysical Research Atmospheres, 111(22), 1–11.
 
     """
-    f1_N = np.zeros([len(identifier)])
-    f2_EI = np.zeros([len(identifier)])
+    if np.any(np.asarray(rain) < 0):
+        raise ValueError("Amount of rain cannot be negative")
 
-    for i in np.unique(identifier):
-        cond = identifier == i
-        f1_N[cond] = -0.14 / 25.4 * rain[cond].cumsum()
-        f2_EI[cond] = -0.012 / 17.02 * rhm[cond].cumsum()
+    f1_N = -0.14 / 25.4 * rain
+    f2_EI = -0.012 / 17.02 * rhm
 
     dr = np.exp(0.5 * f1_N + 0.5 * f2_EI)
 
     ru = 6.096 + (dr * (ri - 6.096))
-    ru[ru.isnull()] = 6.096
 
     return ru, f1_N, f2_EI
 
