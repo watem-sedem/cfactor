@@ -18,7 +18,6 @@ def test_compute_crop_cover():
 
     # Out of bound value H
     H = -0.49
-    Fc = 0.77
 
     with pytest.raises(ValueError) as excinfo:
         cc = cfactor.compute_crop_cover(H, Fc)
@@ -33,7 +32,6 @@ def test_compute_crop_cover():
     assert ("Soil cover must be between 0 and 1") in str(excinfo.value)
 
     # Out of bound value Fc - case 2
-    H = 0.49
     Fc = -9
 
     with pytest.raises(ValueError) as excinfo:
@@ -49,11 +47,34 @@ def test_compute_crop_cover():
     np.testing.assert_allclose(cc, expected_cc)
 
 
-@pytest.mark.skip(reason="not yet implemented")
 def test_compute_soil_roughness():
     """Test calculation of soil roughness"""
-    # TO DO
-    # cfactor.compute_soil_roughness()
+    # Typical case float
+    ri = 10.2
+    rain = 35.41
+    rhm = 28.47
+    expected_ru = 9.781252579741903
+    expected_f1_N = -0.1951732283464567
+    expected_f2_EI = -0.020072855464159812
+    ru, f1_N, f2_EI = cfactor.compute_soil_roughness(ri, rain, rhm)
+    assert (expected_ru, expected_f1_N, expected_f2_EI) == (ru, f1_N, f2_EI)
+
+    rain = -10
+    with pytest.raises(ValueError) as excinfo:
+        cfactor.compute_soil_roughness(ri, rain, rhm)
+    assert ("Amount of rain cannot be negative") in str(excinfo.value)
+
+    # Typical case np.array
+    df_dummy = load_calculated_dummy_data()
+    ri = df_dummy["Ri"].to_numpy()
+    rain = df_dummy["rain"].to_numpy()
+    rhm = df_dummy["Rhm"].to_numpy()
+    expected_ru = df_dummy["Ru"].to_numpy()
+    expected_f1_N = df_dummy["f1_N"].to_numpy()
+    expected_f2_EI = df_dummy["f2_EI"].to_numpy()
+    expected_result = (expected_ru, expected_f1_N, expected_f2_EI)
+    calculated_result = cfactor.compute_soil_roughness(ri, rain, rhm)
+    np.testing.assert_allclose(expected_result, calculated_result)
 
 
 def test_compute_surface_roughness():
