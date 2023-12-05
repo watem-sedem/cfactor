@@ -171,7 +171,6 @@ def test_compute_harvest_residu_decay_rate():
     np.testing.assert_allclose(result, (expected_W, expected_F, expected_a))
 
 
-@pytest.mark.skip(reason="not yet implemented")
 def test_compute_soil_cover():
     """Test calculation of soil cover"""
     # Typical case float
