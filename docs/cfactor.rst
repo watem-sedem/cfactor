@@ -44,6 +44,8 @@ with
 
 In the following paragraphs we discuss these subfactors.
 
+.. _subfactors:
+
 Subfactors
 ----------
 
