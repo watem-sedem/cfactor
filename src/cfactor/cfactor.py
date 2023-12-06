@@ -93,7 +93,7 @@ def compute_surface_roughness(ru):
 
 
 def compute_soil_roughness(ri, rain, rhm):
-    """Compute soil roughness subfactor per identifier (ri_tag).
+    """Compute soil roughness subfactor
 
     This function computes the roughness for every roughness period id. The beginning
     of a period is defined by a new roughness condition (i.e. prep for a new crop by
@@ -307,7 +307,7 @@ def aggregate_slr_to_c_factor(SLR, EI30):
     Parameters
     ----------
     SLR: numpy.ndarray
-        Soil loss ratio, see :func:`cfactor.cfactor._ratio`
+        Soil loss ratio, see :func:`cfactor.cfactor.compute_soil_loss_ratio`
     EI30: numpy.ndarray
         # TODO: refer to R-factor package with intersphinx
 
@@ -373,12 +373,12 @@ def compute_harvest_residu_decay_rate(rain, temperature, p, R0=R0, T0=T0, A=A):
 
     Returns
     -------
-    a: float or numpy.ndarray
-        Harvest decay coefficient (-)
     W: float or numpy.ndarray
         Coefficients weighing rainfall
     F: float or numpy.ndarray
         Coefficients weighing temperature
+    a: float or numpy.ndarray
+        Harvest decay coefficient (-)
 
     References
     ----------
@@ -482,13 +482,13 @@ def compute_crop_residu(d, a, initial_crop_residu):
 
     Parameters
     ----------
-    d: int
+    d: int or np.array
         number of days, see
         :func:`cfactor.cfactor.calculate_number_of_days`
-    a: float
+    a: float or np.array
         Harvest decay coefficient (-), see
         :func:`cfactor.cfactor.compute_harvest_residu_decay_rate`
-    initial_crop_residu: float
+    initial_crop_residu: float or np.array
         Initial amount of crop residu (kg dry matter / ha)
 
     Returns
@@ -505,3 +505,72 @@ def compute_crop_residu(d, a, initial_crop_residu):
     crop_residu = initial_crop_residu * np.exp(-a * d)
 
     return crop_residu
+
+
+def calculate_slr(
+    begin_date,
+    end_date,
+    rain,
+    temperature,
+    rhm,
+    ri,
+    H,
+    Fc,
+    p,
+    initial_crop_residu,
+    alpha,
+    return_subfactors=False,
+):
+    """Calculate Soil loss ratio based on basic input parameters
+
+    This function combines the calculations of all subfactors
+
+    Parameters
+    ----------
+    begin_date: str
+        start date of period formatted as 'YYYY-MM-DD'
+    end_date: str
+        end date of period formatted as 'YYYY-MM-DD'
+    rain: float or np.ndarray
+        Summed (half monthly) rainfall (mm)
+    temperature: float or np.array
+        (Average) temperature (degree C)
+    rhm: float or np.ndarray
+        Cumulative rainfall erosivity (in :math:`\\frac{MJ.mm}{ha.year}`)
+    ri: float or np.ndarray
+        # TO DO
+    H: float or numpy.ndarray
+        Effective drop height (m): estimate of average height between rainfall capture
+        by crop and soil.
+    Fc: float or numpy.ndarray
+        Soil cover by crop (in %)
+    p: float or np.ndarray
+        Maximum decay speed (-) #TODO: check unit
+    initial_crop_residu: float or np.ndarray
+        Initial amount of crop residu (kg dry matter / ha)
+    alpha: float or np.ndarray
+        Soil cover in comparison to weight residu (:math:`m^2/kg`)
+
+    Returns
+    -------
+
+    """
+    cc = compute_crop_cover(H, Fc)
+
+    _, _, a = compute_harvest_residu_decay_rate(rain, temperature, p)
+
+    d = calculate_number_of_days(begin_date, end_date)
+
+    crop_residu = compute_crop_residu(d, a, initial_crop_residu)
+
+    ru, _, _ = compute_soil_roughness(ri, rain, rhm)
+    sr = compute_surface_roughness(ru)
+
+    _, sc = compute_soil_cover(initial_crop_residu, alpha, ru)
+
+    slr = compute_soil_loss_ratio(sc, sr, cc)
+
+    if return_subfactors:
+        return crop_residu, a, d, ru, cc, sr, sc, slr
+    else:
+        return slr
