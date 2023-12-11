@@ -13,6 +13,7 @@ Calculating the SLR
 -------------------
 
 Three possibilities exist to calculate the soil loss ratio (SLR):
+
 - for a single period and a single crop/location
 - for different crops/locations on the same time
 - for a timeseries of a crop on a given location
@@ -24,6 +25,7 @@ We will explore these three possibilities in the following tutorial.
 
 For all possibilities we need input data from the environment, the crop and soil.
 Following data is needed for every location/crop and period:
+
 - startdate of the period
 - enddate of the period
 - total amount of rain during the period
@@ -42,6 +44,7 @@ TO DO: REF
 Start with importing the package
 
 .. code-block:: python
+
     from cfactor import cfactor
 
 .. note::
@@ -52,6 +55,7 @@ As stated before, we can calculate the soil loss ratio for a single location and
 single period. For example:
 
 .. code-block:: python
+
     begin_date = '2023-06-01'
     end_date = '2023-06-15'
     rain = 35.41
@@ -84,6 +88,7 @@ If you want to know the calculated subfactors of the soil loss ratio, enable the
 option `return_subfactors`in the function:
 
 .. code-block:: python
+
     crop_residu, cc, sr, sc, slr = cfactor.calculate_slr(begin_date,
                                                          end_date,
                                                          rain,
@@ -101,6 +106,7 @@ for different locations and crops. Therefore, we need to change some inputs to n
 arrays.
 
 .. code-block:: python
+
     import numpy as np
 
     begin_date = '2023-06-01'
@@ -138,6 +144,7 @@ Of course, you can also use a pandas dataframe to structurize your input data:
 
 
 .. code-block:: python
+
     import pandas as pd
 
     begin_date = '2023-06-01'
@@ -161,6 +168,7 @@ intermediate results and subfactors too, as some outputs at time t are used in t
 calculation of time t+1.
 
 .. code-block:: python
+
     import pandas as pd
 
     begin_date = '2023-06-01'
