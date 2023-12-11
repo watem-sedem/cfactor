@@ -10,11 +10,6 @@ environment to install the dependencies (by using ``tox`` or ``conda``,
 see :ref:`here <installfromsource>`), so it does not
 interfere with other Python installation on your machine.
 
-.. note::
-
-    Matlab or Octave were previously used to run the core cfactor code.
-    See :ref:`codelegacy` for more information on the conversion towards a
-    Python environment.
 
 Latest release
 --------------
