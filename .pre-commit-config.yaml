@@ -2,7 +2,7 @@ exclude: '^docs/conf.py'
 
 repos:
 - repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: v4.0.1
+  rev: v4.5.0
   hooks:
   - id: trailing-whitespace
     exclude: ^(pycnws/tests/data|pycnws/tests/.*/data)
@@ -23,7 +23,7 @@ repos:
 
 # If you want to avoid flake8 errors due to unused vars or imports:
 - repo: https://github.com/myint/autoflake.git
-  rev: v1.4
+  rev: v2.2.1
   hooks:
   - id: autoflake
     args: [
@@ -33,12 +33,12 @@ repos:
     ]
 
 - repo: https://github.com/pycqa/isort
-  rev: 5.11.5
+  rev: 5.13.1
   hooks:
   - id: isort
 
 - repo: https://github.com/psf/black
-  rev: 22.3.0
+  rev: 23.12.0
   hooks:
   - id: black
     language_version: python3
@@ -51,7 +51,7 @@ repos:
 #     additional_dependencies: [black]
 
 - repo: https://github.com/PyCQA/flake8
-  rev: 3.9.2
+  rev: 6.1.0
   hooks:
   - id: flake8
     args: [
@@ -69,7 +69,7 @@ repos:
 
 # Strip the output of jupyter notebooks
 - repo: https://github.com/kynan/nbstripout
-  rev: 0.4.0
+  rev: 0.6.1
   hooks:
     - id: nbstripout
 

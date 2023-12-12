@@ -44,6 +44,13 @@ with
 
 In the following paragraphs we discuss these subfactors.
 
+.. note::
+
+The following code is developed in the context on an application of Flanders.
+Therefore, not all factors are explicitly defined (as no need or data were
+available). We encourage developers to add formulations via the
+GitHub-platform.
+
 .. _subfactors:
 
 Subfactors
@@ -173,7 +180,9 @@ compute this decrease.
 Soil-moisture subfactor (SM)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-TO DO
+Antecedent soil moisture has a substantial influence on infiltration and
+runoff, and thus soil erosion. As this package was developed in the context of
+flanders, we assume this value is equal to 1 (Verbist et al., 2004).
 
 References
 ----------
