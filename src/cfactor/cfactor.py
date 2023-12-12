@@ -409,9 +409,9 @@ def calculate_number_of_days(bdate, edate):
 
     Parameters
     ----------
-    bdate: str or np.array
+    bdate: str or np.ndarray
 
-    edate: str or np.array
+    edate: str or np.ndarray
 
     Returns
     -------
@@ -433,10 +433,10 @@ def compute_crop_residu_timeseries(d, a, initial_crop_residu):
 
     Parameters
     ----------
-    d: np.array
+    d: np.ndarray
         number of days, see
         :func:`cfactor.cfactor.calculate_number_of_days`
-    a: np.array
+    a: np.ndarray
         Harvest decay coefficient (-), see
         :func:`cfactor.cfactor.compute_harvest_residu_decay_rate`
     initial_crop_residu: float
@@ -444,9 +444,9 @@ def compute_crop_residu_timeseries(d, a, initial_crop_residu):
 
     Returns
     -------
-    bsi: np.array
+    bsi: np.ndarray
         Crop residu (kg/m2) at the start of each period
-    bse: np.array
+    bse: np.ndarray
         Crop residu (kg/m²) at the end of each period
 
     """
@@ -482,13 +482,13 @@ def compute_crop_residu(d, a, initial_crop_residu):
 
     Parameters
     ----------
-    d: int or np.array
+    d: int or np.ndarray
         number of days, see
         :func:`cfactor.cfactor.calculate_number_of_days`
-    a: float or np.array
+    a: float or np.ndarray
         Harvest decay coefficient (-), see
         :func:`cfactor.cfactor.compute_harvest_residu_decay_rate`
-    initial_crop_residu: float or np.array
+    initial_crop_residu: float or np.ndarray
         Initial amount of crop residu (kg dry matter / ha)
 
     Returns
@@ -533,7 +533,7 @@ def calculate_slr(
         end date of period formatted as 'YYYY-MM-DD'
     rain: float or np.ndarray
         Summed (half monthly) rainfall (mm)
-    temperature: float or np.array
+    temperature: float or np.ndarray
         (Average) temperature (degree C)
     rhm: float or np.ndarray
         Cumulative rainfall erosivity (in :math:`\\frac{MJ.mm}{ha.year}`)
@@ -602,7 +602,7 @@ def calculate_slr_timeseries(
         end dates of period formatted as 'YYYY-MM-DD'
     rain: np.ndarray
         Summed (half monthly) rainfall (mm)
-    temperature: np.array
+    temperature: np.ndarray
         (Average) temperature (degree C)
     rhm: np.ndarray
         Cumulative rainfall erosivity (in :math:`\\frac{MJ.mm}{ha.year}`)
