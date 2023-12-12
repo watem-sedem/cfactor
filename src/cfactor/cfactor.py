@@ -39,20 +39,20 @@ def compute_soil_loss_ratio(sc, sr, cc, sm=1, plu=1):
 
     Parameters
     ----------
-    sc: float or np.ndarray
+    sc: float or numpy.ndarray
         soil cover subfactor, see `cfactor.cfactor.compute_soil_cover`
-    sr: float or np.ndarray
+    sr: float or numpy.ndarray
         surface roughness subfactor, see `cfactor.cfactor.compute_surface_roughness`
-    cc: float or np.ndarray
+    cc: float or numpy.ndarray
         canopy cover subfactor, see `cfactor.cfactor.compute_crop_cover`
-    sm: float or np.ndarray
+    sm: float or numpy.ndarray
         soil moisture subfactor, see `cfactor.cfactor.compute_soil_moisture`
-    plu: float or np.ndarray
+    plu: float or numpy.ndarray
         prior land use subfactor, see `cfactor.cfactor.compute_PLU`
 
     Returns
     -------
-    float or np.ndarray
+    float or numpy.ndarray
         soil loss ratio
     """
 
@@ -409,9 +409,9 @@ def calculate_number_of_days(bdate, edate):
 
     Parameters
     ----------
-    bdate: str or np.ndarray
+    bdate: str or numpy.ndarray
 
-    edate: str or np.ndarray
+    edate: str or numpy.ndarray
 
     Returns
     -------
@@ -433,10 +433,10 @@ def compute_crop_residu_timeseries(d, a, initial_crop_residu):
 
     Parameters
     ----------
-    d: np.ndarray
+    d: numpy.ndarray
         number of days, see
         :func:`cfactor.cfactor.calculate_number_of_days`
-    a: np.ndarray
+    a: numpy.ndarray
         Harvest decay coefficient (-), see
         :func:`cfactor.cfactor.compute_harvest_residu_decay_rate`
     initial_crop_residu: float
@@ -444,9 +444,9 @@ def compute_crop_residu_timeseries(d, a, initial_crop_residu):
 
     Returns
     -------
-    bsi: np.ndarray
+    bsi: numpy.ndarray
         Crop residu (kg/m2) at the start of each period
-    bse: np.ndarray
+    bse: numpy.ndarray
         Crop residu (kg/m²) at the end of each period
 
     """
@@ -482,13 +482,13 @@ def compute_crop_residu(d, a, initial_crop_residu):
 
     Parameters
     ----------
-    d: int or np.ndarray
+    d: int or numpy.ndarray
         number of days, see
         :func:`cfactor.cfactor.calculate_number_of_days`
-    a: float or np.ndarray
+    a: float or numpy.ndarray
         Harvest decay coefficient (-), see
         :func:`cfactor.cfactor.compute_harvest_residu_decay_rate`
-    initial_crop_residu: float or np.ndarray
+    initial_crop_residu: float or numpy.ndarray
         Initial amount of crop residu (kg dry matter / ha)
 
     Returns
@@ -531,24 +531,24 @@ def calculate_slr(
         start date of period formatted as 'YYYY-MM-DD'
     end_date: str
         end date of period formatted as 'YYYY-MM-DD'
-    rain: float or np.ndarray
+    rain: float or numpy.ndarray
         Summed (half monthly) rainfall (mm)
-    temperature: float or np.ndarray
+    temperature: float or numpy.ndarray
         (Average) temperature (degree C)
-    rhm: float or np.ndarray
+    rhm: float or numpy.ndarray
         Cumulative rainfall erosivity (in :math:`\\frac{MJ.mm}{ha.year}`)
-    ri: float or np.ndarray
+    ri: float or numpy.ndarray
         # TO DO
     H: float or numpy.ndarray
         Effective drop height (m): estimate of average height between rainfall capture
         by crop and soil.
     Fc: float or numpy.ndarray
         Soil cover by crop (in %)
-    p: float or np.ndarray
+    p: float or numpy.ndarray
         Maximum decay speed (-) #TODO: check unit
-    initial_crop_residu: float or np.ndarray
+    initial_crop_residu: float or numpy.ndarray
         Initial amount of crop residu (kg dry matter / ha)
-    alpha: float or np.ndarray
+    alpha: float or numpy.ndarray
         Soil cover in comparison to weight residu (:math:`m^2/kg`)
 
     Returns
@@ -596,28 +596,28 @@ def calculate_slr_timeseries(
 
     Parameters
     ----------
-    begin_date: np.ndarray
+    begin_date: numpy.ndarray
         start dates of period formatted as 'YYYY-MM-DD'
-    end_date: np.ndarray
+    end_date: numpy.ndarray
         end dates of period formatted as 'YYYY-MM-DD'
-    rain: np.ndarray
+    rain: numpy.ndarray
         Summed (half monthly) rainfall (mm)
-    temperature: np.ndarray
+    temperature: numpy.ndarray
         (Average) temperature (degree C)
-    rhm: np.ndarray
+    rhm: numpy.ndarray
         Cumulative rainfall erosivity (in :math:`\\frac{MJ.mm}{ha.year}`)
-    ri: np.ndarray
+    ri: numpy.ndarray
         # TO DO
     H: numpy.ndarray
         Effective drop height (m): estimate of average height between rainfall capture
         by crop and soil.
     Fc: numpy.ndarray
         Soil cover by crop (in %)
-    p: np.ndarray
+    p: numpy.ndarray
         Maximum decay speed (-) #TODO: check unit
     initial_crop_residu: float
         Initial amount of crop residu (kg dry matter / ha)
-    alpha: np.ndarray
+    alpha: numpy.ndarray
         Soil cover in comparison to weight residu (:math:`m^2/kg`)
 
     Returns
