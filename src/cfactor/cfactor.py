@@ -13,7 +13,7 @@ T0 = 37  # degree C
 A = 7.76  # degree C
 
 
-def compute_soil_loss_ratio(sc, sr, cc, sm=1, plu=1):
+def compute_soil_loss_ratio(sc, sr, cc, sm=1.0, plu=1.0):
     """Computes subcomponents of soil loss ratio
 
     The soil loss ratio (SLR) is computed by following formula:
@@ -428,7 +428,7 @@ def compute_crop_residu_timeseries(d, a, initial_crop_residu):
     """Computes harvest remains on timeseries
 
     The function :func:`cfactor.cfactor.compute_crop_residu`. is applied on numpy
-    arrays. An intial crop residu is given to the function and for every timestep
+    arrays. An initial crop residu is given to the function and for every timestep
     the remaining crop residu after decay is calculated
 
     Parameters
