@@ -211,7 +211,7 @@ def test_compute_soil_loss_ratio():
     arr_sc = df_dummy["SC"].to_numpy()
     arr_sr = df_dummy["SR"].to_numpy()
     arr_cc = df_dummy["CC"].to_numpy()
-    arr_expected_slr = df_dummy["soil_loss_ratio"].to_numpy()
+    arr_expected_slr = df_dummy["SLR"].to_numpy()
     arr_slr = cfactor.compute_soil_loss_ratio(arr_sc, arr_sr, arr_cc)
     np.testing.assert_allclose(arr_expected_slr, arr_slr)
 
