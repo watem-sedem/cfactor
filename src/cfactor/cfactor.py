@@ -7,20 +7,22 @@ from cfactor.util import celc_to_fahr
 b = 0.035
 rii = 6.096
 
-R0 = 25.76  # minimum gemiddelde halfmaandelijks neerslag nodig voor afbraak
+r0 = 25.76  # minimum gemiddelde halfmaandelijks neerslag nodig voor afbraak
 # (opm. pagina 6?)
-T0 = 37  # degree C
-A = 7.76  # degree C
+t0 = 37  # degree C
+a = 7.76  # degree C
 
 
-def compute_soil_loss_ratio(sc, sr, cc, sm=1.0, plu=1.0):
+def compute_soil_loss_ratio(
+    soil_cover, surface_roughness, crop_cover, soil_moisture=1.0, prior_landuse=1.0
+):
     """Computes subcomponents of soil loss ratio
 
-    The soil loss ratio (SLR) is computed by following formula:
+    The soil loss ratio (soil_loss_ratio) is computed by following formula:
 
     .. math::
 
-        SLR = SC.CC.SR.SM.PLU
+        soil_loss_ratio = SC.CC.SR.SM.PLU
 
     with
 
@@ -39,16 +41,16 @@ def compute_soil_loss_ratio(sc, sr, cc, sm=1.0, plu=1.0):
 
     Parameters
     ----------
-    sc: float or numpy.ndarray
+    soil_cover: float or numpy.ndarray
         soil cover subfactor, see `cfactor.cfactor.compute_soil_cover`
-    sr: float or numpy.ndarray
+    surface_roughness: float or numpy.ndarray
         surface roughness subfactor, see `cfactor.cfactor.compute_surface_roughness`
-    cc: float or numpy.ndarray
+    crop_cover: float or numpy.ndarray
         canopy cover subfactor, see `cfactor.cfactor.compute_crop_cover`
-    sm: float or numpy.ndarray
+    soil_moisture: float or numpy.ndarray
         soil moisture subfactor, see `cfactor.cfactor.compute_soil_moisture`
-    plu: float or numpy.ndarray
-        prior land use subfactor, see `cfactor.cfactor.compute_PLU`
+    prior_landuse: float or numpy.ndarray
+        prior land use subfactor, see `cfactor.cfactor.compute_plu`
 
     Returns
     -------
@@ -56,15 +58,14 @@ def compute_soil_loss_ratio(sc, sr, cc, sm=1.0, plu=1.0):
         soil loss ratio
     """
 
-    for i in [sc, cc, sr, sm, plu]:
+    for i in [soil_cover, crop_cover, surface_roughness, soil_moisture, prior_landuse]:
         if (np.any(i > 1)) or (np.any(i < 0)):
-            raise ValueError("All SLR subfactors must lie between 0 and 1")
+            raise ValueError("All soil_loss_ratio subfactors must lie between 0 and 1")
 
-    slr = sc * cc * sr * sm * plu
-    return slr
+    return soil_cover * crop_cover * surface_roughness * soil_moisture * prior_landuse
 
 
-def compute_surface_roughness(ru):
+def compute_surface_roughness(soil_roughness):
     """Computes surface roughness subfactor SR
 
     Computes surface roughness :math:`SR` as
@@ -80,8 +81,8 @@ def compute_surface_roughness(ru):
 
     Parameters
     ----------
-    ru: float or numpy.ndarray
-        Surface roughness, output from :func:`cfactor.cfactor.compute_soil_roughness`
+    soil_roughness: float or numpy.ndarray
+        Soil roughness, output from :func:`cfactor.cfactor.compute_soil_roughness`
 
     Returns
     -------
@@ -89,7 +90,7 @@ def compute_surface_roughness(ru):
         Surface roughness ([0,1])
 
     """
-    return np.exp(-0.026 * (ru - 6.096))
+    return np.exp(-0.026 * (soil_roughness - 6.096))
 
 
 def compute_soil_roughness(ri, rain, rhm):
@@ -130,16 +131,16 @@ def compute_soil_roughness(ri, rain, rhm):
 
     Returns
     -------
-    ru:  numpy.ndarray
+    soil_roughness:  numpy.ndarray
         Soil roughness (mm)
-    f1_N:  numpy.ndarray
+    f1_n:  numpy.ndarray
         Factor rainfall
-    f2_EI:  numpy.ndarray
+    f2_ei:  numpy.ndarray
         Factor erosivity
 
     Notes
     -----
-    1. A slight different formulation is used from [1]_ where the parameter for EI is
+    1. a slight different formulation is used from [1]_ where the parameter for EI is
        defined as -0.0705, whereas here we use -0.00070505287 (-0.012 / 17.02)
        #TODO: check.
     2. The rhm is equal to EI, for guidelines computation, see [2]_ and #TODO: refer to
@@ -160,20 +161,20 @@ def compute_soil_roughness(ri, rain, rhm):
     if np.any(np.asarray(rain) < 0):
         raise ValueError("Amount of rain cannot be negative")
 
-    f1_N = -0.14 / 25.4 * rain
-    f2_EI = -0.012 / 17.02 * rhm
+    f1_n = -0.14 / 25.4 * rain
+    f2_ei = -0.012 / 17.02 * rhm
 
-    dr = np.exp(0.5 * f1_N + 0.5 * f2_EI)
+    dr = np.exp(0.5 * f1_n + 0.5 * f2_ei)
 
-    ru = 6.096 + (dr * (ri - 6.096))
+    soil_roughness = 6.096 + (dr * (ri - 6.096))
 
-    return ru, f1_N, f2_EI
+    return soil_roughness, f1_n, f2_ei
 
 
 def compute_soil_cover(
     crop_residu,
     alpha,
-    ru,
+    soil_roughness,
 ):
     """Computes soil cover (SC) subfactor
 
@@ -208,14 +209,14 @@ def compute_soil_cover(
         see :func:`cfactor.cfactor.compute_crop_residu`
     alpha: floar or numpy.ndarray
         Soil cover in comparison to weight residu (:math:`m^2/kg`)
-    ru: float or numpy.ndarray
+    soil_roughness: float or numpy.ndarray
         Soil roughness (mm), see :func:`cfactor.cfactor.compute_soil_roughness`
 
     Returns
     -------
     sp: numpy.ndarray
         Percentage soil cover of harvest remains
-    sc: numpy.ndarray
+    soil_cover: numpy.ndarray
         Soil cover (-, [0,1])
 
     References
@@ -225,11 +226,11 @@ def compute_soil_cover(
 
     """
     sp = 100 * (1 - np.exp(-alpha * crop_residu / (100**2)))
-    sc = np.exp(-b * sp * ((6.096 / ru) ** 0.08))
-    return sp, sc
+    soil_cover = np.exp(-b * sp * ((6.096 / soil_roughness) ** 0.08))
+    return sp, soil_cover
 
 
-def compute_crop_cover(H, Fc):
+def compute_crop_cover(h, fc):
     """Computes crop cover factor based on soil cover crop and effective drop height
 
     The crop cover or canopy cover subfactor (:math:`CC`) represents the ability of a
@@ -250,15 +251,15 @@ def compute_crop_cover(H, Fc):
 
     Parameters
     ----------
-    H: float or numpy.ndarray
+    h: float or numpy.ndarray
         Effective drop height (m): estimate of average height between rainfall capture
         by crop and soil.
-    Fc: float or numpy.ndarray
+    fc: float or numpy.ndarray
         Soil cover by crop (in %)
 
     Returns
     -------
-    cc: float or nump.ndarray
+    crop_cover: float or nump.ndarray
         Crop cover factor (-, [0,1])
 
     References
@@ -267,14 +268,14 @@ def compute_crop_cover(H, Fc):
      “Computermodel RUSLE C-factor.”
 
     """
-    if (np.any(Fc > 1)) or (np.any(Fc < 0)):
+    if (np.any(fc > 1)) or (np.any(fc < 0)):
         raise ValueError("Soil cover must be between 0 and 1")
 
-    if np.any(H < 0):
+    if np.any(h < 0):
         raise ValueError("Effective drop height cannot be negative")
 
-    cc = 1 - Fc * np.exp(-0.328 * H)
-    return cc
+    crop_cover = 1 - fc * np.exp(-0.328 * h)
+    return crop_cover
 
 
 def compute_soil_moisture():
@@ -286,7 +287,7 @@ def compute_soil_moisture():
     raise NotImplementedError("compute soil moisture is not implemented")
 
 
-def compute_PLU():
+def compute_plu():
     """
     Computes prior land use factor
 
@@ -301,29 +302,29 @@ def compute_PLU():
     raise NotImplementedError("compute prior land use is not implemented")
 
 
-def aggregate_slr_to_c_factor(SLR, EI30):
+def aggregate_slr_to_c_factor(soil_loss_ratio, ei30):
     """Aggregate  SLR according to erosivity
 
     Parameters
     ----------
-    SLR: numpy.ndarray
+    soil_loss_ratio: numpy.ndarray
         Soil loss ratio, see :func:`cfactor.cfactor.compute_soil_loss_ratio`
-    EI30: numpy.ndarray
+    ei30: numpy.ndarray
         # TODO: refer to R-factor package with intersphinx
 
     Returns
     -------
-    C: float
+    c: float
         C-factor (-, [0,1])
 
     """
-    sumR = np.sum(EI30)
-    product = SLR * EI30
-    C = np.sum(product) / sumR
-    return C
+    sum_r = np.sum(ei30)
+    product = soil_loss_ratio * ei30
+    c = np.sum(product) / sum_r
+    return c
 
 
-def compute_harvest_residu_decay_rate(rain, temperature, p, R0=R0, T0=T0, A=A):
+def compute_harvest_residu_decay_rate(rain, temperature, p, r0=r0, t0=t0, a=a):
     """Computes crop residu decay coefficient [1]_
 
     The soil cover by harvest residues changes in time by decay processes.
@@ -331,26 +332,26 @@ def compute_harvest_residu_decay_rate(rain, temperature, p, R0=R0, T0=T0, A=A):
 
     .. math::
 
-        a = p[min(W,F)]
+        a = p[min(w,f)]
 
     with:
 
     .. math::
 
-        W = \\frac{R}{R_0}
+        w = \\frac{R}{R_0}
 
     and
 
     .. math::
 
-        F = \\frac{2(T_a+A)^2.(T_0+A)^2-(T_a+A)^4}{(T_0+A)^4}
+        f = \\frac{2(T_a+A)^2.(T_0+a)^2-(T_a+A)^4}{(T_0+A)^4}
 
     with:
 
         - :math:`R`: half-monthly rainfall (mm)
         - :math:`R_0`: minimum half-monthly average rainfall (mm)
-        - :math:`T_a`: average temperature in half-montlhy period (degree F)
-        - :math:`T_0`: optimal temperature for decay (degree F)
+        - :math:`T_a`: average temperature in half-montlhy period (degree f)
+        - :math:`T_0`: optimal temperature for decay (degree f)
         - :math:`A`: coefficient used to express the shape of the decay function
          as a function of temperature.
 
@@ -363,45 +364,45 @@ def compute_harvest_residu_decay_rate(rain, temperature, p, R0=R0, T0=T0, A=A):
         (Average) temperature (degree C)
     p: float or numpy.ndarray
         Maximum decay speed (-) #TODO: check unit
-    R0: float
+    r0: float
         Average half monthly rainfall (mm)
-    T0: float
+    t0: float
         Optimal temperature for decay (degree C)
-    A: float
+    a: float
         coefficient used to express the shape of the decay function
         as a function of temperature (degree C)
 
     Returns
     -------
-    W: float or numpy.ndarray
+    w: float or numpy.ndarray
         Coefficients weighing rainfall
-    F: float or numpy.ndarray
+    f: float or numpy.ndarray
         Coefficients weighing temperature
-    a: float or numpy.ndarray
+    harvest_decay_coefficient: float or numpy.ndarray
         Harvest decay coefficient (-)
 
     References
     ----------
-    .. [1] Verbist, K., Schiettecatte, W., Gabriels, D., n.d. Eindrapport:
+    .. [1] Verbist, K., Schiettecatte, w., Gabriels, D., n.d. Eindrapport:
      “Computermodel RUSLE C-factor.”
 
     """
     if np.any(np.asarray(rain) < 0):
         raise ValueError("Halfmonthly rainfall cannot be negative")
 
-    W = rain / R0
+    w = rain / r0
 
     temperature = celc_to_fahr(temperature)
-    T0 = celc_to_fahr(T0)
-    A = celc_to_fahr(A)
+    t0 = celc_to_fahr(t0)
+    a = celc_to_fahr(a)
 
-    F = (2 * ((temperature + A) ** 2) * ((T0 + A) ** 2) - (temperature + A) ** 4) / (
-        (T0 + A) ** 4
+    f = (2 * ((temperature + a) ** 2) * ((t0 + a) ** 2) - (temperature + a) ** 4) / (
+        (t0 + a) ** 4
     )
 
-    a = p * np.min([W, F], axis=0)
+    harvest_decay_coefficient = p * np.min([w, f], axis=0)
 
-    return W, F, a
+    return w, f, harvest_decay_coefficient
 
 
 def calculate_number_of_days(bdate, edate):
@@ -424,7 +425,7 @@ def calculate_number_of_days(bdate, edate):
 
 
 @jit(nopython=True)
-def compute_crop_residu_timeseries(d, a, initial_crop_residu):
+def compute_crop_residu_timeseries(d, harvest_decay_coefficient, initial_crop_residu):
     """Computes harvest remains on timeseries
 
     The function :func:`cfactor.cfactor.compute_crop_residu`. is applied on numpy
@@ -436,7 +437,7 @@ def compute_crop_residu_timeseries(d, a, initial_crop_residu):
     d: numpy.ndarray
         number of days, see
         :func:`cfactor.cfactor.calculate_number_of_days`
-    a: numpy.ndarray
+    harvest_decay_coefficient: numpy.ndarray
         Harvest decay coefficient (-), see
         :func:`cfactor.cfactor.compute_harvest_residu_decay_rate`
     initial_crop_residu: float
@@ -450,21 +451,23 @@ def compute_crop_residu_timeseries(d, a, initial_crop_residu):
         Crop residu (kg/m²) at the end of each period
 
     """
-    if not (d.shape == a.shape):
+    if not (d.shape == harvest_decay_coefficient.shape):
         raise ValueError("dimension mismatch")
 
     bse = np.zeros(d.shape[0])
     bsi = np.zeros(d.shape[0])
     bsi[0] = initial_crop_residu
-    bse[0] = compute_crop_residu(d[0], a[0], initial_crop_residu)
+    bse[0] = compute_crop_residu(
+        d[0], harvest_decay_coefficient[0], initial_crop_residu
+    )
     for i in range(1, d.shape[0]):
         bsi[i] = bse[i - 1]
-        bse[i] = compute_crop_residu(d[i], a[i], bsi[i])
+        bse[i] = compute_crop_residu(d[i], harvest_decay_coefficient[i], bsi[i])
     return bsi, bse
 
 
 @jit(nopython=True)
-def compute_crop_residu(d, a, initial_crop_residu):
+def compute_crop_residu(d, harvest_decay_coefficient, initial_crop_residu):
     """
     Computes harvest remains per unit of area over nodes [1]_:
 
@@ -485,7 +488,7 @@ def compute_crop_residu(d, a, initial_crop_residu):
     d: int or numpy.ndarray
         number of days, see
         :func:`cfactor.cfactor.calculate_number_of_days`
-    a: float or numpy.ndarray
+    harvest_decay_coefficient: float or numpy.ndarray
         Harvest decay coefficient (-), see
         :func:`cfactor.cfactor.compute_harvest_residu_decay_rate`
     initial_crop_residu: float or numpy.ndarray
@@ -502,7 +505,7 @@ def compute_crop_residu(d, a, initial_crop_residu):
      “Computermodel RUSLE C-factor.”
 
     """
-    crop_residu = initial_crop_residu * np.exp(-a * d)
+    crop_residu = initial_crop_residu * np.exp(-harvest_decay_coefficient * d)
 
     return crop_residu
 
@@ -514,8 +517,8 @@ def calculate_slr(
     temperature,
     rhm,
     ri,
-    H,
-    Fc,
+    h,
+    fc,
     p,
     initial_crop_residu,
     alpha,
@@ -541,10 +544,10 @@ def calculate_slr(
         Cumulative rainfall erosivity (in :math:`\\frac{MJ.mm}{ha.year}`)
     ri: float or numpy.ndarray
         # TO DO
-    H: float or numpy.ndarray
+    h: float or numpy.ndarray
         Effective drop height (m): estimate of average height between rainfall capture
         by crop and soil.
-    Fc: float or numpy.ndarray
+    fc: float or numpy.ndarray
         Soil cover by crop (in %)
     p: float or numpy.ndarray
         Maximum decay speed (-) #TODO: check unit
@@ -557,7 +560,7 @@ def calculate_slr(
     -------
 
     """
-    cc = compute_crop_cover(H, Fc)
+    cc = compute_crop_cover(h, fc)
 
     _, _, a = compute_harvest_residu_decay_rate(rain, temperature, p)
 
@@ -582,8 +585,8 @@ def calculate_slr_timeseries(
     temperature,
     rhm,
     ri,
-    H,
-    Fc,
+    h,
+    fc,
     p,
     initial_crop_residu,
     alpha,
@@ -609,10 +612,10 @@ def calculate_slr_timeseries(
         Cumulative rainfall erosivity (in :math:`\\frac{MJ.mm}{ha.year}`)
     ri: numpy.ndarray
         # TO DO
-    H: numpy.ndarray
+    h: numpy.ndarray
         Effective drop height (m): estimate of average height between rainfall capture
         by crop and soil.
-    Fc: numpy.ndarray
+    fc: numpy.ndarray
         Soil cover by crop (in %)
     p: numpy.ndarray
         Maximum decay speed (-) #TODO: check unit
@@ -625,7 +628,7 @@ def calculate_slr_timeseries(
     -------
 
     """
-    cc = compute_crop_cover(H, Fc)
+    cc = compute_crop_cover(h, fc)
 
     _, _, a = compute_harvest_residu_decay_rate(rain, temperature, p)
 
