@@ -66,7 +66,7 @@ single period. For example:
     Fc = 0.905
     p = 0.03
     alpha = 5.53
-    intitial_crop_residu = 0.12
+    initial_crop_redisu = 0.12
 
     slr = cfactor.calculate_slr(begin_date,
                                 end_date,
@@ -77,7 +77,8 @@ single period. For example:
                                 H,
                                 Fc,
                                 p,
-                                initial_crop_residu)
+                                initial_crop_residu,
+                                alpha)
 
     print(slr)
     >>>> 0.1384131864957308
@@ -99,7 +100,7 @@ option `return_subfactors`in the function:
                                                          Fc,
                                                          p,
                                                          initial_crop_residu,
-                                                         return_subfactors = True)
+                                                         alpha)
 
 We can use the same function To calculate the slr
 for different locations and crops. Therefore, we need to change some inputs to numpy
@@ -118,7 +119,8 @@ arrays.
     H = np.array()
     Fc = np.array()
     p = np.array()
-    intitial_crop_residu =
+    alpha = np.array()
+    initial_crop_redisu =
 
     slr = cfactor.calculate_slr(begin_date,
                                 end_date,
@@ -129,7 +131,8 @@ arrays.
                                 H,
                                 Fc,
                                 p,
-                                initial_crop_residu)
+                                initial_crop_residu,
+                                alpha)
 
 Of course, you can also use a pandas dataframe to structurize your input data:
 
@@ -164,7 +167,8 @@ Of course, you can also use a pandas dataframe to structurize your input data:
                                        df['H'],
                                        df['Fc'],
                                        df['p'],
-                                       df['initial_crop_residu'])
+                                       df['initial_crop_residu'],
+                                       df['alpha'])
 
 If you run the function above for several timestamps, it is recomended to store the
 intermediate results and subfactors too, as some outputs at time t are used in the
@@ -188,4 +192,5 @@ calculation of time t+1.
                                        df['H'],
                                        df['Fc'],
                                        df['p'],
-                                       df['initial_crop_residu'])
+                                       df['initial_crop_residu'],
+                                       df['alpha'])
