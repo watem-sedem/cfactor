@@ -16,6 +16,6 @@ CURRENT_DIR = Path(os.path.dirname(__file__))
 
 def load_calculated_dummy_data():
     """Calculated example subfactors"""
-    f = CURRENT_DIR / "data" / "dummy_calculations.csv"
-    df = pd.read_csv(f)
-    return df
+    txt_dummy_data = CURRENT_DIR / "data" / "dummy_calculations.csv"
+    df_dummy_data = pd.read_csv(txt_dummy_data)
+    return df_dummy_data

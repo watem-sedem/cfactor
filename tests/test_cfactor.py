@@ -9,42 +9,42 @@ def test_compute_crop_cover():
     """Test calculation of crop cover"""
 
     # Typical case
-    H = 0.49
-    Fc = 0.77
+    h = 0.49
+    fc = 0.77
     expected_cc = 0.34432154097916456
 
-    cc = cfactor.compute_crop_cover(H, Fc)
+    cc = cfactor.compute_crop_cover(h, fc)
     assert cc == expected_cc
 
-    # Out of bound value H
-    H = -0.49
+    # Out of bound value h
+    h = -0.49
 
     with pytest.raises(ValueError) as excinfo:
-        cc = cfactor.compute_crop_cover(H, Fc)
+        cc = cfactor.compute_crop_cover(h, fc)
     assert ("Effective drop height cannot be negative") in str(excinfo.value)
 
-    # Out of bound value Fc - case 1
-    H = 0.49
-    Fc = 1.2
+    # Out of bound value fc - case 1
+    h = 0.49
+    fc = 1.2
 
     with pytest.raises(ValueError) as excinfo:
-        cc = cfactor.compute_crop_cover(H, Fc)
+        cc = cfactor.compute_crop_cover(h, fc)
     assert ("Soil cover must be between 0 and 1") in str(excinfo.value)
 
-    # Out of bound value Fc - case 2
-    Fc = -9
+    # Out of bound value fc - case 2
+    fc = -9
 
     with pytest.raises(ValueError) as excinfo:
-        cc = cfactor.compute_crop_cover(H, Fc)
+        cc = cfactor.compute_crop_cover(h, fc)
     assert ("Soil cover must be between 0 and 1") in str(excinfo.value)
 
     # Typical case numpy
     df_dummy = load_calculated_dummy_data()
-    H = df_dummy["H"].to_numpy()
-    Fc = df_dummy["Fc"].to_numpy()
-    expected_cc = df_dummy["CC"].to_numpy()
-    cc = cfactor.compute_crop_cover(H, Fc)
-    np.testing.assert_allclose(cc, expected_cc)
+    arr_h = df_dummy["h"].to_numpy()
+    arr_fc = df_dummy["fc"].to_numpy()
+    arr_expected_cc = df_dummy["CC"].to_numpy()
+    arr_cc = cfactor.compute_crop_cover(arr_h, arr_fc)
+    np.testing.assert_allclose(arr_cc, arr_expected_cc)
 
 
 def test_compute_soil_roughness():
@@ -54,10 +54,10 @@ def test_compute_soil_roughness():
     rain = 35.41
     rhm = 28.47
     expected_ru = 9.781252579741903
-    expected_f1_N = -0.1951732283464567
-    expected_f2_EI = -0.020072855464159812
-    ru, f1_N, f2_EI = cfactor.compute_soil_roughness(ri, rain, rhm)
-    assert (expected_ru, expected_f1_N, expected_f2_EI) == (ru, f1_N, f2_EI)
+    expected_f1_n = -0.1951732283464567
+    expected_f2_ei = -0.020072855464159812
+    ru, f1_n, f2_ei = cfactor.compute_soil_roughness(ri, rain, rhm)
+    assert (expected_ru, expected_f1_n, expected_f2_ei) == (ru, f1_n, f2_ei)
 
     rain = -10
     with pytest.raises(ValueError) as excinfo:
@@ -66,14 +66,14 @@ def test_compute_soil_roughness():
 
     # Typical case np.array
     df_dummy = load_calculated_dummy_data()
-    ri = df_dummy["Ri"].to_numpy()
-    rain = df_dummy["rain"].to_numpy()
-    rhm = df_dummy["Rhm"].to_numpy()
-    expected_ru = df_dummy["Ru"].to_numpy()
-    expected_f1_N = df_dummy["f1_N"].to_numpy()
-    expected_f2_EI = df_dummy["f2_EI"].to_numpy()
-    expected_result = (expected_ru, expected_f1_N, expected_f2_EI)
-    calculated_result = cfactor.compute_soil_roughness(ri, rain, rhm)
+    arr_ri = df_dummy["Ri"].to_numpy()
+    arr_rain = df_dummy["rain"].to_numpy()
+    arr_rhm = df_dummy["Rhm"].to_numpy()
+    arr_expected_ru = df_dummy["Ru"].to_numpy()
+    arr_expected_f1_n = df_dummy["f1_N"].to_numpy()
+    arr_expected_f2_ei = df_dummy["f2_EI"].to_numpy()
+    expected_result = (arr_expected_ru, arr_expected_f1_n, arr_expected_f2_ei)
+    calculated_result = cfactor.compute_soil_roughness(arr_ri, arr_rain, arr_rhm)
     np.testing.assert_allclose(expected_result, calculated_result)
 
 
@@ -87,10 +87,10 @@ def test_compute_surface_roughness():
 
     # Typical case - np.ndaraay
     df_dummy = load_calculated_dummy_data()
-    ru = df_dummy["Ru"].to_numpy()
-    expected_sr = df_dummy["SR"].to_numpy()
-    sr = cfactor.compute_surface_roughness(ru)
-    np.testing.assert_allclose(expected_sr, sr)
+    arr_ru = df_dummy["Ru"].to_numpy()
+    arr_expected_sr = df_dummy["SR"].to_numpy()
+    arr_sr = cfactor.compute_surface_roughness(arr_ru)
+    np.testing.assert_allclose(arr_expected_sr, arr_sr)
 
 
 def test_calculate_number_of_days():
@@ -104,11 +104,13 @@ def test_calculate_number_of_days():
 
     # Typical case - np.array
     df_dummy = load_calculated_dummy_data()
-    start_dates = df_dummy["bdate"].to_numpy()
-    end_dates = df_dummy["edate"].to_numpy()
-    expected_days = df_dummy["D"].to_numpy()
-    calculated_days = cfactor.calculate_number_of_days(start_dates, end_dates)
-    np.testing.assert_allclose(expected_days, calculated_days)
+    arr_start_dates = df_dummy["bdate"].to_numpy()
+    arr_end_dates = df_dummy["edate"].to_numpy()
+    arr_expected_days = df_dummy["D"].to_numpy()
+    arr_calculated_days = cfactor.calculate_number_of_days(
+        arr_start_dates, arr_end_dates
+    )
+    np.testing.assert_allclose(arr_expected_days, arr_calculated_days)
 
 
 def test_compute_crop_residu():
@@ -126,14 +128,14 @@ def test_compute_crop_residu_timeseries():
     """Test calculation of crop residu on timeseries"""
     # Typical case
     df_dummy = load_calculated_dummy_data()
-    days = df_dummy["D"].to_numpy()
-    a = df_dummy["a"].to_numpy()
+    arr_days = df_dummy["D"].to_numpy()
+    arr_a = df_dummy["a"].to_numpy()
     initial_crop_residu = 5000
-    expected_residu_start = df_dummy["Bsi"].to_numpy()
-    expected_residu_end = df_dummy["Bse"].to_numpy()
-    expected_result = (expected_residu_start, expected_residu_end)
+    arr_expected_residu_start = df_dummy["Bsi"].to_numpy()
+    arr_expected_residu_end = df_dummy["Bse"].to_numpy()
+    expected_result = (arr_expected_residu_start, arr_expected_residu_end)
     calculated_result = cfactor.compute_crop_residu_timeseries(
-        days, a, initial_crop_residu
+        arr_days, arr_a, initial_crop_residu
     )
     np.testing.assert_allclose(expected_result, calculated_result)
 
@@ -145,12 +147,12 @@ def test_compute_harvest_residu_decay_rate():
     rain = 73.56
     temperature = 4.5
     p = 0.05
-    expected_W = 2.8555900621118013
-    expected_F = 0.583248438971586
+    expected_w = 2.8555900621118013
+    expected_f = 0.583248438971586
     expected_a = 0.0291624219485793
 
     result = cfactor.compute_harvest_residu_decay_rate(rain, temperature, p)
-    assert result == (expected_W, expected_F, expected_a)
+    assert result == (expected_w, expected_f, expected_a)
 
     # Out of bound value rain
     rain = -10
@@ -161,14 +163,14 @@ def test_compute_harvest_residu_decay_rate():
 
     # Typical case - np.ndarray
     df_dummy = load_calculated_dummy_data()
-    rain = df_dummy["rain"].to_numpy()
-    temperature = df_dummy["temp"].to_numpy()
-    p = df_dummy["p"].to_numpy()
-    expected_W = df_dummy["W"].to_numpy()
-    expected_F = df_dummy["F"].to_numpy()
-    expected_a = df_dummy["a"].to_numpy()
-    result = cfactor.compute_harvest_residu_decay_rate(rain, temperature, p)
-    np.testing.assert_allclose(result, (expected_W, expected_F, expected_a))
+    arr_rain = df_dummy["rain"].to_numpy()
+    arr_temperature = df_dummy["temp"].to_numpy()
+    arr_p = df_dummy["p"].to_numpy()
+    arr_expected_w = df_dummy["W"].to_numpy()
+    arr_expected_f = df_dummy["F"].to_numpy()
+    arr_expected_a = df_dummy["a"].to_numpy()
+    result = cfactor.compute_harvest_residu_decay_rate(arr_rain, arr_temperature, arr_p)
+    np.testing.assert_allclose(result, (arr_expected_w, arr_expected_f, arr_expected_a))
 
 
 def test_compute_soil_cover():
@@ -184,13 +186,13 @@ def test_compute_soil_cover():
 
     # Typical case np.array
     df_dummy = load_calculated_dummy_data()
-    crop_residu = df_dummy["Bse"].to_numpy()
-    alpha = df_dummy["alpha"].to_numpy()
-    ru = df_dummy["Ru"].to_numpy()
-    expected_sp = df_dummy["Sp"].to_numpy()
-    expected_sc = df_dummy["SC"].to_numpy()
-    expected_result = (expected_sp, expected_sc)
-    calculated_result = cfactor.compute_soil_cover(crop_residu, alpha, ru)
+    arr_crop_residu = df_dummy["Bse"].to_numpy()
+    arr_alpha = df_dummy["alpha"].to_numpy()
+    arr_ru = df_dummy["Ru"].to_numpy()
+    arr_expected_sp = df_dummy["Sp"].to_numpy()
+    arr_expected_sc = df_dummy["SC"].to_numpy()
+    expected_result = (arr_expected_sp, arr_expected_sc)
+    calculated_result = cfactor.compute_soil_cover(arr_crop_residu, arr_alpha, arr_ru)
     np.testing.assert_allclose(expected_result, calculated_result)
 
 
@@ -206,12 +208,12 @@ def test_compute_soil_loss_ratio():
 
     # Typical case np.ndarray
     df_dummy = load_calculated_dummy_data()
-    sc = df_dummy["SC"].to_numpy()
-    sr = df_dummy["SR"].to_numpy()
-    cc = df_dummy["CC"].to_numpy()
-    expected_slr = df_dummy["SLR"].to_numpy()
-    slr = cfactor.compute_soil_loss_ratio(sc, sr, cc)
-    np.testing.assert_allclose(expected_slr, slr)
+    arr_sc = df_dummy["SC"].to_numpy()
+    arr_sr = df_dummy["SR"].to_numpy()
+    arr_cc = df_dummy["CC"].to_numpy()
+    arr_expected_slr = df_dummy["soil_loss_ratio"].to_numpy()
+    arr_slr = cfactor.compute_soil_loss_ratio(arr_sc, arr_sr, arr_cc)
+    np.testing.assert_allclose(arr_expected_slr, arr_slr)
 
     # Test error handling float
     sc = 0.03768204712884102
@@ -219,19 +221,23 @@ def test_compute_soil_loss_ratio():
     cc = 0.99
     with pytest.raises(ValueError) as excinfo:
         slr = cfactor.compute_soil_loss_ratio(sc, sr, cc)
-    assert ("All SLR subfactors must lie between 0 and 1") in str(excinfo.value)
+    assert ("All soil_loss_ratio subfactors must lie between 0 and 1") in str(
+        excinfo.value
+    )
 
     # Test error handling np.ndarray
-    sc = np.array([1, 0.03768204712884102, 1])
-    sr = np.array([0.9999671539111016, -10, 0.9999037924066257])
-    cc = np.array([1, 1, 0.99])
+    arr_sc = np.array([1, 0.03768204712884102, 1])
+    arr_sr = np.array([0.9999671539111016, -10, 0.9999037924066257])
+    arr_cc = np.array([1, 1, 0.99])
     with pytest.raises(ValueError) as excinfo:
-        slr = cfactor.compute_soil_loss_ratio(sc, sr, cc)
-    assert ("All SLR subfactors must lie between 0 and 1") in str(excinfo.value)
+        arr_slr = cfactor.compute_soil_loss_ratio(arr_sc, arr_sr, arr_cc)
+    assert ("All soil_loss_ratio subfactors must lie between 0 and 1") in str(
+        excinfo.value
+    )
 
 
 @pytest.mark.skip(reason="not yet implemented")
 def test_aggregate_slr_to_c_factor():
-    """Test aggregation of SLR to C-factor"""
+    """Test aggregation of soil_loss_ratio to C-factor"""
     # TO DO
     # cfactor.aggregate_slr_to_c_factor()
