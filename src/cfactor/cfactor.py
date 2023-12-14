@@ -519,11 +519,13 @@ def calculate_slr(
     p,
     initial_crop_residu,
     alpha,
-    return_subfactors=False,
 ):
     """Calculate Soil loss ratio based on basic input parameters
 
     This function combines the calculations of all subfactors
+
+    .. note::
+        Prior landuse and soil moisture are assumed equal to one.
 
     Parameters
     ----------
@@ -532,9 +534,9 @@ def calculate_slr(
     end_date: str
         end date of period formatted as 'YYYY-MM-DD'
     rain: float or numpy.ndarray
-        Summed (half monthly) rainfall (mm)
+        Summed rainfall (mm) over period defined by begin_date and end_date
     temperature: float or numpy.ndarray
-        (Average) temperature (degree C)
+        (Average) temperature (degree C) over period by begin_date and end_date
     rhm: float or numpy.ndarray
         Cumulative rainfall erosivity (in :math:`\\frac{MJ.mm}{ha.year}`)
     ri: float or numpy.ndarray
@@ -585,11 +587,13 @@ def calculate_slr_timeseries(
     p,
     initial_crop_residu,
     alpha,
-    return_subfactors=False,
 ):
     """Calculate Soil loss ratio based on basic input parameters
 
     This function combines the calculations of all subfactors
+
+    .. note::
+        Prior landuse and soil moisture are assumed equal to one.
 
     Parameters
     ----------
@@ -597,10 +601,10 @@ def calculate_slr_timeseries(
         start dates of period formatted as 'YYYY-MM-DD'
     end_date: numpy.ndarray
         end dates of period formatted as 'YYYY-MM-DD'
-    rain: numpy.ndarray
-        Summed (half monthly) rainfall (mm)
-    temperature: numpy.ndarray
-        (Average) temperature (degree C)
+    rain: float or numpy.ndarray
+        Summed rainfall (mm) over period defined by begin_date and end_date
+    temperature: float or numpy.ndarray
+        (Average) temperature (degree C) over period by begin_date and end_date
     rhm: numpy.ndarray
         Cumulative rainfall erosivity (in :math:`\\frac{MJ.mm}{ha.year}`)
     ri: numpy.ndarray
