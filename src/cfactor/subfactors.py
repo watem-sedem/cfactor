@@ -258,19 +258,19 @@ def compute_harvest_residu_decay_rate(rain, temperature, p, r0=r0, t0=t0, a=a):
 
     .. math::
 
-        a = p[min(w,f)]
+        a = p[min(W,F)]
 
     with:
 
     .. math::
 
-        w = \\frac{R}{R_0}
+        W = \\frac{R}{R_0}
 
     and
 
     .. math::
 
-        f = \\frac{2(T_a+A)^2.(T_0+a)^2-(T_a+A)^4}{(T_0+A)^4}
+        F = \\frac{2(T_a+A)^2.(T_0+a)^2-(T_a+A)^4}{(T_0+A)^4}
 
     with:
 
