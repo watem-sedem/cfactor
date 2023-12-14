@@ -570,10 +570,7 @@ def calculate_slr(
 
     slr = compute_soil_loss_ratio(sc, sr, cc)
 
-    if return_subfactors:
-        return crop_residu, a, d, ru, cc, sr, sc, slr
-    else:
-        return slr
+    return crop_residu, a, d, ru, cc, sr, sc, slr
 
 
 def calculate_slr_timeseries(
@@ -641,7 +638,4 @@ def calculate_slr_timeseries(
 
     slr = compute_soil_loss_ratio(sc, sr, cc)
 
-    if return_subfactors:
-        return crop_residu, a, d, ru, cc, sr, sc, slr
-    else:
-        return slr
+    return crop_residu, a, d, ru, cc, sr, sc, slr
