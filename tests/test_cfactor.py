@@ -40,8 +40,8 @@ def test_compute_crop_cover():
 
     # Typical case numpy
     df_dummy = load_calculated_dummy_data()
-    arr_h = df_dummy["h"].to_numpy()
-    arr_fc = df_dummy["fc"].to_numpy()
+    arr_h = df_dummy["H"].to_numpy()
+    arr_fc = df_dummy["Fc"].to_numpy()
     arr_expected_cc = df_dummy["CC"].to_numpy()
     arr_cc = cfactor.compute_crop_cover(arr_h, arr_fc)
     np.testing.assert_allclose(arr_cc, arr_expected_cc)
