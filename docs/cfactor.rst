@@ -45,10 +45,9 @@ with
 In the following paragraphs we discuss these subfactors.
 
 .. note::
-
-The following code is developed in the context on an application of Flanders.
-Therefore, not all factors are explicitly defined because data was not available.
-We encourage to add formulations using a Pull request.
+    The following code is developed in the context on an application of Flanders.
+    Therefore, not all factors are explicitly defined because data was not available.
+    We encourage to add formulations using a Pull request.
 
 .. _subfactors:
 
