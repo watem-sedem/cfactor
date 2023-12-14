@@ -9,7 +9,7 @@ Introduction
 The crop or cover management factor (C-factor)  is a measure used in erosion and
 (overland) sediment modelling to quantify the effect of of crop cover and soil management
 on soil loss. It is typically defined in the context of the Revised Soil Loss Equation
-(RUSLE - Renard et al., 1997), in whech gross erosion for an agricultural parcel is
+(RUSLE - Renard et al., 1997), in which gross erosion for an agricultural parcel is
 estimated.
 
 Specifically, the C-factor is based on the concept of deviation
@@ -47,9 +47,8 @@ In the following paragraphs we discuss these subfactors.
 .. note::
 
 The following code is developed in the context on an application of Flanders.
-Therefore, not all factors are explicitly defined (as no need or data were
-available). We encourage developers to add formulations via the
-GitHub-platform.
+Therefore, not all factors are explicitly defined because data was not available.
+We encourage to add formulations using a Pull request.
 
 .. _subfactors:
 
