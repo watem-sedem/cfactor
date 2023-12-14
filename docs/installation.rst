@@ -6,7 +6,7 @@ Installation
 Python is used in this package.
 
 We strongly recommend to make use of the seperate ``cfactor`` Python
-environment to install the dependencies (by using ``tox`` or ``conda``,
+environment to install the dependencies (by using ``venv`` or ``conda``,
 see :ref:`here <installfromsource>`), so it does not
 interfere with other Python installation on your machine.
 
@@ -49,8 +49,8 @@ anybody can recreate the required environment:
 If you which to install the dependencies in a conda environment or your choice,
 check out the dependencies in the ``environment.yml``-file.
 
-With your ``cfactor`` environment activated (``conda activate rfactor``),
-install the rfactor package:
+With your ``cfactor`` environment activated (``conda activate cfactor``),
+install the cfactor package:
 
 ::
 
