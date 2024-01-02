@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 from numba import jit
 
+from cfactor.decorators import check_nan
 from cfactor.util import celc_to_fahr
 
 b = 0.035
@@ -13,6 +14,7 @@ t0 = 37  # degree C
 a = 7.76  # degree C
 
 
+@check_nan
 def compute_surface_roughness(soil_roughness):
     """Computes surface roughness subfactor SR
 
@@ -41,6 +43,7 @@ def compute_surface_roughness(soil_roughness):
     return np.exp(-0.026 * (soil_roughness - 6.096))
 
 
+@check_nan
 def compute_soil_roughness(ri, rain, rhm):
     """Compute soil roughness subfactor
 
@@ -119,6 +122,7 @@ def compute_soil_roughness(ri, rain, rhm):
     return soil_roughness, f1_n, f2_ei
 
 
+@check_nan
 def compute_soil_cover(
     crop_residu,
     alpha,
@@ -178,6 +182,7 @@ def compute_soil_cover(
     return sp, soil_cover
 
 
+@check_nan
 def compute_crop_cover(h, fc):
     """Computes crop cover factor based on soil cover crop and effective drop height
 
@@ -250,6 +255,7 @@ def compute_plu():
     raise NotImplementedError("compute prior land use is not implemented")
 
 
+@check_nan
 def compute_harvest_residu_decay_rate(rain, temperature, p, r0=r0, t0=t0, a=a):
     """Computes crop residu decay coefficient [1]_
 
@@ -331,6 +337,7 @@ def compute_harvest_residu_decay_rate(rain, temperature, p, r0=r0, t0=t0, a=a):
     return w, f, harvest_decay_coefficient
 
 
+@check_nan
 def calculate_number_of_days(bdate, edate):
     """Computes the number of days between two timestamps
 
@@ -350,6 +357,7 @@ def calculate_number_of_days(bdate, edate):
     return d
 
 
+@check_nan
 @jit(nopython=True)
 def compute_crop_residu_timeseries(d, harvest_decay_coefficient, initial_crop_residu):
     """Computes harvest remains on timeseries
@@ -392,6 +400,7 @@ def compute_crop_residu_timeseries(d, harvest_decay_coefficient, initial_crop_re
     return bsi, bse
 
 
+@check_nan
 @jit(nopython=True)
 def compute_crop_residu(d, harvest_decay_coefficient, initial_crop_residu):
     """
@@ -436,6 +445,7 @@ def compute_crop_residu(d, harvest_decay_coefficient, initial_crop_residu):
     return crop_residu
 
 
+@check_nan
 def compute_soil_loss_ratio(
     soil_cover, surface_roughness, crop_cover, soil_moisture=1.0, prior_landuse=1.0
 ):

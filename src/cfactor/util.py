@@ -1,6 +1,9 @@
 import os
 
+from cfactor.decorators import check_nan
 
+
+@check_nan
 def celc_to_fahr(C):
     """
     Computes degree Celsisus

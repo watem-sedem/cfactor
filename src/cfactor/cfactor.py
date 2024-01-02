@@ -1,8 +1,10 @@
 import numpy as np
 
 from cfactor import subfactors
+from cfactor.decorators import check_nan
 
 
+@check_nan
 def aggregate_slr_to_c_factor(soil_loss_ratio, ei30):
     """Aggregate  SLR according to erosivity
 
@@ -25,6 +27,7 @@ def aggregate_slr_to_c_factor(soil_loss_ratio, ei30):
     return c
 
 
+@check_nan
 def calculate_slr(
     begin_date,
     end_date,
