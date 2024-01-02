@@ -3,8 +3,8 @@ import numpy as np
 from cfactor import util
 
 
-def test_celc_to_fahr():
-    """Test the conversion from degrees celcius ot fahrenheit"""
+def test_celc_to_fahr_float():
+    """Test the conversion from degrees celcius ot fahrenheit using floats"""
     # Typical case float
     temperature_celcius = 24
     expected_temperature = 75.2
@@ -12,7 +12,9 @@ def test_celc_to_fahr():
     temperature_fahrenheit = util.celc_to_fahr(temperature_celcius)
     assert expected_temperature == temperature_fahrenheit
 
-    # Test with numpy array
+
+def test_celc_to_fahr_numpy():
+    """Test the conversion from degrees celcius ot fahrenheit using numpy arrays"""
     temperature_celcius_series = np.array([0, 10, 24, -10])
 
     expected_temperature_series = np.array([32.0, 50.0, 75.2, 14.0])
