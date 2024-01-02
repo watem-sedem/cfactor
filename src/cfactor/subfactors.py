@@ -24,13 +24,13 @@ def compute_surface_roughness(soil_roughness):
 
 
     With :math:`R_u` is a measure for roughness of a parcell (mm). See
-    :func:`cfactor.cfactor.compute_soil_roughness` for more information about this
+    :func:`cfactor.subfactors.compute_soil_roughness` for more information about this
     parameter.
 
     Parameters
     ----------
     soil_roughness: float or numpy.ndarray
-        Soil roughness, output from :func:`cfactor.cfactor.compute_soil_roughness`
+        Soil roughness, output from :func:`cfactor.subfactors.compute_soil_roughness`
 
     Returns
     -------
@@ -147,18 +147,18 @@ def compute_soil_cover(
     - :math:`alpha`: soil cover in comparison to weight residu (:math:`m^2/kg`)
 
     - :math:`B_s`: amount of residu per unit of area (:math:`kg/m^2`), for definition,
-       see :func:`cfactor.cfactor.compute_crop_residu`
+       see :func:`cfactor.subfactors.compute_crop_residu`
 
 
     Parameters
     ----------
     crop_residu: float or numpy.ndarray
         crop residu (kg dry matter / ha) for harvest period,
-        see :func:`cfactor.cfactor.compute_crop_residu`
+        see :func:`cfactor.subfactors.compute_crop_residu`
     alpha: floar or numpy.ndarray
         Soil cover in comparison to weight residu (:math:`m^2/kg`)
     soil_roughness: float or numpy.ndarray
-        Soil roughness (mm), see :func:`cfactor.cfactor.compute_soil_roughness`
+        Soil roughness (mm), see :func:`cfactor.subfactors.compute_soil_roughness`
 
     Returns
     -------
@@ -354,7 +354,7 @@ def calculate_number_of_days(bdate, edate):
 def compute_crop_residu_timeseries(d, harvest_decay_coefficient, initial_crop_residu):
     """Computes harvest remains on timeseries
 
-    The function :func:`cfactor.cfactor.compute_crop_residu`. is applied on numpy
+    The function :func:`cfactor.subfactors.compute_crop_residu`. is applied on numpy
     arrays. An initial crop residu is given to the function and for every timestep
     the remaining crop residu after decay is calculated
 
@@ -362,10 +362,10 @@ def compute_crop_residu_timeseries(d, harvest_decay_coefficient, initial_crop_re
     ----------
     d: numpy.ndarray
         number of days, see
-        :func:`cfactor.cfactor.calculate_number_of_days`
+        :func:`cfactor.subfactors.calculate_number_of_days`
     harvest_decay_coefficient: numpy.ndarray
         Harvest decay coefficient (-), see
-        :func:`cfactor.cfactor.compute_harvest_residu_decay_rate`
+        :func:`cfactor.subfactors.compute_harvest_residu_decay_rate`
     initial_crop_residu: float
         Initial amount of crop residu (kg dry matter / ha)
 
@@ -406,17 +406,17 @@ def compute_crop_residu(d, harvest_decay_coefficient, initial_crop_residu):
     - Bse: amount of crop residu at end of period (kg dry matter . :math:`m^{-2}`)
     - Bsb: amount of crop residu at start of period (kg dry matter . :math:`m^{-2}`)
     - a: harvest decay coefficient, see
-        :func:`cfactor.cfactor.compute_harvest_residu_decay_rate`.
+        :func:`cfactor.subfactors.compute_harvest_residu_decay_rate`.
     - d: number of days
 
     Parameters
     ----------
     d: int or numpy.ndarray
         number of days, see
-        :func:`cfactor.cfactor.calculate_number_of_days`
+        :func:`cfactor.subfactors.calculate_number_of_days`
     harvest_decay_coefficient: float or numpy.ndarray
         Harvest decay coefficient (-), see
-        :func:`cfactor.cfactor.compute_harvest_residu_decay_rate`
+        :func:`cfactor.subfactors.compute_harvest_residu_decay_rate`
     initial_crop_residu: float or numpy.ndarray
         Initial amount of crop residu (kg dry matter / ha)
 
@@ -450,12 +450,12 @@ def compute_soil_loss_ratio(
     with
 
     - :math:`SC`: impact of surface cover (due to crop residu), see
-      :func:`cfactor.cfactor.compute_soil_cover`.
+      :func:`cfactor.subfactors.compute_soil_cover`.
 
-    - :math:`CC`: impact of canopy cover, :func:`cfactor.cfactor.compute_crop_cover`.
+    - :math:`CC`: impact of canopy cover, :func:`cfactor.subfactors.compute_crop_cover`.
 
     - :math:`SR`: impact of surface roughness (due to farming operations)
-      :func:`cfactor.cfactor.compute_surface_roughness`.
+      :func:`cfactor.subfactors.compute_surface_roughness`.
 
     - :math:`SM`: impact of surface moisture
 
@@ -465,15 +465,15 @@ def compute_soil_loss_ratio(
     Parameters
     ----------
     soil_cover: float or numpy.ndarray
-        soil cover subfactor, see `cfactor.cfactor.compute_soil_cover`
+        soil cover subfactor, see `cfactor.subfactors.compute_soil_cover`
     surface_roughness: float or numpy.ndarray
-        surface roughness subfactor, see `cfactor.cfactor.compute_surface_roughness`
+        surface roughness subfactor, see `cfactor.subfactors.compute_surface_roughness`
     crop_cover: float or numpy.ndarray
-        canopy cover subfactor, see `cfactor.cfactor.compute_crop_cover`
+        canopy cover subfactor, see `cfactor.subfactors.compute_crop_cover`
     soil_moisture: float or numpy.ndarray
-        soil moisture subfactor, see `cfactor.cfactor.compute_soil_moisture`
+        soil moisture subfactor, see `cfactor.subfactors.compute_soil_moisture`
     prior_landuse: float or numpy.ndarray
-        prior land use subfactor, see `cfactor.cfactor.compute_plu`
+        prior land use subfactor, see `cfactor.subfactors.compute_plu`
 
     Returns
     -------
