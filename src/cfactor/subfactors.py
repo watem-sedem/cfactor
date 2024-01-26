@@ -36,7 +36,7 @@ def compute_surface_roughness(soil_roughness):
     Returns
     -------
     float or numpy.ndarray
-        Surface roughness ([0,1])
+        Surface roughness (-, [0,1])
 
     """
     return np.exp(-0.026 * (soil_roughness - 6.096))
@@ -46,7 +46,7 @@ def compute_surface_roughness(soil_roughness):
 def compute_soil_roughness(ri, rain, rhm):
     """Compute soil roughness subfactor
 
-    This function computes the roughness for every roughness period id. The beginning
+    This function computes the soil roughness. The beginning
     of a period is defined by a new roughness condition (i.e. prep for a new crop by
     plowing):
 
