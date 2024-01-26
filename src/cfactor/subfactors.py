@@ -336,7 +336,6 @@ def compute_harvest_residu_decay_rate(rain, temperature, p, r0=r0, t0=t0, a=a):
     return w, f, harvest_decay_coefficient
 
 
-@check_nan
 def calculate_number_of_days(bdate, edate):
     """Computes the number of days between two timestamps
 
