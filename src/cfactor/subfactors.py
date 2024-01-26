@@ -1,6 +1,5 @@
 import numpy as np
 import pandas as pd
-from numba import jit
 
 from cfactor.decorators import check_nan
 from cfactor.util import celc_to_fahr
@@ -358,7 +357,6 @@ def calculate_number_of_days(bdate, edate):
 
 
 @check_nan
-@jit(nopython=True)
 def compute_crop_residu_timeseries(d, harvest_decay_coefficient, initial_crop_residu):
     """Computes harvest remains on timeseries
 
@@ -401,7 +399,6 @@ def compute_crop_residu_timeseries(d, harvest_decay_coefficient, initial_crop_re
 
 
 @check_nan
-@jit(nopython=True)
 def compute_crop_residu(d, harvest_decay_coefficient, initial_crop_residu):
     """
     Computes harvest remains per unit of area over nodes [1]_:
