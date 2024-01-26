@@ -1,7 +1,7 @@
 import numpy as np
 
 from cfactor import subfactors
-from cfactor.decorators import check_nan
+from cfactor.decorators import check_length, check_nan
 
 
 @check_nan
@@ -28,6 +28,7 @@ def aggregate_slr_to_c_factor(soil_loss_ratio, ei30):
 
 
 @check_nan
+@check_length
 def calculate_soil_loss_ratio(
     begin_date,
     end_date,

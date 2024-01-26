@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 
-from cfactor.decorators import check_nan
+from cfactor.decorators import check_length, check_nan
 from cfactor.util import celc_to_fahr
 
 b = 0.035
@@ -43,6 +43,7 @@ def compute_surface_roughness(soil_roughness):
 
 
 @check_nan
+@check_length
 def compute_soil_roughness(ri, rain, rhm):
     """Compute soil roughness subfactor
 
@@ -122,6 +123,7 @@ def compute_soil_roughness(ri, rain, rhm):
 
 
 @check_nan
+@check_length
 def compute_soil_cover(
     crop_residu,
     alpha,
@@ -182,6 +184,7 @@ def compute_soil_cover(
 
 
 @check_nan
+@check_length
 def compute_crop_cover(h, fc):
     """Computes crop cover factor based on soil cover crop and effective drop height
 
@@ -321,6 +324,9 @@ def compute_harvest_residu_decay_rate(rain, temperature, p, r0=r0, t0=t0, a=a):
     if np.any(np.asarray(rain) < 0):
         raise ValueError("Halfmonthly rainfall cannot be negative")
 
+    if np.asarray(rain).shape != np.asarray(temperature).shape:
+        raise ValueError("Dimensions of rain and temperature input must be the same")
+
     w = rain / r0
 
     temperature = celc_to_fahr(temperature)
@@ -336,6 +342,7 @@ def compute_harvest_residu_decay_rate(rain, temperature, p, r0=r0, t0=t0, a=a):
     return w, f, harvest_decay_coefficient
 
 
+@check_length
 def calculate_number_of_days(bdate, edate):
     """Computes the number of days between two timestamps
 
@@ -442,6 +449,7 @@ def compute_crop_residu(d, harvest_decay_coefficient, initial_crop_residu):
 
 
 @check_nan
+@check_length
 def compute_soil_loss_ratio(
     soil_cover, surface_roughness, crop_cover, soil_moisture=1.0, prior_landuse=1.0
 ):
