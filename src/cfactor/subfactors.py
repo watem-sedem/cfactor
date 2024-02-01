@@ -363,7 +363,7 @@ def calculate_number_of_days(bdate, edate):
 
 
 @check_nan
-def compute_crop_residu_timeseries(d, harvest_decay_coefficient, initial_crop_residu):
+def compute_crop_residu(d, harvest_decay_coefficient, initial_crop_residu, mode="time"):
     """Computes harvest remains on timeseries
 
     The function :func:`cfactor.subfactors.compute_crop_residu`. is applied on numpy
@@ -383,29 +383,46 @@ def compute_crop_residu_timeseries(d, harvest_decay_coefficient, initial_crop_re
 
     Returns
     -------
-    bsi: numpy.ndarray
-        Crop residu (kg/m2) at the start of each period
     bse: numpy.ndarray
         Crop residu (kg/m²) at the end of each period
 
     """
-    if not (d.shape == harvest_decay_coefficient.shape):
-        raise ValueError("dimension mismatch")
+    if not (np.asarray(d).shape == np.asarray(harvest_decay_coefficient).shape):
+        raise ValueError(
+            "dimension mismatch between number of days and " "decay coefficients"
+        )
 
-    bse = np.zeros(d.shape[0])
-    bsi = np.zeros(d.shape[0])
-    bsi[0] = initial_crop_residu
-    bse[0] = compute_crop_residu(
-        d[0], harvest_decay_coefficient[0], initial_crop_residu
-    )
-    for i in range(1, d.shape[0]):
-        bsi[i] = bse[i - 1]
-        bse[i] = compute_crop_residu(d[i], harvest_decay_coefficient[i], bsi[i])
-    return bsi, bse
+    if mode == "time":
+        if not isinstance(initial_crop_residu, "float"):
+            raise ValueError(
+                "To calculate the cropresidu in a timeseries, the intial"
+                "crop residu must be a float"
+            )
+
+        end_residu = np.zeros(d.shape[0])
+        intial_residu = np.zeros(d.shape[0])
+        intial_residu[0] = initial_crop_residu
+        end_residu[0] = compute_crop_residu(
+            d[0], harvest_decay_coefficient[0], initial_crop_residu
+        )
+        for i in range(1, d.shape[0]):
+            intial_residu[i] = end_residu[i - 1]
+            end_residu[i] = _compute_crop_residu(
+                d[i], harvest_decay_coefficient[i], intial_residu[i]
+            )
+    elif mode == "space":
+        if not (np.asarray(d).shape == np.asarray(initial_crop_residu).shape):
+            raise ValueError("There is no initial crop residu given for every period")
+
+        end_residu = _compute_crop_residu(
+            d, harvest_decay_coefficient, initial_crop_residu
+        )
+    return end_residu
 
 
 @check_nan
-def compute_crop_residu(d, harvest_decay_coefficient, initial_crop_residu):
+@check_length
+def _compute_crop_residu(d, harvest_decay_coefficient, initial_crop_residu):
     """
     Computes harvest remains per unit of area over nodes [1]_:
 

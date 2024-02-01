@@ -134,17 +134,31 @@ def test_calculate_number_of_days_numpy():
     np.testing.assert_allclose(arr_expected_days, arr_calculated_days)
 
 
-def test_compute_crop_residu():
+def test_compute_crop_residu_single_moment_single_place():
     """Test expected result of compute_crop_residu"""
     days = 15
     initial_crop_residu = 5000
     a = 0.02518464958645108
     expected_residu = 3426.9414870271776
-    calculated_residu = subfactors.compute_crop_residu(days, a, initial_crop_residu)
+    calculated_residu = subfactors.compute_crop_residu(
+        days, a, initial_crop_residu, mode="space"
+    )
     assert expected_residu == calculated_residu
 
 
-def test_compute_crop_residu_timeseries():
+def test_compute_crop_residu_single_moment_multiple_places():
+    """Test expected result of compute_crop_residu"""
+    days = 15
+    initial_crop_residu = 5000
+    a = 0.02518464958645108
+    expected_residu = 3426.9414870271776
+    calculated_residu = subfactors.compute_crop_residu(
+        days, a, initial_crop_residu, mode="space"
+    )
+    assert expected_residu == calculated_residu
+
+
+def test_compute_crop_residu_multiple_times_single_place():
     """Test calculation of crop residu on timeseries"""
 
     df_dummy = load_calculated_dummy_data()
@@ -155,7 +169,7 @@ def test_compute_crop_residu_timeseries():
     arr_expected_residu_end = df_dummy["Bse"].to_numpy()
     expected_result = (arr_expected_residu_start, arr_expected_residu_end)
     calculated_result = subfactors.compute_crop_residu_timeseries(
-        arr_days, arr_a, initial_crop_residu
+        arr_days, arr_a, initial_crop_residu, mode="time"
     )
     np.testing.assert_allclose(expected_result, calculated_result)
 
