@@ -393,10 +393,10 @@ def compute_crop_residu(d, harvest_decay_coefficient, initial_crop_residu, mode=
         )
 
     if mode == "time":
-        if not isinstance(initial_crop_residu, "float"):
+        if not isinstance(initial_crop_residu, (float, int)):
             raise ValueError(
                 "To calculate the cropresidu in a timeseries, the intial"
-                "crop residu must be a float"
+                "crop residu must be a float or integer value"
             )
 
         end_residu = np.zeros(d.shape[0])
