@@ -165,13 +165,11 @@ def test_compute_crop_residu_multiple_times_single_place():
     arr_days = df_dummy["D"].to_numpy()
     arr_a = df_dummy["a"].to_numpy()
     initial_crop_residu = 5000
-    arr_expected_residu_start = df_dummy["Bsi"].to_numpy()
     arr_expected_residu_end = df_dummy["Bse"].to_numpy()
-    expected_result = (arr_expected_residu_start, arr_expected_residu_end)
     calculated_result = subfactors.compute_crop_residu(
         arr_days, arr_a, initial_crop_residu, mode="time"
     )
-    np.testing.assert_allclose(expected_result, calculated_result)
+    np.testing.assert_allclose(arr_expected_residu_end, calculated_result)
 
 
 def test_compute_harvest_residu_decay_rate_float():
