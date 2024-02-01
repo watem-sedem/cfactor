@@ -400,20 +400,18 @@ def compute_crop_residu(d, harvest_decay_coefficient, initial_crop_residu, mode=
             )
 
         end_residu = np.zeros(d.shape[0])
-        intial_residu = np.zeros(d.shape[0])
-        intial_residu[0] = initial_crop_residu
-        end_residu[0] = compute_crop_residu(
+        initial_residu = np.zeros(d.shape[0])
+        initial_residu[0] = initial_crop_residu
+        end_residu[0] = _compute_crop_residu(
             d[0], harvest_decay_coefficient[0], initial_crop_residu
         )
+
         for i in range(1, d.shape[0]):
-            intial_residu[i] = end_residu[i - 1]
+            initial_residu[i] = end_residu[i - 1]
             end_residu[i] = _compute_crop_residu(
-                d[i], harvest_decay_coefficient[i], intial_residu[i]
+                d[i], harvest_decay_coefficient[i], initial_residu[i]
             )
     elif mode == "space":
-        if not (np.asarray(d).shape == np.asarray(initial_crop_residu).shape):
-            raise ValueError("There is no initial crop residu given for every period")
-
         end_residu = _compute_crop_residu(
             d, harvest_decay_coefficient, initial_crop_residu
         )
