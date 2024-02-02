@@ -4,14 +4,6 @@ import pandas as pd
 from cfactor.decorators import check_length, check_nan
 from cfactor.util import celc_to_fahr
 
-b = 0.035
-rii = 6.096
-
-r0 = 25.76  # minimum gemiddelde halfmaandelijks neerslag nodig voor afbraak
-# (opm. pagina 6?)
-t0 = 37  # degree C
-a = 7.76  # degree C
-
 
 @check_nan
 def compute_surface_roughness(soil_roughness):
@@ -124,11 +116,7 @@ def compute_soil_roughness(ri, rain, rhm):
 
 @check_nan
 @check_length
-def compute_soil_cover(
-    crop_residu,
-    alpha,
-    soil_roughness,
-):
+def compute_soil_cover(crop_residu, alpha, soil_roughness, b):
     """Computes soil cover (SC) subfactor
 
     This subfactor is defined as the erosion limiting influence of the ground cover
@@ -164,6 +152,7 @@ def compute_soil_cover(
         Soil cover in comparison to weight residu (:math:`m^2/kg`)
     soil_roughness: float or numpy.ndarray
         Soil roughness (mm), see :func:`cfactor.subfactors.compute_soil_roughness`
+    b: float
 
     Returns
     -------
@@ -258,7 +247,7 @@ def compute_plu():
 
 
 @check_nan
-def compute_harvest_residu_decay_rate(rain, temperature, p, r0=r0, t0=t0, a=a):
+def compute_harvest_residu_decay_rate(rain, temperature, p, r0, t0, a):
     """Computes crop residu decay coefficient [1]_
 
     The soil cover by harvest residues changes in time by decay processes.
@@ -395,7 +384,7 @@ def compute_crop_residu(d, harvest_decay_coefficient, initial_crop_residu, mode=
     if mode == "time":
         if not isinstance(initial_crop_residu, (float, int)):
             raise ValueError(
-                "To calculate the cropresidu in a timeseries, the intial"
+                "To calculate the cropresidu in a timeseries, the initial"
                 "crop residu must be a float or integer value"
             )
 

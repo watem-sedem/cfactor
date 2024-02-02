@@ -3,6 +3,13 @@ import numpy as np
 from cfactor import subfactors
 from cfactor.decorators import check_length, check_nan
 
+b = 0.035
+rii = 6.096
+
+r0 = 25.76  # minimum mean half monthly rrainfall needed for decay
+t0 = 37  # degree C
+a = 7.76  # degree C
+
 
 @check_nan
 def aggregate_slr_to_c_factor(soil_loss_ratio, ei30):
@@ -41,6 +48,11 @@ def calculate_soil_loss_ratio(
     p,
     initial_crop_residu,
     alpha,
+    mode,
+    r0=r0,
+    t0=t0,
+    a=a,
+    b=b,
 ):
     """Calculate Soil loss ratio based on basic input parameters
 
@@ -74,6 +86,18 @@ def calculate_soil_loss_ratio(
         Initial amount of crop residu (kg dry matter / ha)
     alpha: float or numpy.ndarray
         Soil cover in comparison to weight residu (:math:`m^2/kg`)
+    mode: str
+        Calculate the SLR for a timeseries (mode='time') or for a single moment in time
+        (mode='space')
+    r0: float
+        Average half monthly rainfall (mm)
+    t0: float
+        Optimal temperature for decay (degree C)
+    a: float
+        coefficient used to express the shape of the decay function
+        as a function of temperature (degree C)
+    b: float
+        coeffienct: TO DO
 
     Returns
     -------
@@ -103,20 +127,20 @@ def calculate_soil_loss_ratio(
     crop_cover = subfactors.compute_crop_cover(h, fc)
 
     _, _, harvest_decay_coefficient = subfactors.compute_harvest_residu_decay_rate(
-        rain, temperature, p
+        rain, temperature, p, r0=r0, t0=t0, a=a
     )
 
     d = subfactors.calculate_number_of_days(begin_date, end_date)
 
     crop_residu = subfactors.compute_crop_residu(
-        d, harvest_decay_coefficient, initial_crop_residu
+        d, harvest_decay_coefficient, initial_crop_residu, mode
     )
 
     soil_roughness, _, _ = subfactors.compute_soil_roughness(ri, rain, rhm)
     surface_roughness = subfactors.compute_surface_roughness(soil_roughness)
 
     _, soil_cover = subfactors.compute_soil_cover(
-        initial_crop_residu, alpha, soil_roughness
+        initial_crop_residu, alpha, soil_roughness, b=b
     )
 
     soil_loss_ratio = subfactors.compute_soil_loss_ratio(
