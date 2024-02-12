@@ -218,14 +218,16 @@ def test_compute_soil_cover_float():
     crop_residu = 5000
     alpha = 5.53
     ru = 6.096
+    b = 0.035
     expected_sp = 93.7023900651985
     expected_sc = 0.037643926507827864
-    sp, sc = subfactors.compute_soil_cover(crop_residu, alpha, ru)
+    sp, sc = subfactors.compute_soil_cover(crop_residu, alpha, ru, b)
     assert (expected_sp, expected_sc) == (sp, sc)
 
 
 def test_compute_soil_cover_numpy():
     """Test expected result of compute_soil_cover using np.array"""
+    b = 0.035
     df_dummy = load_calculated_dummy_data()
     arr_crop_residu = df_dummy["Bse"].to_numpy()
     arr_alpha = df_dummy["alpha"].to_numpy()
@@ -234,7 +236,7 @@ def test_compute_soil_cover_numpy():
     arr_expected_sc = df_dummy["SC"].to_numpy()
     expected_result = (arr_expected_sp, arr_expected_sc)
     calculated_result = subfactors.compute_soil_cover(
-        arr_crop_residu, arr_alpha, arr_ru
+        arr_crop_residu, arr_alpha, arr_ru, b
     )
     np.testing.assert_allclose(expected_result, calculated_result)
 
