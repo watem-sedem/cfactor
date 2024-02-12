@@ -138,10 +138,10 @@ def test_compute_crop_residu_single_moment_single_place():
     """Test expected result of compute_crop_residu"""
     days = 15
     initial_crop_residu = 5000
-    a = 0.02518464958645108
+    harvest_decay_coefficient = 0.02518464958645108
     expected_residu = 3426.9414870271776
     calculated_residu = subfactors.compute_crop_residu(
-        days, a, initial_crop_residu, mode="space"
+        days, harvest_decay_coefficient, initial_crop_residu, mode="space"
     )
     assert expected_residu == calculated_residu
 
@@ -149,13 +149,15 @@ def test_compute_crop_residu_single_moment_single_place():
 def test_compute_crop_residu_single_moment_multiple_places():
     """Test expected result of compute_crop_residu"""
     days = 15
-    initial_crop_residu = 5000
-    a = 0.02518464958645108
-    expected_residu = 3426.9414870271776
-    calculated_residu = subfactors.compute_crop_residu(
-        days, a, initial_crop_residu, mode="space"
+    arr_initial_crop_residu = np.array([5000, 5500, 6000])
+    arr_harvest_decay_coefficient = np.array(
+        [0.02518464958645108, 0.0286742362808827, 0.0061545576603491]
     )
-    assert expected_residu == calculated_residu
+    arr_expected_residu = np.array([3426.94148703, 3577.39380555, 5470.88888097])
+    arr_calculated_residu = subfactors.compute_crop_residu(
+        days, arr_harvest_decay_coefficient, arr_initial_crop_residu, mode="space"
+    )
+    np.testing.assert_allclose(arr_expected_residu, arr_calculated_residu)
 
 
 def test_compute_crop_residu_multiple_times_single_place():
@@ -163,11 +165,11 @@ def test_compute_crop_residu_multiple_times_single_place():
 
     df_dummy = load_calculated_dummy_data()
     arr_days = df_dummy["D"].to_numpy()
-    arr_a = df_dummy["a"].to_numpy()
+    arr_harvest_decay_coefficient = df_dummy["a"].to_numpy()
     initial_crop_residu = 5000
     arr_expected_residu_end = df_dummy["Bse"].to_numpy()
     calculated_result = subfactors.compute_crop_residu(
-        arr_days, arr_a, initial_crop_residu, mode="time"
+        arr_days, arr_harvest_decay_coefficient, initial_crop_residu, mode="time"
     )
     np.testing.assert_allclose(arr_expected_residu_end, calculated_result)
 

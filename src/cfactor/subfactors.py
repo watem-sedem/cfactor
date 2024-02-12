@@ -377,16 +377,16 @@ def compute_crop_residu(d, harvest_decay_coefficient, initial_crop_residu, mode=
         Crop residu (kg/m²) at the end of each period
 
     """
-    if not (np.asarray(d).shape == np.asarray(harvest_decay_coefficient).shape):
-        raise ValueError(
-            "dimension mismatch between number of days and " "decay coefficients"
-        )
-
     if mode == "time":
         if not isinstance(initial_crop_residu, (float, int)):
             raise ValueError(
                 "To calculate the cropresidu in a timeseries, the initial"
                 "crop residu must be a float or integer value"
+            )
+
+        if not (np.asarray(d).shape == np.asarray(harvest_decay_coefficient).shape):
+            raise ValueError(
+                "dimension mismatch between number of days and " "decay coefficients"
             )
 
         end_residu = np.zeros(d.shape[0])

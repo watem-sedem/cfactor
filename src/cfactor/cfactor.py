@@ -100,7 +100,7 @@ def calculate_soil_loss_ratio(
     harvest_decay_coefficient: float or numpy.ndarray
         Harvest decay coefficient (-)
 
-    d: number of daysgit
+    d: number of days
 
     soil_roughness:  numpy.ndarray
         Soil roughness (mm)
