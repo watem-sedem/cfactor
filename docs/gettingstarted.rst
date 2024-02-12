@@ -18,7 +18,8 @@ Three possibilities exist to calculate the soil loss ratio (SLR):
 - for different crops/locations on the same time
 - for a timeseries of a crop on a given location
 
-To enable these possibilities, the functions were made as generic as possible.
+To enable these possibilities, the functions in this package were made as generic as
+possible.
 They work both with float values as with (one-dimensional) numpy arrays.
 
 We will explore these three possibilities in the following tutorial.
@@ -45,7 +46,7 @@ Start with importing the package
 
 .. code-block:: python
 
-    from cfactor import cfactor
+    import cfactor
 
 .. note::
     Make sure to activate the conda environment ``conda activate cfactor`` with the
@@ -62,47 +63,36 @@ single period. For example:
     temperature = 18.48
     rhm = 109.22
     ri = 6.1
-    H = 0.15
-    Fc = 0.905
+    h = 0.15
+    fc = 0.905
     p = 0.03
     alpha = 5.53
-    initial_crop_redisu = 0.12
+    initial_crop_redisu = 5000
+    mode = 'space'
 
-    slr = cfactor.calculate_slr(begin_date,
-                                end_date,
-                                rain,
-                                temperature,
-                                rhm,
-                                ri,
-                                H,
-                                Fc,
-                                p,
-                                initial_crop_residu,
-                                alpha)
+    crop_residu, harvest_decay_coefficient, \
+    days, soil_roughness, crop_cover, \
+    surface_roughness, soil_cover, \
+    soil_loss_ratio = cfactor.calculate_soil_loss_ratio(begin_date,
+                                                        end_date,
+                                                        rain,
+                                                        temperature,
+                                                        rhm,
+                                                        ri,
+                                                        h,
+                                                        fc,
+                                                        p,
+                                                        initial_crop_residu,
+                                                        alpha,
+                                                        mode
 
-    print(slr)
+    print(soil_loss_ratio)
     >>>> 0.1384131864957308
 
-The output is a single value that represents the soil loss ratio for the crop and location
-between the start and end date.
-If you want to know the calculated subfactors of the soil loss ratio, enable the
-option `return_subfactors`in the function:
+The output contains all subfactors and the soil_loss_ratio calculated for the crop
+and location between the start and end date.
 
-.. code-block:: python
-
-    crop_residu, cc, sr, sc, slr = cfactor.calculate_slr(begin_date,
-                                                         end_date,
-                                                         rain,
-                                                         temperature,
-                                                         rhm,
-                                                         ri,
-                                                         H,
-                                                         Fc,
-                                                         p,
-                                                         initial_crop_residu,
-                                                         alpha)
-
-We can use the same function To calculate the slr
+We can use the same function To calculate the SLR and its subfactors
 for different locations and crops. Therefore, we need to change some inputs to numpy
 arrays.
 
@@ -112,41 +102,49 @@ arrays.
 
     begin_date = '2023-06-01'
     end_date = '2023-06-15'
-    rain = np.array()
-    temperature = np.array()
-    rhm = np.array()
-    ri = np.array()
-    H = np.array()
-    Fc = np.array()
-    p = np.array()
-    alpha = np.array()
-    initial_crop_redisu =
+    rain = np.array([35.41, 33.95, 28.51, 26.76])
+    temperature = np.array([18.48, 17.23, 18.86, 1.47])
+    rhm = np.array([109.22, 145.195, 53.505, 28.47])
+    ri = np.array([6.1, 10.2, 6.096, 6.1])
+    h = np.array([0.15, 0.015, 0.13, 0])
+    fc = np.array([0.905, 0.875, 0.725, 0.405])
+    p = np.array([0.03, 0.01, 0.05, 0.03])
+    alpha = np.array([5.53, 5.53, 9.21, 23.03])
+    initial_crop_redisu = np.array([5000, 4500, 150, 3500])
+    mode = 'space'
 
-    slr = cfactor.calculate_slr(begin_date,
-                                end_date,
-                                rain,
-                                temperature,
-                                rhm,
-                                ri,
-                                H,
-                                Fc,
-                                p,
-                                initial_crop_residu,
-                                alpha)
+    crop_residu, harvest_decay_coefficient, \
+    days, soil_roughness, crop_cover, \
+    surface_roughness, soil_cover, \
+    soil_loss_ratio = cfactor.calculate_soil_loss_ratio(begin_date,
+                                                        end_date,
+                                                        rain,
+                                                        temperature,
+                                                        rhm,
+                                                        ri,
+                                                        h,
+                                                        fc,
+                                                        p,
+                                                        initial_crop_residu,
+                                                        alpha,
+                                                        mode
+
+    print(soil_loss_ratio)
+    >>>> 0.1384131864957308
 
 Of course, you can also use a pandas dataframe to structurize your input data:
 
-+----------+------+-------------+-----+----+---+----+---+---------------------+
-| field_id | rain | temperature | rhm | ri | H | Fc | p | initial_crop_residu |
-+==========+======+=============+=====+====+===+====+===+=====================+
-| 1        |      |             |     |    |   |    |   |                     |
-+----------+------+-------------+-----+----+---+----+---+---------------------+
-| 2        |      |             |     |    |   |    |   |                     |
-+----------+------+-------------+-----+----+---+----+---+---------------------+
-| 3        |      |             |     |    |   |    |   |                     |
-+----------+------+-------------+-----+----+---+----+---+---------------------+
-| 4        |      |             |     |    |   |    |   |                     |
-+----------+------+-------------+-----+----+---+----+---+---------------------+
++----------+-------+-------------+---------+-------+-------+-------+------+---------------------+
+| field_id | rain  | temperature | rhm     | ri    | H     | Fc    | p    | initial_crop_residu |
++==========+=======+=============+=========+=======+=======+=======+======+=====================+
+| 1        | 35.41 | 18.48       | 109.22  | 6.1   | 0.15  | 0.905 | 0.03 | 5000                |
++----------+-------+-------------+---------+-------+-------+-------+------+---------------------+
+| 2        | 33.95 | 17.23       | 145.195 | 10.2  | 0.015 | 0.875 | 0.01 | 4500                |
++----------+-------+-------------+---------+-------+-------+-------+------+---------------------+
+| 3        | 28.51 | 18.86       | 53.505  | 6.096 | 0.13  | 0.725 | 0.05 | 150                 |
++----------+-------+-------------+---------+-------+-------+-------+------+---------------------+
+| 4        | 26.76 | 14.47       | 28.47   | 6.1   | 0     | 0.405 | 0.03 | 3500                |
++----------+-------+-------------+---------+-------+-------+-------+------+---------------------+
 
 
 .. code-block:: python
@@ -158,39 +156,17 @@ Of course, you can also use a pandas dataframe to structurize your input data:
 
     df = pd.read_csv(crop_data_timestamp_x.csv)
 
-    df['slr'] = cfactor.calculated_slr(begin_date,
-                                       end_date,
-                                       df['rain'],
-                                       df['temperature'],
-                                       df['rhm'],
-                                       df['ri'],
-                                       df['H'],
-                                       df['Fc'],
-                                       df['p'],
-                                       df['initial_crop_residu'],
-                                       df['alpha'])
-
-If you run the function above for several timestamps, it is recomended to store the
-intermediate results and subfactors too, as some outputs at time t are used in the
-calculation of time t+1.
-
-.. code-block:: python
-
-    import pandas as pd
-
-    begin_date = '2023-06-01'
-    end_date = '2023-06-15'
-
-    df = pd.read_csv(crop_data_timestamp_x.csv)
-
-    df['slr'] = cfactor.calculated_slr(begin_date,
-                                       end_date,
-                                       df['rain'],
-                                       df['temperature'],
-                                       df['rhm'],
-                                       df['ri'],
-                                       df['H'],
-                                       df['Fc'],
-                                       df['p'],
-                                       df['initial_crop_residu'],
-                                       df['alpha'])
+    df[['crop_residu', 'harvest_decay_coefficient', \
+    'days', 'soil_roughness', 'crop_cover', \
+    'surface_roughness', 'soil_cover', \
+    'soil_loss_ratio' = cfactor.calculated_slr(begin_date,
+                                               end_date,
+                                               df['rain'],
+                                               df['temperature'],
+                                               df['rhm'],
+                                               df['ri'],
+                                               df['H'],
+                                               df['Fc'],
+                                               df['p'],
+                                               df['initial_crop_residu'],
+                                               df['alpha'])
