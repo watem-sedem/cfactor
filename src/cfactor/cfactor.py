@@ -1,14 +1,8 @@
 import numpy as np
 
 from cfactor import subfactors
+from cfactor.constants import a, b, r0, t0
 from cfactor.decorators import check_length, check_nan
-
-b = 0.035
-rii = 6.096
-
-r0 = 25.76  # minimum mean half monthly rrainfall needed for decay
-t0 = 37  # degree C
-a = 7.76  # degree C
 
 
 @check_nan

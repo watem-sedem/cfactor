@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 
+from cfactor.constants import a, b, r0, t0
 from cfactor.decorators import check_length, check_nan
 from cfactor.util import celc_to_fahr
 
@@ -116,7 +117,7 @@ def compute_soil_roughness(ri, rain, rhm):
 
 @check_nan
 @check_length
-def compute_soil_cover(crop_residu, alpha, soil_roughness, b):
+def compute_soil_cover(crop_residu, alpha, soil_roughness, b=b):
     """Computes soil cover (SC) subfactor
 
     This subfactor is defined as the erosion limiting influence of the ground cover
@@ -247,7 +248,7 @@ def compute_plu():
 
 
 @check_nan
-def compute_harvest_residu_decay_rate(rain, temperature, p, r0, t0, a):
+def compute_harvest_residu_decay_rate(rain, temperature, p, r0=r0, t0=t0, a=a):
     """Computes crop residu decay coefficient [1]_
 
     The soil cover by harvest residues changes in time by decay processes.
