@@ -31,7 +31,7 @@ Install from source
 To install from source, ``git clone`` the repository somewhere on your local
 machine and install the code from source.
 
-Make sure to setup a new environment  in either conda or venv (using tox):
+Make sure to setup a new environment  in either conda or venv:
 
 Using conda
 ^^^^^^^^^^^

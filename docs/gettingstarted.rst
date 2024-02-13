@@ -125,12 +125,10 @@ arrays.
                                                         h,
                                                         fc,
                                                         p,
-                                                        initial_crop_residu,
+                                                        initial_crop_redisu,
                                                         alpha,
-                                                        mode
+                                                        mode)
 
-    print(soil_loss_ratio)
-    >>>> 0.1384131864957308
 
 Of course, you can also use a pandas dataframe to structurize your input data:
 
@@ -146,6 +144,8 @@ Of course, you can also use a pandas dataframe to structurize your input data:
 | 4        | 26.76 | 14.47       | 28.47   | 6.1   | 0     | 0.405 | 0.03 | 3500                |
 +----------+-------+-------------+---------+-------+-------+-------+------+---------------------+
 
+When using a pandas dataframe, we can calculate the soil loss ratio and the subfactors
+like the example below:
 
 .. code-block:: python
 
@@ -154,7 +154,7 @@ Of course, you can also use a pandas dataframe to structurize your input data:
     begin_date = '2023-06-01'
     end_date = '2023-06-15'
 
-    df = pd.read_csv(crop_data_timestamp_x.csv)
+    df = pd.read_csv('crop_data_timestamp_x.csv')
 
     df[['crop_residu', 'harvest_decay_coefficient', \
     'days', 'soil_roughness', 'crop_cover', \
@@ -169,4 +169,42 @@ Of course, you can also use a pandas dataframe to structurize your input data:
                                                df['Fc'],
                                                df['p'],
                                                df['initial_crop_residu'],
-                                               df['alpha'])
+                                               df['alpha'],
+                                               mode='space')
+
+However, we can use the functions in the package also to calculate timeseries for every
+subfactor for a single crop on a certain location. To do this, we need different input.
+
+
+.. code-block:: python
+
+    import numpy as np
+
+    begin_date = np.array(['2016-01-01', '2016-01-15', '2016-02-01', '2016-02-15'])
+    end_date = np.array(['2016-01-15', '2016-02-01', '2016-02-15', '2016-03-01'])
+    rain = np.array([35.41, 10.2, 28.51, 26.76])
+    temperature = np.array([18.48, 17.23, 18.86, 1.47])
+    rhm = np.array([109.22, 145.195, 53.505, 28.47])
+    ri = np.array([6.1, 10.2, 6.096, 6.1])
+    h = np.array([0.15, 0.015, 0.13, 0])
+    fc = np.array([0.905, 0.875, 0.725, 0.405])
+    p = np.array([0.03, 0.01, 0.05, 0.03])
+    alpha = np.array([5.53, 5.53, 9.21, 23.03])
+    initial_crop_redisu = 5000
+    mode = 'time'
+
+    crop_residu, harvest_decay_coefficient, \
+    days, soil_roughness, crop_cover, \
+    surface_roughness, soil_cover, \
+    soil_loss_ratio = cfactor.calculate_soil_loss_ratio(begin_date,
+                                                        end_date,
+                                                        rain,
+                                                        temperature,
+                                                        rhm,
+                                                        ri,
+                                                        h,
+                                                        fc,
+                                                        p,
+                                                        initial_crop_redisu,
+                                                        alpha,
+                                                        mode)
