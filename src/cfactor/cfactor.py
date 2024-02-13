@@ -40,7 +40,7 @@ def calculate_soil_loss_ratio(
     p,
     initial_crop_residu,
     alpha,
-    mode,
+    mode="space",
     r0=r0,
     t0=t0,
     a=a,
@@ -125,7 +125,7 @@ def calculate_soil_loss_ratio(
     d = subfactors.calculate_number_of_days(begin_date, end_date)
 
     crop_residu = subfactors.compute_crop_residu(
-        d, harvest_decay_coefficient, initial_crop_residu, mode
+        d, harvest_decay_coefficient, initial_crop_residu, mode=mode
     )
 
     soil_roughness, _, _ = subfactors.compute_soil_roughness(ri, rain, rhm)
