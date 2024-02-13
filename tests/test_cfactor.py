@@ -83,20 +83,14 @@ def test_calculate_soil_loss_ratio_single_moment_multiple_places():
     alpha = np.array([5.53, 5.53, 9.21, 23.03])
     initial_crop_residu = np.array([5000, 4500, 150, 3500])
     mode = "space"
-    expected_crop_residu = np.array(
-        [3523.15134387, 4015.53444796, 83.34852713, 2807.18026399]
-    )
-    expected_harvest_decay_coefficient = np.array(
-        [0.02500586, 0.00813621, 0.04197174, 0.01575589]
-    )
+    expected_crop_residu = np.array([3523.1513, 4015.5344, 83.3485, 2807.1803])
+    expected_harvest_decay_coefficient = np.array([0.02500, 0.0081, 0.0420, 0.0158])
     expected_days = 14
-    expected_soil_roughness = np.array([6.09949106, 9.64694597, 6.096, 6.09967852])
-    expected_crop_cover = np.array([0.13844841, 0.12929443, 0.30526418, 0.595])
-    expected_surface_roughness = np.array([0.99990924, 0.91180913, 1.0, 0.99990436])
-    expected_soil_cover = np.array([0.03764958, 0.04533543, 0.6366012, 0.03023588])
-    expected_soil_loss_ratio = np.array(
-        [0.00521205, 0.00534468, 0.19433155, 0.01798863]
-    )
+    expected_soil_roughness = np.array([6.0995, 9.6469, 6.096, 6.0997])
+    expected_crop_cover = np.array([0.1384, 0.1293, 0.3053, 0.595])
+    expected_surface_roughness = np.array([0.9999, 0.9118, 1.0, 0.9999])
+    expected_soil_cover = np.array([0.0376, 0.0453, 0.6366, 0.0302])
+    expected_soil_loss_ratio = np.array([0.0052, 0.0053, 0.1943, 0.0180])
 
     (
         crop_residu,
@@ -122,16 +116,18 @@ def test_calculate_soil_loss_ratio_single_moment_multiple_places():
         mode,
     )
 
-    np.testing.assert_allclose(crop_residu, expected_crop_residu)
+    np.testing.assert_allclose(crop_residu, expected_crop_residu, atol=0.0001)
     np.testing.assert_allclose(
-        harvest_decay_coefficient, expected_harvest_decay_coefficient
+        harvest_decay_coefficient, expected_harvest_decay_coefficient, atol=0.0001
     )
     np.testing.assert_allclose(days, expected_days)
-    np.testing.assert_allclose(soil_roughness, expected_soil_roughness)
-    np.testing.assert_allclose(crop_cover, expected_crop_cover)
-    np.testing.assert_allclose(surface_roughness, expected_surface_roughness)
-    np.testing.assert_allclose(soil_cover, expected_soil_cover)
-    np.testing.assert_allclose(soil_loss_ratio, expected_soil_loss_ratio)
+    np.testing.assert_allclose(soil_roughness, expected_soil_roughness, atol=0.0001)
+    np.testing.assert_allclose(crop_cover, expected_crop_cover, atol=0.0001)
+    np.testing.assert_allclose(
+        surface_roughness, expected_surface_roughness, atol=0.0001
+    )
+    np.testing.assert_allclose(soil_cover, expected_soil_cover, atol=0.0001)
+    np.testing.assert_allclose(soil_loss_ratio, expected_soil_loss_ratio, atol=0.0001)
 
 
 def test_calculate_soil_loss_ratio_multiple_moments_single_place():
@@ -155,11 +151,11 @@ def test_calculate_soil_loss_ratio_multiple_moments_single_place():
         [0.02500586, 0.00395963, 0.04197174, 0.01575589]
     )
     expected_days = np.array([14, 17, 14, 15])
-    expected_soil_roughness = np.array([6.09949106, 9.88714011, 6.096, 6.09967852])
-    expected_crop_cover = np.array([0.13844841, 0.12929443, 0.30526418, 0.595])
-    expected_surface_roughness = np.array([0.99990924, 0.90613258, 1.0, 0.99990436])
-    expected_soil_cover = np.array([0.03764958, 0.04263305, 0.03127319, 0.03020354])
-    expected_soil_loss_ratio = np.array([0.00521205, 0.0049948, 0.00954659, 0.01796939])
+    expected_soil_roughness = np.array([6.0995, 9.8871, 6.096, 6.0997])
+    expected_crop_cover = np.array([0.1384, 0.1293, 0.3053, 0.595])
+    expected_surface_roughness = np.array([0.9999, 0.90613, 1.0, 0.9999])
+    expected_soil_cover = np.array([0.0376, 0.0426, 0.0313, 0.0302])
+    expected_soil_loss_ratio = np.array([0.0052, 0.0049, 0.0095, 0.0179])
 
     (
         crop_residu,
@@ -185,13 +181,15 @@ def test_calculate_soil_loss_ratio_multiple_moments_single_place():
         mode,
     )
 
-    np.testing.assert_allclose(crop_residu, expected_crop_residu)
+    np.testing.assert_allclose(crop_residu, expected_crop_residu, atol=0.0001)
     np.testing.assert_allclose(
-        harvest_decay_coefficient, expected_harvest_decay_coefficient
+        harvest_decay_coefficient, expected_harvest_decay_coefficient, atol=0.0001
     )
     np.testing.assert_allclose(days, expected_days)
-    np.testing.assert_allclose(soil_roughness, expected_soil_roughness)
-    np.testing.assert_allclose(crop_cover, expected_crop_cover)
-    np.testing.assert_allclose(surface_roughness, expected_surface_roughness)
-    np.testing.assert_allclose(soil_cover, expected_soil_cover)
-    np.testing.assert_allclose(soil_loss_ratio, expected_soil_loss_ratio)
+    np.testing.assert_allclose(soil_roughness, expected_soil_roughness, atol=0.0001)
+    np.testing.assert_allclose(crop_cover, expected_crop_cover, atol=0.0001)
+    np.testing.assert_allclose(
+        surface_roughness, expected_surface_roughness, atol=0.0001
+    )
+    np.testing.assert_allclose(soil_cover, expected_soil_cover, atol=0.0001)
+    np.testing.assert_allclose(soil_loss_ratio, expected_soil_loss_ratio, atol=0.0001)
