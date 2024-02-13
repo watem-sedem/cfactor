@@ -122,14 +122,16 @@ def test_calculate_soil_loss_ratio_single_moment_multiple_places():
         mode,
     )
 
-    assert crop_residu == expected_crop_residu
-    assert harvest_decay_coefficient == expected_harvest_decay_coefficient
-    assert days == expected_days
-    assert soil_roughness == expected_soil_roughness
-    assert crop_cover == expected_crop_cover
-    assert surface_roughness == expected_surface_roughness
-    assert soil_cover == expected_soil_cover
-    assert soil_loss_ratio == expected_soil_loss_ratio
+    np.testing.assert_allclose(crop_residu, expected_crop_residu)
+    np.testing.assert_allclose(
+        harvest_decay_coefficient, expected_harvest_decay_coefficient
+    )
+    np.testing.assert_allclose(days, expected_days)
+    np.testing.assert_allclose(soil_roughness, expected_soil_roughness)
+    np.testing.assert_allclose(crop_cover, expected_crop_cover)
+    np.testing.assert_allclose(surface_roughness, expected_surface_roughness)
+    np.testing.assert_allclose(soil_cover, expected_soil_cover)
+    np.testing.assert_allclose(soil_loss_ratio, expected_soil_loss_ratio)
 
 
 def test_calculate_soil_loss_ratio_multiple_moments_single_place():
@@ -183,11 +185,13 @@ def test_calculate_soil_loss_ratio_multiple_moments_single_place():
         mode,
     )
 
-    assert crop_residu == expected_crop_residu
-    assert harvest_decay_coefficient == expected_harvest_decay_coefficient
-    assert days == expected_days
-    assert soil_roughness == expected_soil_roughness
-    assert crop_cover == expected_crop_cover
-    assert surface_roughness == expected_surface_roughness
-    assert soil_cover == expected_soil_cover
-    assert soil_loss_ratio == expected_soil_loss_ratio
+    np.testing.assert_allclose(crop_residu, expected_crop_residu)
+    np.testing.assert_allclose(
+        harvest_decay_coefficient, expected_harvest_decay_coefficient
+    )
+    np.testing.assert_allclose(days, expected_days)
+    np.testing.assert_allclose(soil_roughness, expected_soil_roughness)
+    np.testing.assert_allclose(crop_cover, expected_crop_cover)
+    np.testing.assert_allclose(surface_roughness, expected_surface_roughness)
+    np.testing.assert_allclose(soil_cover, expected_soil_cover)
+    np.testing.assert_allclose(soil_loss_ratio, expected_soil_loss_ratio)
