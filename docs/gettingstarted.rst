@@ -180,7 +180,6 @@ like the example below:
 However, we can use the functions in the package also to calculate timeseries for every
 subfactor for a single crop on a certain location. To do this, we need different input.
 
-git
 .. code-block:: python
 
     begin_date = np.array(['2016-01-01', '2016-01-15', '2016-02-01', '2016-02-15'])
