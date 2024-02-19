@@ -67,7 +67,7 @@ single period. For example:
     fc = 0.905
     p = 0.03
     alpha = 5.53
-    initial_crop_redisu = 5000
+    initial_crop_residu = 5000
     mode = 'space'
 
     crop_residu, harvest_decay_coefficient, \
@@ -87,7 +87,7 @@ single period. For example:
                                                         mode
 
     print(soil_loss_ratio)
-    >>>> 0.1384131864957308
+    >>> 0.1384131864957308
 
 The output contains all subfactors and the soil_loss_ratio calculated for the crop
 and location between the start and end date.
@@ -110,7 +110,7 @@ arrays.
     fc = np.array([0.905, 0.875, 0.725, 0.405])
     p = np.array([0.03, 0.01, 0.05, 0.03])
     alpha = np.array([5.53, 5.53, 9.21, 23.03])
-    initial_crop_redisu = np.array([5000, 4500, 150, 3500])
+    initial_crop_residu = np.array([5000, 4500, 150, 3500])
     mode = 'space'
 
     crop_residu, harvest_decay_coefficient, \
@@ -125,10 +125,15 @@ arrays.
                                                         h,
                                                         fc,
                                                         p,
-                                                        initial_crop_redisu,
+                                                        initial_crop_residu,
                                                         alpha,
                                                         mode)
 
+    print(crop_residu)
+    >>>[3523.15134387, 4015.53444796,   83.34852713, 2807.18026399]
+
+    print(soil_loss_ratio)
+    >>>[0.00521205, 0.00534468, 0.19433155, 0.01798863]
 
 Of course, you can also use a pandas dataframe to structurize your input data:
 
@@ -175,10 +180,8 @@ like the example below:
 However, we can use the functions in the package also to calculate timeseries for every
 subfactor for a single crop on a certain location. To do this, we need different input.
 
-
+git
 .. code-block:: python
-
-    import numpy as np
 
     begin_date = np.array(['2016-01-01', '2016-01-15', '2016-02-01', '2016-02-15'])
     end_date = np.array(['2016-01-15', '2016-02-01', '2016-02-15', '2016-03-01'])
@@ -190,7 +193,7 @@ subfactor for a single crop on a certain location. To do this, we need different
     fc = np.array([0.905, 0.875, 0.725, 0.405])
     p = np.array([0.03, 0.01, 0.05, 0.03])
     alpha = np.array([5.53, 5.53, 9.21, 23.03])
-    initial_crop_redisu = 5000
+    initial_crop_residu = 5000
     mode = 'time'
 
     crop_residu, harvest_decay_coefficient, \
@@ -205,6 +208,6 @@ subfactor for a single crop on a certain location. To do this, we need different
                                                         h,
                                                         fc,
                                                         p,
-                                                        initial_crop_redisu,
+                                                        initial_crop_residu,
                                                         alpha,
                                                         mode)

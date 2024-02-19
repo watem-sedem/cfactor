@@ -10,18 +10,8 @@ environment to install the dependencies (by using ``venv`` or ``conda``,
 see :ref:`here <installfromsource>`), so it does not
 interfere with other Python installation on your machine.
 
-
-Latest release
---------------
-
-The cfactor package is available on `PyPI <https://pypi.org/project/cfactor/>`_.
-Make sure to setup an environment (either virtualenv, conda,….) first with ``pip`` installed.
-To install the cfactor package, run:
-
-::
-
-    pip install cfactor
-
+For now, the only option to use the package is to install it from source. In the future
+we forsee an installation via a repository such as pip.
 
 .. _installfromsource:
 
