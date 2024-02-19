@@ -370,11 +370,14 @@ def compute_crop_residu(d, harvest_decay_coefficient, initial_crop_residu, mode=
         :func:`cfactor.subfactors.compute_harvest_residu_decay_rate`
     initial_crop_residu: float
         Initial amount of crop residu (kg dry matter / ha)
+    mode: str
+        Calculate the crop residu for a timeseries (mode='time') or for a single moment
+        in time (mode='space')
 
     Returns
     -------
-    bse: numpy.ndarray
-        Crop residu (kg/m²) at the end of each period
+    end_residu: float or numpy.ndarray
+        Crop residu (kg/m²) at the end for every calculated period
 
     """
     if mode == "time":
