@@ -1,56 +1,21 @@
-=======
-cfactor
-=======
 
-.. image:: https://drone.fluves.net/api/badges/fluves/cfactor/status.svg
-    :target: https://drone.fluves.net/fluves/cfactor
 
-This is the documentation of **cfactor**, a python package to calculate the RUSLE C-factor.
+C-factor
+========
 
-Installation
-=============
+#TODO
 
-To use the package, you can either install the latest release from the
-`fluves repo <https://repo.fluves.net/fluves/>`_ using pip OR install the latest version in as development
-installation 'from source' to get continuous updates of the current master.
-
-Latest release
---------------
-
-.. warning::
-   Installing the latest release using this method is only possible within the
-   Fluves/Marlinks network. If you are working from outside the network (or VPN), you should have access to git and
-   install the package from source.
-
-Make sure to setup an environment (either virtualenv, conda,....) first with pip available. To install the package,
-run the following command:
-
-::
-
-    pip install --upgrade pip
-    pip install --extra-index-url https://repo.fluves.net/fluves --extra-index-url https://repo.fluves.net/marlinks cfactor
-
-When all goes well, you have the package installed and ready to use.
-
-Install from source
--------------------
-
-To keep track of the continuous development on the package beyond the major releases, ``git clone`` the
-repository somewhere and install the code from source.
-
-Make sure to setup a new environment  in either conda or venv (using tox):
-
+Get started
+-----------
 Using conda
 ^^^^^^^^^^^
-
-When using conda, you can setup the environment using the ``environment.yml`` file included in this repository:
+When using conda, you can setup the environment using the environment.yml file included in this repository:
 
 ::
 
     conda env create -f environment.yml
 
-Next, install the package from within the ``cfactor`` folder in the terminal and with the conda environment
-activated:
+Next, install the package from within the cfactor folder in the terminal and with the conda environment activated:
 
 ::
 
@@ -59,14 +24,11 @@ activated:
 
 Using venv
 ^^^^^^^^^^
-
-Run the ``dev`` tox command, which will create a ``venv`` with a development install of the package and it will register
-the environment as a ipykernel (for usage inside jupyter notebook):
+Run the dev tox command, which will create a venv with a development install of the package and it will register the environment as a ipykernel (for usage inside jupyter notebook):
 
 ::
 
     tox -e dev
-
 
 Development
 ============
@@ -147,20 +109,10 @@ In order to get nicely rendered online documentation, we use the ``numpydoc`` fo
 As a minimum, provide the following sections for any public method/class: ``summary``, ``description``, ``parameters``,
 ``returns`` and ``examples``.
 
-Drone CI
---------
+CI
+--
 
-Apart from these tools you can run locally, we use drone continuous integration to run these checks also
-on our servers. See https://drone.fluves.net/fluves/cfactor for the results.
-
-The drone provides reports that can be checked:
-
-- The docstring coverage of the functions, see the ``report docstring`` step of the `drone output <https://drone.fluves.net/fluves/cfactor>`_.
-- An `interactive unit test coverage report <https://drone-coverage-report.static.fluves.net/cfactor/>`_ with the unit test covered code for each of the files.
-
-https://drone-coverage-report.static.fluves.net/cfactor/
-
-For more information on the initial setup, see the ``README.md`` file in the ``ci`` subfolder.
+#TODO
 
 Package release
 ===============
@@ -180,11 +132,25 @@ When all test pass, drone CI will publish a pre-release on gitea. To convert thi
 - On the release page of the repository, draft a new release using the latest git tag
 - Copy past the changes from the changelog in the dialog and publish release
 
-.. _pyscaffold-notes:
+License
+-------
 
-Note
-====
+#TODO
 
-This project has been set up using PyScaffold 4.0.1 and the fluves-extension. For details and usage
-information on PyScaffold see https://pyscaffold.org/ and the Fluves extension
-see https://git.fluves.net/fluves/pyscaffoldext-fluves/.
+Contact
+-------
+
+We encourage user to submit question, suggestions and bug reports via
+the issues platform on GitHub. In case of other questions, one can mail
+to <cn-ws@omgeving.vlaanderen.be>
+
+Powered by
+----------
+
+![image](docs/_static/png/DepartementOmgeving_logo.png)
+
+![image](docs/_static/png/KULeuven_logo.png)
+
+![image](docs/_static/png/VMM_logo.png)
+
+![image](docs/_static/png/fluves_logo.png)
