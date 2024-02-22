@@ -151,6 +151,4 @@ Powered by
 
 ![image](docs/_static/png/KULeuven_logo.png)
 
-![image](docs/_static/png/VMM_logo.png)
-
 ![image](docs/_static/png/fluves_logo.png)
