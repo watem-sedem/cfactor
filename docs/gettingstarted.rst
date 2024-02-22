@@ -45,7 +45,7 @@ Start with importing the package
 
 .. code-block:: python
 
-    import cfactor
+    from cfactor import cfactor
 
 .. note::
     Make sure to activate the conda environment ``conda activate cfactor`` with the
@@ -83,7 +83,7 @@ single period. For example:
                                                         p,
                                                         initial_crop_residu,
                                                         alpha,
-                                                        mode
+                                                        mode)
 
     print(soil_loss_ratio)
     >>> 0.1384131864957308
@@ -163,7 +163,7 @@ like the example below:
     df[['crop_residu', 'harvest_decay_coefficient', \
     'days', 'soil_roughness', 'crop_cover', \
     'surface_roughness', 'soil_cover', \
-    'soil_loss_ratio' = cfactor.calculated_slr(begin_date,
+    'soil_loss_ratio']] = cfactor.calculated_slr(begin_date,
                                                end_date,
                                                df['rain'],
                                                df['temperature'],
