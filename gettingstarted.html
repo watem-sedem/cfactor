@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Getting started &mdash; cfactor 0.0.post1.dev199+g0164bfe documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/clipboard.min.js"></script>
+        <script src="_static/copybutton.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="cfactor" href="api/modules.html" />
+    <link rel="prev" title="Installation" href="installation.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            cfactor
+          </a>
+              <div class="version">
+                0.0.post1.dev199+g0164bfe
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="cfactor.html">C-factor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#calculating-the-slr">Calculating the SLR</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api/modules.html">Module overview</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Developer guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contribute</a></li>
+<li class="toctree-l1"><a class="reference internal" href="conduct.html">Code of conduct</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">cfactor</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Getting started</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="https://git.fluves.net/fluves/cfactor/src/branch/master/docs/gettingstarted.rst">View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="section" id="getting-started">
+<span id="gettingstarted"></span><h1>Getting started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h1>
+<p>The C-factor scripts can be used to calculate all the subfactors of
+<a class="reference internal" href="cfactor.html#subfactors"><span class="std std-ref">the Soil Loss Ratio</span></a>. There is also a function provided to calculate
+the C-factor based on the calculated soil loss ratios.</p>
+<p>In this tutorial we first give an overview on how to calculate the soil loss ratios.</p>
+<div class="section" id="calculating-the-slr">
+<h2>Calculating the SLR<a class="headerlink" href="#calculating-the-slr" title="Permalink to this headline">¶</a></h2>
+<p>Three possibilities exist to calculate the soil loss ratio (SLR):</p>
+<ul class="simple">
+<li><p>for a single period and a single crop/location</p></li>
+<li><p>for different crops/locations on the same time</p></li>
+<li><p>for a timeseries of a crop on a given location</p></li>
+</ul>
+<p>To enable these possibilities, the functions in this package were made as generic as
+possible.
+They work both with float values as with (one-dimensional) numpy arrays.</p>
+<p>We will explore these three possibilities in the following tutorial.</p>
+<p>For all possibilities we need input data from the environment, the crop and soil.
+Following data is needed for every location/crop and period:</p>
+<ul class="simple">
+<li><p>startdate of the period</p></li>
+<li><p>enddate of the period</p></li>
+<li><p>total amount of rain during the period</p></li>
+<li><p>average temperature (°C) during the period</p></li>
+<li><p>Effective drop height (m), an estimate of average height between rainfall
+capture by crop and soil</p></li>
+<li><p>The soil cover by the crop (in %)</p></li>
+<li><p>The maximum decay speed</p></li>
+<li><p>The crop residu present at the soil at the start of the period,</p></li>
+<li><p>cumulative rainfall erosivity (MJ.mm/ha.year)</p></li>
+<li><p>ri: initial soil roughness?</p></li>
+</ul>
+<p>The input data can be typically found in publications and reports (Cecelja et al., 2019)</p>
+<p>Start with importing the package</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">cfactor</span> <span class="kn">import</span> <span class="n">cfactor</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Make sure to activate the conda environment <code class="docutils literal notranslate"><span class="pre">conda</span> <span class="pre">activate</span> <span class="pre">cfactor</span></code> with the
+cfactor package installed (see <a class="reference internal" href="installation.html#installation"><span class="std std-ref">the installation page</span></a>)</p>
+</div>
+<p>As stated before, we can calculate the soil loss ratio for a single location and a
+single period. For example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">begin_date</span> <span class="o">=</span> <span class="s1">&#39;2023-06-01&#39;</span>
+<span class="n">end_date</span> <span class="o">=</span> <span class="s1">&#39;2023-06-15&#39;</span>
+<span class="n">rain</span> <span class="o">=</span> <span class="mf">35.41</span>
+<span class="n">temperature</span> <span class="o">=</span> <span class="mf">18.48</span>
+<span class="n">rhm</span> <span class="o">=</span> <span class="mf">109.22</span>
+<span class="n">ri</span> <span class="o">=</span> <span class="mf">6.1</span>
+<span class="n">h</span> <span class="o">=</span> <span class="mf">0.15</span>
+<span class="n">fc</span> <span class="o">=</span> <span class="mf">0.905</span>
+<span class="n">p</span> <span class="o">=</span> <span class="mf">0.03</span>
+<span class="n">alpha</span> <span class="o">=</span> <span class="mf">5.53</span>
+<span class="n">initial_crop_residu</span> <span class="o">=</span> <span class="mi">5000</span>
+<span class="n">mode</span> <span class="o">=</span> <span class="s1">&#39;space&#39;</span>
+
+<span class="n">crop_residu</span><span class="p">,</span> <span class="n">harvest_decay_coefficient</span><span class="p">,</span> \
+<span class="n">days</span><span class="p">,</span> <span class="n">soil_roughness</span><span class="p">,</span> <span class="n">crop_cover</span><span class="p">,</span> \
+<span class="n">surface_roughness</span><span class="p">,</span> <span class="n">soil_cover</span><span class="p">,</span> \
+<span class="n">soil_loss_ratio</span> <span class="o">=</span> <span class="n">cfactor</span><span class="o">.</span><span class="n">calculate_soil_loss_ratio</span><span class="p">(</span><span class="n">begin_date</span><span class="p">,</span>
+                                                    <span class="n">end_date</span><span class="p">,</span>
+                                                    <span class="n">rain</span><span class="p">,</span>
+                                                    <span class="n">temperature</span><span class="p">,</span>
+                                                    <span class="n">rhm</span><span class="p">,</span>
+                                                    <span class="n">ri</span><span class="p">,</span>
+                                                    <span class="n">h</span><span class="p">,</span>
+                                                    <span class="n">fc</span><span class="p">,</span>
+                                                    <span class="n">p</span><span class="p">,</span>
+                                                    <span class="n">initial_crop_residu</span><span class="p">,</span>
+                                                    <span class="n">alpha</span><span class="p">,</span>
+                                                    <span class="n">mode</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">soil_loss_ratio</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="mf">0.1384131864957308</span>
+</pre></div>
+</div>
+<p>The output contains all subfactors and the soil_loss_ratio calculated for the crop
+and location between the start and end date.</p>
+<p>We can use the same function To calculate the SLR and its subfactors
+for different locations and crops. Therefore, we need to change some inputs to numpy
+arrays.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="n">begin_date</span> <span class="o">=</span> <span class="s1">&#39;2023-06-01&#39;</span>
+<span class="n">end_date</span> <span class="o">=</span> <span class="s1">&#39;2023-06-15&#39;</span>
+<span class="n">rain</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">35.41</span><span class="p">,</span> <span class="mf">33.95</span><span class="p">,</span> <span class="mf">28.51</span><span class="p">,</span> <span class="mf">26.76</span><span class="p">])</span>
+<span class="n">temperature</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">18.48</span><span class="p">,</span> <span class="mf">17.23</span><span class="p">,</span> <span class="mf">18.86</span><span class="p">,</span> <span class="mf">1.47</span><span class="p">])</span>
+<span class="n">rhm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">109.22</span><span class="p">,</span> <span class="mf">145.195</span><span class="p">,</span> <span class="mf">53.505</span><span class="p">,</span> <span class="mf">28.47</span><span class="p">])</span>
+<span class="n">ri</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">6.1</span><span class="p">,</span> <span class="mf">10.2</span><span class="p">,</span> <span class="mf">6.096</span><span class="p">,</span> <span class="mf">6.1</span><span class="p">])</span>
+<span class="n">h</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.15</span><span class="p">,</span> <span class="mf">0.015</span><span class="p">,</span> <span class="mf">0.13</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="n">fc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.905</span><span class="p">,</span> <span class="mf">0.875</span><span class="p">,</span> <span class="mf">0.725</span><span class="p">,</span> <span class="mf">0.405</span><span class="p">])</span>
+<span class="n">p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.03</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.03</span><span class="p">])</span>
+<span class="n">alpha</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">5.53</span><span class="p">,</span> <span class="mf">5.53</span><span class="p">,</span> <span class="mf">9.21</span><span class="p">,</span> <span class="mf">23.03</span><span class="p">])</span>
+<span class="n">initial_crop_residu</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">5000</span><span class="p">,</span> <span class="mi">4500</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="mi">3500</span><span class="p">])</span>
+<span class="n">mode</span> <span class="o">=</span> <span class="s1">&#39;space&#39;</span>
+
+<span class="n">crop_residu</span><span class="p">,</span> <span class="n">harvest_decay_coefficient</span><span class="p">,</span> \
+<span class="n">days</span><span class="p">,</span> <span class="n">soil_roughness</span><span class="p">,</span> <span class="n">crop_cover</span><span class="p">,</span> \
+<span class="n">surface_roughness</span><span class="p">,</span> <span class="n">soil_cover</span><span class="p">,</span> \
+<span class="n">soil_loss_ratio</span> <span class="o">=</span> <span class="n">cfactor</span><span class="o">.</span><span class="n">calculate_soil_loss_ratio</span><span class="p">(</span><span class="n">begin_date</span><span class="p">,</span>
+                                                    <span class="n">end_date</span><span class="p">,</span>
+                                                    <span class="n">rain</span><span class="p">,</span>
+                                                    <span class="n">temperature</span><span class="p">,</span>
+                                                    <span class="n">rhm</span><span class="p">,</span>
+                                                    <span class="n">ri</span><span class="p">,</span>
+                                                    <span class="n">h</span><span class="p">,</span>
+                                                    <span class="n">fc</span><span class="p">,</span>
+                                                    <span class="n">p</span><span class="p">,</span>
+                                                    <span class="n">initial_crop_residu</span><span class="p">,</span>
+                                                    <span class="n">alpha</span><span class="p">,</span>
+                                                    <span class="n">mode</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">crop_residu</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span><span class="p">[</span><span class="mf">3523.15134387</span><span class="p">,</span> <span class="mf">4015.53444796</span><span class="p">,</span>   <span class="mf">83.34852713</span><span class="p">,</span> <span class="mf">2807.18026399</span><span class="p">]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">soil_loss_ratio</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span><span class="p">[</span><span class="mf">0.00521205</span><span class="p">,</span> <span class="mf">0.00534468</span><span class="p">,</span> <span class="mf">0.19433155</span><span class="p">,</span> <span class="mf">0.01798863</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Of course, you can also use a pandas dataframe to structurize your input data:</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 11%" />
+<col style="width: 8%" />
+<col style="width: 15%" />
+<col style="width: 10%" />
+<col style="width: 8%" />
+<col style="width: 8%" />
+<col style="width: 8%" />
+<col style="width: 7%" />
+<col style="width: 24%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>field_id</p></th>
+<th class="head"><p>rain</p></th>
+<th class="head"><p>temperature</p></th>
+<th class="head"><p>rhm</p></th>
+<th class="head"><p>ri</p></th>
+<th class="head"><p>H</p></th>
+<th class="head"><p>Fc</p></th>
+<th class="head"><p>p</p></th>
+<th class="head"><p>initial_crop_residu</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>35.41</p></td>
+<td><p>18.48</p></td>
+<td><p>109.22</p></td>
+<td><p>6.1</p></td>
+<td><p>0.15</p></td>
+<td><p>0.905</p></td>
+<td><p>0.03</p></td>
+<td><p>5000</p></td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p>33.95</p></td>
+<td><p>17.23</p></td>
+<td><p>145.195</p></td>
+<td><p>10.2</p></td>
+<td><p>0.015</p></td>
+<td><p>0.875</p></td>
+<td><p>0.01</p></td>
+<td><p>4500</p></td>
+</tr>
+<tr class="row-even"><td><p>3</p></td>
+<td><p>28.51</p></td>
+<td><p>18.86</p></td>
+<td><p>53.505</p></td>
+<td><p>6.096</p></td>
+<td><p>0.13</p></td>
+<td><p>0.725</p></td>
+<td><p>0.05</p></td>
+<td><p>150</p></td>
+</tr>
+<tr class="row-odd"><td><p>4</p></td>
+<td><p>26.76</p></td>
+<td><p>14.47</p></td>
+<td><p>28.47</p></td>
+<td><p>6.1</p></td>
+<td><p>0</p></td>
+<td><p>0.405</p></td>
+<td><p>0.03</p></td>
+<td><p>3500</p></td>
+</tr>
+</tbody>
+</table>
+<p>When using a pandas dataframe, we can calculate the soil loss ratio and the subfactors
+like the example below:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="n">begin_date</span> <span class="o">=</span> <span class="s1">&#39;2023-06-01&#39;</span>
+<span class="n">end_date</span> <span class="o">=</span> <span class="s1">&#39;2023-06-15&#39;</span>
+
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;crop_data_timestamp_x.csv&#39;</span><span class="p">)</span>
+
+<span class="n">df</span><span class="p">[[</span><span class="s1">&#39;crop_residu&#39;</span><span class="p">,</span> <span class="s1">&#39;harvest_decay_coefficient&#39;</span><span class="p">,</span> \
+<span class="s1">&#39;days&#39;</span><span class="p">,</span> <span class="s1">&#39;soil_roughness&#39;</span><span class="p">,</span> <span class="s1">&#39;crop_cover&#39;</span><span class="p">,</span> \
+<span class="s1">&#39;surface_roughness&#39;</span><span class="p">,</span> <span class="s1">&#39;soil_cover&#39;</span><span class="p">,</span> \
+<span class="s1">&#39;soil_loss_ratio&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">cfactor</span><span class="o">.</span><span class="n">calculated_slr</span><span class="p">(</span><span class="n">begin_date</span><span class="p">,</span>
+                                           <span class="n">end_date</span><span class="p">,</span>
+                                           <span class="n">df</span><span class="p">[</span><span class="s1">&#39;rain&#39;</span><span class="p">],</span>
+                                           <span class="n">df</span><span class="p">[</span><span class="s1">&#39;temperature&#39;</span><span class="p">],</span>
+                                           <span class="n">df</span><span class="p">[</span><span class="s1">&#39;rhm&#39;</span><span class="p">],</span>
+                                           <span class="n">df</span><span class="p">[</span><span class="s1">&#39;ri&#39;</span><span class="p">],</span>
+                                           <span class="n">df</span><span class="p">[</span><span class="s1">&#39;H&#39;</span><span class="p">],</span>
+                                           <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Fc&#39;</span><span class="p">],</span>
+                                           <span class="n">df</span><span class="p">[</span><span class="s1">&#39;p&#39;</span><span class="p">],</span>
+                                           <span class="n">df</span><span class="p">[</span><span class="s1">&#39;initial_crop_residu&#39;</span><span class="p">],</span>
+                                           <span class="n">df</span><span class="p">[</span><span class="s1">&#39;alpha&#39;</span><span class="p">],</span>
+                                           <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;space&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>However, we can use the functions in the package also to calculate timeseries for every
+subfactor for a single crop on a certain location. To do this, we need different input.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">begin_date</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="s1">&#39;2016-01-01&#39;</span><span class="p">,</span> <span class="s1">&#39;2016-01-15&#39;</span><span class="p">,</span> <span class="s1">&#39;2016-02-01&#39;</span><span class="p">,</span> <span class="s1">&#39;2016-02-15&#39;</span><span class="p">])</span>
+<span class="n">end_date</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="s1">&#39;2016-01-15&#39;</span><span class="p">,</span> <span class="s1">&#39;2016-02-01&#39;</span><span class="p">,</span> <span class="s1">&#39;2016-02-15&#39;</span><span class="p">,</span> <span class="s1">&#39;2016-03-01&#39;</span><span class="p">])</span>
+<span class="n">rain</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">35.41</span><span class="p">,</span> <span class="mf">10.2</span><span class="p">,</span> <span class="mf">28.51</span><span class="p">,</span> <span class="mf">26.76</span><span class="p">])</span>
+<span class="n">temperature</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">18.48</span><span class="p">,</span> <span class="mf">17.23</span><span class="p">,</span> <span class="mf">18.86</span><span class="p">,</span> <span class="mf">1.47</span><span class="p">])</span>
+<span class="n">rhm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">109.22</span><span class="p">,</span> <span class="mf">145.195</span><span class="p">,</span> <span class="mf">53.505</span><span class="p">,</span> <span class="mf">28.47</span><span class="p">])</span>
+<span class="n">ri</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">6.1</span><span class="p">,</span> <span class="mf">10.2</span><span class="p">,</span> <span class="mf">6.096</span><span class="p">,</span> <span class="mf">6.1</span><span class="p">])</span>
+<span class="n">h</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.15</span><span class="p">,</span> <span class="mf">0.015</span><span class="p">,</span> <span class="mf">0.13</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="n">fc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.905</span><span class="p">,</span> <span class="mf">0.875</span><span class="p">,</span> <span class="mf">0.725</span><span class="p">,</span> <span class="mf">0.405</span><span class="p">])</span>
+<span class="n">p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.03</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.03</span><span class="p">])</span>
+<span class="n">alpha</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">5.53</span><span class="p">,</span> <span class="mf">5.53</span><span class="p">,</span> <span class="mf">9.21</span><span class="p">,</span> <span class="mf">23.03</span><span class="p">])</span>
+<span class="n">initial_crop_residu</span> <span class="o">=</span> <span class="mi">5000</span>
+<span class="n">mode</span> <span class="o">=</span> <span class="s1">&#39;time&#39;</span>
+
+<span class="n">crop_residu</span><span class="p">,</span> <span class="n">harvest_decay_coefficient</span><span class="p">,</span> \
+<span class="n">days</span><span class="p">,</span> <span class="n">soil_roughness</span><span class="p">,</span> <span class="n">crop_cover</span><span class="p">,</span> \
+<span class="n">surface_roughness</span><span class="p">,</span> <span class="n">soil_cover</span><span class="p">,</span> \
+<span class="n">soil_loss_ratio</span> <span class="o">=</span> <span class="n">cfactor</span><span class="o">.</span><span class="n">calculate_soil_loss_ratio</span><span class="p">(</span><span class="n">begin_date</span><span class="p">,</span>
+                                                    <span class="n">end_date</span><span class="p">,</span>
+                                                    <span class="n">rain</span><span class="p">,</span>
+                                                    <span class="n">temperature</span><span class="p">,</span>
+                                                    <span class="n">rhm</span><span class="p">,</span>
+                                                    <span class="n">ri</span><span class="p">,</span>
+                                                    <span class="n">h</span><span class="p">,</span>
+                                                    <span class="n">fc</span><span class="p">,</span>
+                                                    <span class="n">p</span><span class="p">,</span>
+                                                    <span class="n">initial_crop_residu</span><span class="p">,</span>
+                                                    <span class="n">alpha</span><span class="p">,</span>
+                                                    <span class="n">mode</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="references">
+<h2>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h2>
+<p>Cecelja, A., Ruysschaert, G., Vanden Nest, T. &amp; Deproost, P. (2019). Verzamelen van data voor de
+verdere verfijning van de RUSLE gewas- en bedrijfsvoeringsfactor C voor de Vlaamse teeltpraktijken
+en erosiebestrijdingsmaatregelen. Rapport in opdracht van Departement Omgeving. 28p.</p>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="installation.html" class="btn btn-neutral float-left" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="api/modules.html" class="btn btn-neutral float-right" title="cfactor" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Fluves.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

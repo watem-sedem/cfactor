@@ -1,0 +1,61 @@
+cfactor package
+===============
+
+Submodules
+----------
+
+cfactor.cfactor module
+----------------------
+
+.. automodule:: cfactor.cfactor
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+cfactor.constants module
+------------------------
+
+.. automodule:: cfactor.constants
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+cfactor.decorators module
+-------------------------
+
+.. automodule:: cfactor.decorators
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+cfactor.io module
+-----------------
+
+.. automodule:: cfactor.io
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+cfactor.subfactors module
+-------------------------
+
+.. automodule:: cfactor.subfactors
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+cfactor.util module
+-------------------
+
+.. automodule:: cfactor.util
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: cfactor
+   :members:
+   :undoc-members:
+   :show-inheritance:

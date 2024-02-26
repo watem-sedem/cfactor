@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cover-Management Factor &mdash; cfactor 0.0.post1.dev199+g0164bfe documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/clipboard.min.js"></script>
+        <script src="_static/copybutton.js"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Installation" href="installation.html" />
+    <link rel="prev" title="Contents" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            cfactor
+          </a>
+              <div class="version">
+                0.0.post1.dev199+g0164bfe
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">C-factor</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#subfactors">Subfactors</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#prior-land-use-subfactor-plu">Prior-land-use subfactor (PLU)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#canopy-cover-subfactor-cc">Canopy-cover subfactor (CC)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#surface-cover-subfactor-sc">Surface-cover subfactor (SC)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#surface-roughness-subfactor-sr">Surface-roughness subfactor (SR)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#soil-moisture-subfactor-sm">Soil-moisture subfactor (SM)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gettingstarted.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/modules.html">Module overview</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Developer guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contribute</a></li>
+<li class="toctree-l1"><a class="reference internal" href="conduct.html">Code of conduct</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">cfactor</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Cover-Management Factor</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="https://git.fluves.net/fluves/cfactor/src/branch/master/docs/cfactor.rst">View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="section" id="cover-management-factor">
+<span id="cfactor"></span><h1>Cover-Management Factor<a class="headerlink" href="#cover-management-factor" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>The crop or cover management factor (C-factor)  is a measure used in erosion and
+(overland) sediment modelling to quantify the effect of of crop cover and soil management
+on soil loss. It is typically defined in the context of the Revised Soil Loss Equation
+(RUSLE - Renard et al., 1997) <a class="footnote-reference brackets" href="#id8" id="id1">1</a>, in which gross erosion for an agricultural parcel is
+estimated.</p>
+<p>Specifically, the C-factor is based on the concept of deviation
+from a standard, in this case defined by a parcel under clean-tilled
+continuous-fallow conditions (Renard et al., 1997) <a class="footnote-reference brackets" href="#id8" id="id2">1</a>. It can be quantified
+as the ratio of the soil loss of a specific parcel with crop cover -
+cultivated under specific conditions - and soil loss that would occur on the
+same parcel without crop growth (with plowing perpendicular to the
+contour lines) (Verbist et al., 2004) <a class="footnote-reference brackets" href="#id9" id="id3">2</a>.</p>
+<p>The C-factor is calculated as</p>
+<div class="math notranslate nohighlight">
+\[C = \frac{\sum_i^t{R_i} \cdot SLR_i}{\sum_i^t{R_i}}\]</div>
+<dl class="simple">
+<dt>with</dt><dd><ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(R_i\)</span>: rainfall erosivity factor (<span class="math notranslate nohighlight">\(\frac{\text{J.mm}}{\text{m}^2.\text{h.TR}}\)</span>) with <span class="math notranslate nohighlight">\(\text{TR}\)</span>: temporal resolution.</p></li>
+<li><p><span class="math notranslate nohighlight">\(t\)</span>: the maximum number of the increments.</p></li>
+<li><p><span class="math notranslate nohighlight">\(SLR\)</span>: the soil loss ratio (-)</p></li>
+</ul>
+</dd>
+</dl>
+<p>The soil loss ratio <span class="math notranslate nohighlight">\(SLR\)</span> is calculated as</p>
+<div class="math notranslate nohighlight">
+\[SLR = PLU \cdot CC \cdot SC \cdot SR \cdot SM\]</div>
+<dl class="simple">
+<dt>with</dt><dd><ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(PLU\)</span>: Prior-land-use subfactor</p></li>
+<li><p><span class="math notranslate nohighlight">\(CC\)</span>: Canopy-cover subfactor</p></li>
+<li><p><span class="math notranslate nohighlight">\(SC\)</span>: Surface-cover subfactor</p></li>
+<li><p><span class="math notranslate nohighlight">\(SR\)</span>: Surface-roughness subfactor</p></li>
+<li><p><span class="math notranslate nohighlight">\(SM\)</span>: Soil-moisture subfactor</p></li>
+</ul>
+</dd>
+</dl>
+<p>In the following paragraphs we discuss these subfactors.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The following code is developed in the context on an application of Flanders.
+Therefore, not all factors are explicitly defined because data was not available.
+We encourage to add formulations using a Pull request.</p>
+</div>
+</div>
+<div class="section" id="subfactors">
+<span id="id4"></span><h2>Subfactors<a class="headerlink" href="#subfactors" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="prior-land-use-subfactor-plu">
+<h3>Prior-land-use subfactor (PLU)<a class="headerlink" href="#prior-land-use-subfactor-plu" title="Permalink to this headline">¶</a></h3>
+<p>The influence of crop residues and prior soil management practices on soil erosion is
+represented by the Prior-land-use subfactor (<span class="math notranslate nohighlight">\(PLU\)</span>).</p>
+<p>According to Verstraeten et al. (2002) <a class="footnote-reference brackets" href="#id10" id="id5">3</a>, a value between 0.9 and 1 is a good estimate for
+the PLU subfactor for a soil that expierences tillage every year. In this package we do
+not take this factor into account due to this reason. More information about this
+subfactor and how to calculate it, can be found in Renard et al. (1997) <a class="footnote-reference brackets" href="#id8" id="id6">1</a>.</p>
+</div>
+<div class="section" id="canopy-cover-subfactor-cc">
+<h3>Canopy-cover subfactor (CC)<a class="headerlink" href="#canopy-cover-subfactor-cc" title="Permalink to this headline">¶</a></h3>
+<p>The crop cover or canopy cover subfactor (<span class="math notranslate nohighlight">\(CC\)</span>) represents the ability of a
+crop to reduce the erosivity of falling raindrops on the soil. The effect of the crop
+cover is expressed as:</p>
+<div class="math notranslate nohighlight">
+\[CC = 1-F_c \cdot e^{-0.328H}\]</div>
+<dl>
+<dt>With:</dt><dd><ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(F_c (m²/m²)\)</span>: the amount of coverage of the soil by the crop</p></li>
+<li><p><span class="math notranslate nohighlight">\(H (m)\)</span>: Effective drop height, the average heigt of falling raindrops</p></li>
+</ul>
+<p>after they have been intercepted by the crop</p>
+</dd>
+</dl>
+<p>This subfactor changes considerably during the growth of a crop due to the
+increasing crop cover and effective drop height.</p>
+</div>
+<div class="section" id="surface-cover-subfactor-sc">
+<h3>Surface-cover subfactor (SC)<a class="headerlink" href="#surface-cover-subfactor-sc" title="Permalink to this headline">¶</a></h3>
+<p>This subfactor is defined as the erosion limiting influence of the ground cover
+by crop residues, stones and non-erodible material in direct contact with the soil</p>
+<div class="math notranslate nohighlight">
+\[SC = \exp{\left(-b \cdot sp \cdot {\frac{6.096}{Ru}}^{0.08} \right)}\]</div>
+<p>with sp being the amount of land being covered by residu</p>
+<div class="math notranslate nohighlight">
+\[sp = 10 \cdot (1 - {\exp{\left(-\alpha \cdot B_s \right)}})\]</div>
+<dl class="simple">
+<dt>with</dt><dd><ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\alpha\)</span>: soil cover in comparison to weight residu (<span class="math notranslate nohighlight">\(m^2/kg\)</span>)</p></li>
+<li><p><span class="math notranslate nohighlight">\(B_s\)</span>: amount of residu per unit of area (<span class="math notranslate nohighlight">\(kg/m^2\)</span>)</p></li>
+</ul>
+</dd>
+</dl>
+<p>The crop residu <cite>B_s</cite> can be calculated with an exponention decay function:</p>
+<div class="math notranslate nohighlight">
+\[B_{se} = B_{sb} \cdot \exp{\left(-a \cdot D \right)}\]</div>
+<dl class="simple">
+<dt>with</dt><dd><ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(B_{se}\)</span>: amount of crop residu at end of period (kg dry matter . <span class="math notranslate nohighlight">\(m^{-2}\)</span>)</p></li>
+<li><p><span class="math notranslate nohighlight">\(B_{sb}\)</span>: amount of crop residu at start of period (kg dry matter . <span class="math notranslate nohighlight">\(m^{-2}\)</span>)</p></li>
+<li><p><span class="math notranslate nohighlight">\(a\)</span>: harvest decay coefficient</p></li>
+<li><p><span class="math notranslate nohighlight">\(D\)</span>: number of days</p></li>
+</ul>
+</dd>
+</dl>
+<p>The harvest decay coefficient <span class="math notranslate nohighlight">\(a\)</span> is calculated as</p>
+<div class="math notranslate nohighlight">
+\[a = p[min(W,F)]\]</div>
+<p>with:</p>
+<div class="math notranslate nohighlight">
+\[W = \frac{R}{R_0}\]</div>
+<p>and</p>
+<div class="math notranslate nohighlight">
+\[F = \frac{2(T_a+A)^2 \cdot (T_0+A)^2-(T_a+A)^4}{(T_0+A)^4}\]</div>
+<p>with:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(R\)</span>: half-monthly rainfall (mm)</p></li>
+<li><p><span class="math notranslate nohighlight">\(R_0\)</span>: minimum half-monthly average rainfall (mm)</p></li>
+<li><p><span class="math notranslate nohighlight">\(T_a\)</span>: average temperature in half-montlhy period (°F)</p></li>
+<li><p><span class="math notranslate nohighlight">\(T_0\)</span>: optimal temperature for decay (°F)</p></li>
+<li><p><span class="math notranslate nohighlight">\(A\)</span>: coefficient used to express the shape of the decay function
+as a function of temperature.</p></li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="surface-roughness-subfactor-sr">
+<h3>Surface-roughness subfactor (SR)<a class="headerlink" href="#surface-roughness-subfactor-sr" title="Permalink to this headline">¶</a></h3>
+<p>The surface roughness <span class="math notranslate nohighlight">\(SR\)</span> is caluclated as</p>
+<div class="math notranslate nohighlight">
+\[SR = \exp(−0.026 \cdot (R_u-6.096))\]</div>
+<p>With <span class="math notranslate nohighlight">\(R_u\)</span> is a measure for roughness of a parcell (mm).
+<span class="math notranslate nohighlight">\(R_u\)</span> (-) is calculated by:</p>
+<div class="math notranslate nohighlight">
+\[R_u = 6.096+(D_r \cdot (R_i-6.096))\]</div>
+<p>The final roughness is referred to as <span class="math notranslate nohighlight">\(r_{ii}\)</span>, i.e. 6.096.
+The initial roughness is crop dependent (soil preparation dependent).</p>
+<p>The roughness decay function <span class="math notranslate nohighlight">\(D_r\)</span> is defined as:</p>
+<div class="math notranslate nohighlight">
+\[D_r = \exp{\left(0.5 \cdot \frac{-0.14}{25.4}P_t + 0.5 \cdot \frac{-0.012}{17.02}EI_t \right)}\]</div>
+<p>with</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(P_t\)</span>: the cumulative rainfall (in mm)</p></li>
+<li><p><span class="math notranslate nohighlight">\(EI_t\)</span>: the cumulative rainfall erosivity (in <span class="math notranslate nohighlight">\(MJ \cdot mm \cdot ha^{-1} \cdot year^{-1}\)</span>)</p></li>
+</ul>
+<p>Under the influence of precipitation, the roughness of an agricultural field,
+left undisturbed, will systematically decrease until an (average) minimum roughness
+of 6.096 mm (0.24 inches) is reached. The decrease function <span class="math notranslate nohighlight">\(D_r\)</span> is defined to
+compute this decrease.</p>
+</div>
+<div class="section" id="soil-moisture-subfactor-sm">
+<h3>Soil-moisture subfactor (SM)<a class="headerlink" href="#soil-moisture-subfactor-sm" title="Permalink to this headline">¶</a></h3>
+<p>Antecedent soil moisture has a substantial influence on infiltration and
+runoff, and thus soil erosion. As this package was developed in the context of
+flanders, we assume this value is equal to 1 (Verbist et al., 2004) <a class="footnote-reference brackets" href="#id9" id="id7">2</a>.</p>
+</div>
+</div>
+<div class="section" id="references">
+<h2>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h2>
+<dl class="footnote brackets">
+<dt class="label" id="id8"><span class="brackets">1</span><span class="fn-backref">(<a href="#id1">1</a>,<a href="#id2">2</a>,<a href="#id6">3</a>)</span></dt>
+<dd><p>Renard, K.G., Foster, G.R., Weesies, G.A., McCool, D.K., Yoder, D.C.,
+1997, Predicting soil erosion by water: a guide to conservation planning with
+the revised universal soil loss equation (RUSLE), Agriculture Handbook. U.S.
+Department of Agriculture, Washington.
+<a class="reference external" href="https://www.ars.usda.gov/ARSUserFiles/64080530/RUSLE/AH_703.pdf">https://www.ars.usda.gov/ARSUserFiles/64080530/RUSLE/AH_703.pdf</a></p>
+</dd>
+<dt class="label" id="id9"><span class="brackets">2</span><span class="fn-backref">(<a href="#id3">1</a>,<a href="#id7">2</a>)</span></dt>
+<dd><p>Verbist, K., Schiettecatte, W., Gabriels, D., 2004, Eindrapport.
+Computermodel RUSLE c-factor. Universiteit Gent, Gent. (In dutch)</p>
+</dd>
+<dt class="label" id="id10"><span class="brackets"><a class="fn-backref" href="#id5">3</a></span></dt>
+<dd><p>Verstraeten, G., Van Oost, K., Van Rompaey, A., Poesen, J. &amp; Govers, G. 2002.
+Integraal land- en waterbeheer in landelijke gebieden met het oog op het beperken
+van erosie en modderoverlast (proefproject gemeente Gingelom). Ministerie van de
+Vlaamse Gemeenschap, Departement Leefmilieu en Infrastructuur, AMINAL,
+Afdeling Land, Brussel, 69p</p>
+</dd>
+</dl>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="Contents" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="installation.html" class="btn btn-neutral float-right" title="Installation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Fluves.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

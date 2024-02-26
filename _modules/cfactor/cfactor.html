@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cfactor.cfactor &mdash; cfactor 0.0.post1.dev199+g0164bfe documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/clipboard.min.js"></script>
+        <script src="../../_static/copybutton.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            cfactor
+          </a>
+              <div class="version">
+                0.0.post1.dev199+g0164bfe
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../cfactor.html">C-factor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../gettingstarted.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/modules.html">Module overview</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Developer guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contribute</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../conduct.html">Code of conduct</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Changelog</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">cfactor</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">cfactor.cfactor</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for cfactor.cfactor</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">cfactor</span> <span class="kn">import</span> <span class="n">subfactors</span>
+<span class="kn">from</span> <span class="nn">cfactor.constants</span> <span class="kn">import</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">r0</span><span class="p">,</span> <span class="n">t0</span>
+<span class="kn">from</span> <span class="nn">cfactor.decorators</span> <span class="kn">import</span> <span class="n">check_nan</span>
+
+
+<span class="nd">@check_nan</span>
+<span class="k">def</span> <span class="nf">aggregate_slr_to_c_factor</span><span class="p">(</span><span class="n">soil_loss_ratio</span><span class="p">,</span> <span class="n">ei30</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Aggregate  SLR according to erosivity</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    soil_loss_ratio: numpy.ndarray</span>
+<span class="sd">        Soil loss ratio, see :func:`cfactor.subfactors.compute_soil_loss_ratio`</span>
+<span class="sd">    ei30: numpy.ndarray</span>
+<span class="sd">        # TODO: refer to R-factor package with intersphinx</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    c: float</span>
+<span class="sd">        C-factor (-, [0,1])</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">sum_r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">ei30</span><span class="p">)</span>
+    <span class="n">product</span> <span class="o">=</span> <span class="n">soil_loss_ratio</span> <span class="o">*</span> <span class="n">ei30</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">product</span><span class="p">)</span> <span class="o">/</span> <span class="n">sum_r</span>
+    <span class="k">return</span> <span class="n">c</span>
+
+
+<div class="viewcode-block" id="calculate_soil_loss_ratio"><a class="viewcode-back" href="../../api/cfactor.html#cfactor.cfactor.calculate_soil_loss_ratio">[docs]</a><span class="k">def</span> <span class="nf">calculate_soil_loss_ratio</span><span class="p">(</span>
+    <span class="n">begin_date</span><span class="p">,</span>
+    <span class="n">end_date</span><span class="p">,</span>
+    <span class="n">rain</span><span class="p">,</span>
+    <span class="n">temperature</span><span class="p">,</span>
+    <span class="n">rhm</span><span class="p">,</span>
+    <span class="n">ri</span><span class="p">,</span>
+    <span class="n">h</span><span class="p">,</span>
+    <span class="n">fc</span><span class="p">,</span>
+    <span class="n">p</span><span class="p">,</span>
+    <span class="n">initial_crop_residu</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="p">,</span>
+    <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;space&quot;</span><span class="p">,</span>
+    <span class="n">r0</span><span class="o">=</span><span class="n">r0</span><span class="p">,</span>
+    <span class="n">t0</span><span class="o">=</span><span class="n">t0</span><span class="p">,</span>
+    <span class="n">a</span><span class="o">=</span><span class="n">a</span><span class="p">,</span>
+    <span class="n">b</span><span class="o">=</span><span class="n">b</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate Soil loss ratio based on basic input parameters</span>
+
+<span class="sd">    This function combines the calculations of all subfactors</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        Prior landuse and soil moisture are assumed equal to one.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    begin_date: str</span>
+<span class="sd">        start date of period formatted as &#39;YYYY-MM-DD&#39;</span>
+<span class="sd">    end_date: str</span>
+<span class="sd">        end date of period formatted as &#39;YYYY-MM-DD&#39;</span>
+<span class="sd">    rain: float or numpy.ndarray</span>
+<span class="sd">        Summed rainfall (mm) over period defined by begin_date and end_date</span>
+<span class="sd">    temperature: float or numpy.ndarray</span>
+<span class="sd">        (Average) temperature (degree C) over period by begin_date and end_date</span>
+<span class="sd">    rhm: float or numpy.ndarray</span>
+<span class="sd">        Cumulative rainfall erosivity (in :math:`\\frac{MJ.mm}{ha.year}`)</span>
+<span class="sd">    ri: float or numpy.ndarray</span>
+<span class="sd">        # TO DO</span>
+<span class="sd">    h: float or numpy.ndarray</span>
+<span class="sd">        Effective drop height (m): estimate of average height between rainfall capture</span>
+<span class="sd">        by crop and soil.</span>
+<span class="sd">    fc: float or numpy.ndarray</span>
+<span class="sd">        Soil cover by crop (in %)</span>
+<span class="sd">    p: float or numpy.ndarray</span>
+<span class="sd">        Maximum decay speed (-) #TODO: check unit</span>
+<span class="sd">    initial_crop_residu: float or numpy.ndarray</span>
+<span class="sd">        Initial amount of crop residu (kg dry matter / ha)</span>
+<span class="sd">    alpha: float or numpy.ndarray</span>
+<span class="sd">        Soil cover in comparison to weight residu (:math:`m^2/kg`)</span>
+<span class="sd">    mode: str</span>
+<span class="sd">        Calculate the SLR for a timeseries (mode=&#39;time&#39;) or for a single moment in time</span>
+<span class="sd">        (mode=&#39;space&#39;)</span>
+<span class="sd">    r0: float</span>
+<span class="sd">        Average half monthly rainfall (mm)</span>
+<span class="sd">    t0: float</span>
+<span class="sd">        Optimal temperature for decay (degree C)</span>
+<span class="sd">    a: float</span>
+<span class="sd">        coefficient used to express the shape of the decay function</span>
+<span class="sd">        as a function of temperature (degree C)</span>
+<span class="sd">    b: float</span>
+<span class="sd">        coeffienct: TO DO</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    crop_residu: float or numpy.ndarray</span>
+
+<span class="sd">    harvest_decay_coefficient: float or numpy.ndarray</span>
+<span class="sd">        Harvest decay coefficient (-)</span>
+
+<span class="sd">    d: number of days</span>
+
+<span class="sd">    soil_roughness:  numpy.ndarray</span>
+<span class="sd">        Soil roughness (mm)</span>
+
+<span class="sd">    crop_cover: float or nump.ndarray</span>
+<span class="sd">        Crop cover factor (-, [0,1])</span>
+
+<span class="sd">    surface_roughness: float or numpy.ndarray</span>
+<span class="sd">        Surface roughness (-, [0,1])</span>
+
+<span class="sd">    soil_cover: float or numpy.ndarray</span>
+<span class="sd">        Soil cover (-, [0,1])</span>
+
+<span class="sd">    soil_loss_ratio: float or numpy.ndarray</span>
+<span class="sd">        soil loss ratio</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">crop_cover</span> <span class="o">=</span> <span class="n">subfactors</span><span class="o">.</span><span class="n">compute_crop_cover</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">fc</span><span class="p">)</span>
+
+    <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">harvest_decay_coefficient</span> <span class="o">=</span> <span class="n">subfactors</span><span class="o">.</span><span class="n">compute_harvest_residu_decay_rate</span><span class="p">(</span>
+        <span class="n">rain</span><span class="p">,</span> <span class="n">temperature</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">r0</span><span class="o">=</span><span class="n">r0</span><span class="p">,</span> <span class="n">t0</span><span class="o">=</span><span class="n">t0</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="n">a</span>
+    <span class="p">)</span>
+
+    <span class="n">d</span> <span class="o">=</span> <span class="n">subfactors</span><span class="o">.</span><span class="n">calculate_number_of_days</span><span class="p">(</span><span class="n">begin_date</span><span class="p">,</span> <span class="n">end_date</span><span class="p">)</span>
+
+    <span class="n">crop_residu</span> <span class="o">=</span> <span class="n">subfactors</span><span class="o">.</span><span class="n">compute_crop_residu</span><span class="p">(</span>
+        <span class="n">d</span><span class="p">,</span> <span class="n">harvest_decay_coefficient</span><span class="p">,</span> <span class="n">initial_crop_residu</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">mode</span>
+    <span class="p">)</span>
+
+    <span class="n">soil_roughness</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">subfactors</span><span class="o">.</span><span class="n">compute_soil_roughness</span><span class="p">(</span><span class="n">ri</span><span class="p">,</span> <span class="n">rain</span><span class="p">,</span> <span class="n">rhm</span><span class="p">)</span>
+    <span class="n">surface_roughness</span> <span class="o">=</span> <span class="n">subfactors</span><span class="o">.</span><span class="n">compute_surface_roughness</span><span class="p">(</span><span class="n">soil_roughness</span><span class="p">)</span>
+
+    <span class="n">_</span><span class="p">,</span> <span class="n">soil_cover</span> <span class="o">=</span> <span class="n">subfactors</span><span class="o">.</span><span class="n">compute_soil_cover</span><span class="p">(</span>
+        <span class="n">initial_crop_residu</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">soil_roughness</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="n">b</span>
+    <span class="p">)</span>
+
+    <span class="n">soil_loss_ratio</span> <span class="o">=</span> <span class="n">subfactors</span><span class="o">.</span><span class="n">compute_soil_loss_ratio</span><span class="p">(</span>
+        <span class="n">soil_cover</span><span class="p">,</span> <span class="n">surface_roughness</span><span class="p">,</span> <span class="n">crop_cover</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="n">crop_residu</span><span class="p">,</span>
+        <span class="n">harvest_decay_coefficient</span><span class="p">,</span>
+        <span class="n">d</span><span class="p">,</span>
+        <span class="n">soil_roughness</span><span class="p">,</span>
+        <span class="n">crop_cover</span><span class="p">,</span>
+        <span class="n">surface_roughness</span><span class="p">,</span>
+        <span class="n">soil_cover</span><span class="p">,</span>
+        <span class="n">soil_loss_ratio</span><span class="p">,</span>
+    <span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Fluves.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

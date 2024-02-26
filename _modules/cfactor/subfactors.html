@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cfactor.subfactors &mdash; cfactor 0.0.post1.dev199+g0164bfe documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/clipboard.min.js"></script>
+        <script src="../../_static/copybutton.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            cfactor
+          </a>
+              <div class="version">
+                0.0.post1.dev199+g0164bfe
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../cfactor.html">C-factor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../gettingstarted.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/modules.html">Module overview</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Developer guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contribute</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../conduct.html">Code of conduct</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Changelog</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">cfactor</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">cfactor.subfactors</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for cfactor.subfactors</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="kn">from</span> <span class="nn">cfactor.constants</span> <span class="kn">import</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">r0</span><span class="p">,</span> <span class="n">t0</span>
+<span class="kn">from</span> <span class="nn">cfactor.decorators</span> <span class="kn">import</span> <span class="n">check_length</span><span class="p">,</span> <span class="n">check_nan</span>
+<span class="kn">from</span> <span class="nn">cfactor.util</span> <span class="kn">import</span> <span class="n">celc_to_fahr</span>
+
+
+<span class="nd">@check_nan</span>
+<span class="k">def</span> <span class="nf">compute_surface_roughness</span><span class="p">(</span><span class="n">soil_roughness</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Computes surface roughness subfactor SR</span>
+
+<span class="sd">    Computes surface roughness :math:`SR` as</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        SR = e(−0.026*(R_u-6.096))</span>
+
+
+<span class="sd">    With :math:`R_u` is a measure for roughness of a parcell (mm). See</span>
+<span class="sd">    :func:`cfactor.subfactors.compute_soil_roughness` for more information about this</span>
+<span class="sd">    parameter.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    soil_roughness: float or numpy.ndarray</span>
+<span class="sd">        Soil roughness, output from :func:`cfactor.subfactors.compute_soil_roughness`</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float or numpy.ndarray</span>
+<span class="sd">        Surface roughness (-, [0,1])</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mf">0.026</span> <span class="o">*</span> <span class="p">(</span><span class="n">soil_roughness</span> <span class="o">-</span> <span class="mf">6.096</span><span class="p">))</span>
+
+
+<span class="nd">@check_nan</span>
+<span class="nd">@check_length</span>
+<span class="k">def</span> <span class="nf">compute_soil_roughness</span><span class="p">(</span><span class="n">ri</span><span class="p">,</span> <span class="n">rain</span><span class="p">,</span> <span class="n">rhm</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute soil roughness subfactor</span>
+
+<span class="sd">    This function computes the soil roughness. The beginning</span>
+<span class="sd">    of a period is defined by a new roughness condition (i.e. prep for a new crop by</span>
+<span class="sd">    plowing):</span>
+
+<span class="sd">    The :math:`R_u` (-) is computed by:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        R_u = 6.096+(D_r*(R_i-6.096))</span>
+
+<span class="sd">    The final roughness is referred to as :math:`r_{ii}`, i.e. 6.096.</span>
+<span class="sd">    The initial roughness is crop dependent (soil preparation dependent).</span>
+
+<span class="sd">    The roughness decay function :math:`D_r` is defined as:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        D_r = exp{0.5*\\frac{-0.14}{25.4}P_t}+0.5*\\frac{-0.012}{17.02}EI_t))</span>
+
+<span class="sd">    Under the influence of precipitation, the roughness of an agricultural field,</span>
+<span class="sd">    left undisturbed, will systematically decrease until an (average) minimum roughness</span>
+<span class="sd">    of 6.096 mm (0.24 inches) is reached. The decrease function Dr is defined to</span>
+<span class="sd">    compute this decrease (see [1]_). # TODO: add refs to Reynard et al.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    ri: float or numpy.ndarray</span>
+<span class="sd">        #TODO</span>
+<span class="sd">    rain: float or numpy.ndarray</span>
+<span class="sd">        Amount of rainfall (in mm, during period).</span>
+<span class="sd">    rhm: float or numpy.ndarray</span>
+<span class="sd">        Cumulative rainfall erosivity (in :math:`\\frac{MJ.mm}{ha.year}`)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    soil_roughness:  numpy.ndarray</span>
+<span class="sd">        Soil roughness (mm)</span>
+<span class="sd">    f1_n:  numpy.ndarray</span>
+<span class="sd">        Factor rainfall</span>
+<span class="sd">    f2_ei:  numpy.ndarray</span>
+<span class="sd">        Factor erosivity</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    1. a slight different formulation is used from [1]_ where the parameter for EI is</span>
+<span class="sd">       defined as -0.0705, whereas here we use -0.00070505287 (-0.012 / 17.02)</span>
+<span class="sd">       #TODO: check.</span>
+<span class="sd">    2. The rhm is equal to EI, for guidelines computation, see [2]_ and #TODO: refer to</span>
+<span class="sd">       R-factor package via intersphinx.</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+
+<span class="sd">    .. [1] Verbist, K., Schiettecatte, W., Gabriels, D., n.d. Eindrapport:</span>
+<span class="sd">     “Computermodel RUSLE C-factor.”</span>
+
+<span class="sd">    .. [2] Verstraeten, G., Poesen, J., Demarée, G. &amp; Salles, C. (2006). Long-term</span>
+<span class="sd">     (105 years) variability in rain erosivity as derived from 10-min rainfall depth</span>
+<span class="sd">     data for Ukkel (Brussels, Belgium): Implications for assessing soil erosion rates.</span>
+<span class="sd">     Journal of Geophysical Research Atmospheres, 111(22), 1–11.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">rain</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Amount of rain cannot be negative&quot;</span><span class="p">)</span>
+
+    <span class="n">f1_n</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.14</span> <span class="o">/</span> <span class="mf">25.4</span> <span class="o">*</span> <span class="n">rain</span>
+    <span class="n">f2_ei</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.012</span> <span class="o">/</span> <span class="mf">17.02</span> <span class="o">*</span> <span class="n">rhm</span>
+
+    <span class="n">dr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">f1_n</span> <span class="o">+</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">f2_ei</span><span class="p">)</span>
+
+    <span class="n">soil_roughness</span> <span class="o">=</span> <span class="mf">6.096</span> <span class="o">+</span> <span class="p">(</span><span class="n">dr</span> <span class="o">*</span> <span class="p">(</span><span class="n">ri</span> <span class="o">-</span> <span class="mf">6.096</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">soil_roughness</span><span class="p">,</span> <span class="n">f1_n</span><span class="p">,</span> <span class="n">f2_ei</span>
+
+
+<span class="nd">@check_nan</span>
+<span class="nd">@check_length</span>
+<span class="k">def</span> <span class="nf">compute_soil_cover</span><span class="p">(</span><span class="n">crop_residu</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">soil_roughness</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="n">b</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Computes soil cover (SC) subfactor</span>
+
+<span class="sd">    This subfactor is defined as the erosion limiting influence of the ground cover</span>
+<span class="sd">    by crop residues, stones and non-erodible material in direct contact with the soil</span>
+<span class="sd">    [1]_</span>
+
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        SC = exp{-b.sp.{\\frac{6.096}{Ru}}^{0.08}}</span>
+
+
+<span class="sd">    with sp being the amount of land being covered by residu</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        sp = 100.(1-exp{-\\alpha.B_s})</span>
+
+<span class="sd">    with</span>
+
+<span class="sd">    - :math:`alpha`: soil cover in comparison to weight residu (:math:`m^2/kg`)</span>
+
+<span class="sd">    - :math:`B_s`: amount of residu per unit of area (:math:`kg/m^2`), for definition,</span>
+<span class="sd">       see :func:`cfactor.subfactors.compute_crop_residu`</span>
+
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    crop_residu: float or numpy.ndarray</span>
+<span class="sd">        crop residu (kg dry matter / ha) for harvest period,</span>
+<span class="sd">        see :func:`cfactor.subfactors.compute_crop_residu`</span>
+<span class="sd">    alpha: floar or numpy.ndarray</span>
+<span class="sd">        Soil cover in comparison to weight residu (:math:`m^2/kg`)</span>
+<span class="sd">    soil_roughness: float or numpy.ndarray</span>
+<span class="sd">        Soil roughness (mm), see :func:`cfactor.subfactors.compute_soil_roughness`</span>
+<span class="sd">    b: float</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    sp: numpy.ndarray</span>
+<span class="sd">        Percentage soil cover of harvest remains</span>
+<span class="sd">    soil_cover: numpy.ndarray</span>
+<span class="sd">        Soil cover (-, [0,1])</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    .. [1] Verbist, K., Schiettecatte, W., Gabriels, D., n.d. Eindrapport:</span>
+<span class="sd">     “Computermodel RUSLE C-factor.”</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">sp</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">alpha</span> <span class="o">*</span> <span class="n">crop_residu</span> <span class="o">/</span> <span class="p">(</span><span class="mi">100</span><span class="o">**</span><span class="mi">2</span><span class="p">)))</span>
+    <span class="n">soil_cover</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">b</span> <span class="o">*</span> <span class="n">sp</span> <span class="o">*</span> <span class="p">((</span><span class="mf">6.096</span> <span class="o">/</span> <span class="n">soil_roughness</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.08</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">sp</span><span class="p">,</span> <span class="n">soil_cover</span>
+
+
+<span class="nd">@check_nan</span>
+<span class="nd">@check_length</span>
+<span class="k">def</span> <span class="nf">compute_crop_cover</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">fc</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Computes crop cover factor based on soil cover crop and effective drop height</span>
+
+<span class="sd">    The crop cover or canopy cover subfactor (:math:`CC`) represents the ability of a</span>
+<span class="sd">    crop to reduce the erosivity of falling raindrops on the soil. The</span>
+<span class="sd">    effect of the crop cover is expressed as:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        CC = 1-F_c.exp{-0.328H}</span>
+
+<span class="sd">    With:</span>
+<span class="sd">     - :math:`F_c (m²/m²)`: the amount of coverage of the soil by the crop</span>
+<span class="sd">     - :math:`H (m)`: Effective drop height, the average heigt of falling raindrops</span>
+<span class="sd">        after they have been intercepted by the crop</span>
+
+<span class="sd">    This subfactor changes considerably during the growth of a crop due to the</span>
+<span class="sd">    increasing crop cover and effective drop height.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    h: float or numpy.ndarray</span>
+<span class="sd">        Effective drop height (m): estimate of average height between rainfall capture</span>
+<span class="sd">        by crop and soil.</span>
+<span class="sd">    fc: float or numpy.ndarray</span>
+<span class="sd">        Soil cover by crop (in %)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    crop_cover: float or nump.ndarray</span>
+<span class="sd">        Crop cover factor (-, [0,1])</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    .. [1] Verbist, K., Schiettecatte, W., Gabriels, D., n.d. Eindrapport:</span>
+<span class="sd">     “Computermodel RUSLE C-factor.”</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">fc</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">))</span> <span class="ow">or</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">fc</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Soil cover must be between 0 and 1&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">h</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Effective drop height cannot be negative&quot;</span><span class="p">)</span>
+
+    <span class="n">crop_cover</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">fc</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mf">0.328</span> <span class="o">*</span> <span class="n">h</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">crop_cover</span>
+
+
+<div class="viewcode-block" id="compute_soil_moisture"><a class="viewcode-back" href="../../api/cfactor.html#cfactor.subfactors.compute_soil_moisture">[docs]</a><span class="k">def</span> <span class="nf">compute_soil_moisture</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Computes soil moisture factor</span>
+
+<span class="sd">    This function is not yet implemented</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;compute soil moisture is not implemented&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="compute_plu"><a class="viewcode-back" href="../../api/cfactor.html#cfactor.subfactors.compute_plu">[docs]</a><span class="k">def</span> <span class="nf">compute_plu</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Computes prior land use factor</span>
+
+<span class="sd">    This function is not yet implemented as Verstraeten et al.(2002) estimate that PLU</span>
+<span class="sd">    lies between 0.9 and 1 for a soil that experiences yearly tillage.</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Verstraeten et al. (2002) TO DO</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;compute prior land use is not implemented&quot;</span><span class="p">)</span></div>
+
+
+<span class="nd">@check_nan</span>
+<span class="k">def</span> <span class="nf">compute_harvest_residu_decay_rate</span><span class="p">(</span><span class="n">rain</span><span class="p">,</span> <span class="n">temperature</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">r0</span><span class="o">=</span><span class="n">r0</span><span class="p">,</span> <span class="n">t0</span><span class="o">=</span><span class="n">t0</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="n">a</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Computes crop residu decay coefficient [1]_</span>
+
+<span class="sd">    The soil cover by harvest residues changes in time by decay processes.</span>
+<span class="sd">    RUSLE uses an exponential decay function</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        a = p[min(W,F)]</span>
+
+<span class="sd">    with:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        W = \\frac{R}{R_0}</span>
+
+<span class="sd">    and</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        F = \\frac{2(T_a+A)^2.(T_0+a)^2-(T_a+A)^4}{(T_0+A)^4}</span>
+
+<span class="sd">    with:</span>
+
+<span class="sd">        - :math:`R`: half-monthly rainfall (mm)</span>
+<span class="sd">        - :math:`R_0`: minimum half-monthly average rainfall (mm)</span>
+<span class="sd">        - :math:`T_a`: average temperature in half-montlhy period (degree f)</span>
+<span class="sd">        - :math:`T_0`: optimal temperature for decay (degree f)</span>
+<span class="sd">        - :math:`A`: coefficient used to express the shape of the decay function</span>
+<span class="sd">         as a function of temperature.</span>
+
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    rain: float or numpy.ndarray</span>
+<span class="sd">        (Summed) half monthly rainfall (mm)</span>
+<span class="sd">    temperature: float or numpy.ndarray</span>
+<span class="sd">        (Average) temperature (degree C)</span>
+<span class="sd">    p: float or numpy.ndarray</span>
+<span class="sd">        Maximum decay speed (-) #TODO: check unit</span>
+<span class="sd">    r0: float</span>
+<span class="sd">        Average half monthly rainfall (mm)</span>
+<span class="sd">    t0: float</span>
+<span class="sd">        Optimal temperature for decay (degree C)</span>
+<span class="sd">    a: float</span>
+<span class="sd">        coefficient used to express the shape of the decay function</span>
+<span class="sd">        as a function of temperature (degree C)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    w: float or numpy.ndarray</span>
+<span class="sd">        Coefficients weighing rainfall</span>
+<span class="sd">    f: float or numpy.ndarray</span>
+<span class="sd">        Coefficients weighing temperature</span>
+<span class="sd">    harvest_decay_coefficient: float or numpy.ndarray</span>
+<span class="sd">        Harvest decay coefficient (-)</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    .. [1] Verbist, K., Schiettecatte, w., Gabriels, D., n.d. Eindrapport:</span>
+<span class="sd">     “Computermodel RUSLE C-factor.”</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">rain</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Halfmonthly rainfall cannot be negative&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">rain</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Dimensions of rain and temperature input must be the same&quot;</span><span class="p">)</span>
+
+    <span class="n">w</span> <span class="o">=</span> <span class="n">rain</span> <span class="o">/</span> <span class="n">r0</span>
+
+    <span class="n">temperature</span> <span class="o">=</span> <span class="n">celc_to_fahr</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
+    <span class="n">t0</span> <span class="o">=</span> <span class="n">celc_to_fahr</span><span class="p">(</span><span class="n">t0</span><span class="p">)</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">celc_to_fahr</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+
+    <span class="n">f</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="p">((</span><span class="n">temperature</span> <span class="o">+</span> <span class="n">a</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="p">((</span><span class="n">t0</span> <span class="o">+</span> <span class="n">a</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="n">temperature</span> <span class="o">+</span> <span class="n">a</span><span class="p">)</span> <span class="o">**</span> <span class="mi">4</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span>
+        <span class="p">(</span><span class="n">t0</span> <span class="o">+</span> <span class="n">a</span><span class="p">)</span> <span class="o">**</span> <span class="mi">4</span>
+    <span class="p">)</span>
+
+    <span class="n">harvest_decay_coefficient</span> <span class="o">=</span> <span class="n">p</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">([</span><span class="n">w</span><span class="p">,</span> <span class="n">f</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">w</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">harvest_decay_coefficient</span>
+
+
+<span class="nd">@check_length</span>
+<span class="k">def</span> <span class="nf">calculate_number_of_days</span><span class="p">(</span><span class="n">bdate</span><span class="p">,</span> <span class="n">edate</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Computes the number of days between two timestamps</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    bdate: str or numpy.ndarray</span>
+
+<span class="sd">    edate: str or numpy.ndarray</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    d: int</span>
+<span class="sd">        number of days between two timestamps</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">edate</span><span class="p">)</span> <span class="o">-</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">bdate</span><span class="p">))</span><span class="o">.</span><span class="n">days</span>
+    <span class="k">return</span> <span class="n">d</span>
+
+
+<span class="nd">@check_nan</span>
+<span class="k">def</span> <span class="nf">compute_crop_residu</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">harvest_decay_coefficient</span><span class="p">,</span> <span class="n">initial_crop_residu</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;time&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Computes harvest remains on timeseries</span>
+
+<span class="sd">    The function :func:`cfactor.subfactors.compute_crop_residu`. is applied on numpy</span>
+<span class="sd">    arrays. An initial crop residu is given to the function and for every timestep</span>
+<span class="sd">    the remaining crop residu after decay is calculated</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    d: numpy.ndarray</span>
+<span class="sd">        number of days, see</span>
+<span class="sd">        :func:`cfactor.subfactors.calculate_number_of_days`</span>
+<span class="sd">    harvest_decay_coefficient: numpy.ndarray</span>
+<span class="sd">        Harvest decay coefficient (-), see</span>
+<span class="sd">        :func:`cfactor.subfactors.compute_harvest_residu_decay_rate`</span>
+<span class="sd">    initial_crop_residu: float</span>
+<span class="sd">        Initial amount of crop residu (kg dry matter / ha)</span>
+<span class="sd">    mode: str</span>
+<span class="sd">        Calculate the crop residu for a timeseries (mode=&#39;time&#39;) or for a single moment</span>
+<span class="sd">        in time (mode=&#39;space&#39;)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    end_residu: float or numpy.ndarray</span>
+<span class="sd">        Crop residu (kg/m²) at the end for every calculated period</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;time&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">initial_crop_residu</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;To calculate the cropresidu in a timeseries, the initial&quot;</span>
+                <span class="s2">&quot;crop residu must be a float or integer value&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">d</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">harvest_decay_coefficient</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;dimension mismatch between number of days and &quot;</span> <span class="s2">&quot;decay coefficients&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">end_residu</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">initial_residu</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">initial_residu</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">initial_crop_residu</span>
+        <span class="n">end_residu</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">_compute_crop_residu</span><span class="p">(</span>
+            <span class="n">d</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">harvest_decay_coefficient</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">initial_crop_residu</span>
+        <span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">d</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+            <span class="n">initial_residu</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">end_residu</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="n">end_residu</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">_compute_crop_residu</span><span class="p">(</span>
+                <span class="n">d</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">harvest_decay_coefficient</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">initial_residu</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;space&quot;</span><span class="p">:</span>
+        <span class="n">end_residu</span> <span class="o">=</span> <span class="n">_compute_crop_residu</span><span class="p">(</span>
+            <span class="n">d</span><span class="p">,</span> <span class="n">harvest_decay_coefficient</span><span class="p">,</span> <span class="n">initial_crop_residu</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">end_residu</span>
+
+
+<span class="nd">@check_nan</span>
+<span class="nd">@check_length</span>
+<span class="k">def</span> <span class="nf">_compute_crop_residu</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">harvest_decay_coefficient</span><span class="p">,</span> <span class="n">initial_crop_residu</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Computes harvest remains per unit of area over nodes [1]_:</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        Bse = Bsb.exp{-a.D}</span>
+
+
+<span class="sd">    with</span>
+
+<span class="sd">    - Bse: amount of crop residu at end of period (kg dry matter . :math:`m^{-2}`)</span>
+<span class="sd">    - Bsb: amount of crop residu at start of period (kg dry matter . :math:`m^{-2}`)</span>
+<span class="sd">    - a: harvest decay coefficient, see</span>
+<span class="sd">        :func:`cfactor.subfactors.compute_harvest_residu_decay_rate`.</span>
+<span class="sd">    - d: number of days</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    d: int or numpy.ndarray</span>
+<span class="sd">        number of days, see</span>
+<span class="sd">        :func:`cfactor.subfactors.calculate_number_of_days`</span>
+<span class="sd">    harvest_decay_coefficient: float or numpy.ndarray</span>
+<span class="sd">        Harvest decay coefficient (-), see</span>
+<span class="sd">        :func:`cfactor.subfactors.compute_harvest_residu_decay_rate`</span>
+<span class="sd">    initial_crop_residu: float or numpy.ndarray</span>
+<span class="sd">        Initial amount of crop residu (kg dry matter / ha)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    crop_residu: float</span>
+<span class="sd">        Crop residu (kg/m2)</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    .. [1] Verbist, K., Schiettecatte, W., Gabriels, D., n.d. Eindrapport:</span>
+<span class="sd">     “Computermodel RUSLE C-factor.”</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">crop_residu</span> <span class="o">=</span> <span class="n">initial_crop_residu</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">harvest_decay_coefficient</span> <span class="o">*</span> <span class="n">d</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">crop_residu</span>
+
+
+<span class="nd">@check_nan</span>
+<span class="nd">@check_length</span>
+<span class="k">def</span> <span class="nf">compute_soil_loss_ratio</span><span class="p">(</span>
+    <span class="n">soil_cover</span><span class="p">,</span> <span class="n">surface_roughness</span><span class="p">,</span> <span class="n">crop_cover</span><span class="p">,</span> <span class="n">soil_moisture</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">prior_landuse</span><span class="o">=</span><span class="mf">1.0</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Computes subcomponents of soil loss ratio</span>
+
+<span class="sd">    The soil loss ratio (soil_loss_ratio) is computed by following formula:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        soil_loss_ratio = SC.CC.SR.SM.PLU</span>
+
+<span class="sd">    with</span>
+
+<span class="sd">    - :math:`SC`: impact of surface cover (due to crop residu), see</span>
+<span class="sd">      :func:`cfactor.subfactors.compute_soil_cover`.</span>
+
+<span class="sd">    - :math:`CC`: impact of canopy cover, :func:`cfactor.subfactors.compute_crop_cover`.</span>
+
+<span class="sd">    - :math:`SR`: impact of surface roughness (due to farming operations)</span>
+<span class="sd">      :func:`cfactor.subfactors.compute_surface_roughness`.</span>
+
+<span class="sd">    - :math:`SM`: impact of surface moisture</span>
+
+<span class="sd">    - :math:`PLU`: impact of prior land use</span>
+
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    soil_cover: float or numpy.ndarray</span>
+<span class="sd">        soil cover subfactor, see `cfactor.subfactors.compute_soil_cover`</span>
+<span class="sd">    surface_roughness: float or numpy.ndarray</span>
+<span class="sd">        surface roughness subfactor, see `cfactor.subfactors.compute_surface_roughness`</span>
+<span class="sd">    crop_cover: float or numpy.ndarray</span>
+<span class="sd">        canopy cover subfactor, see `cfactor.subfactors.compute_crop_cover`</span>
+<span class="sd">    soil_moisture: float or numpy.ndarray</span>
+<span class="sd">        soil moisture subfactor, see `cfactor.subfactors.compute_soil_moisture`</span>
+<span class="sd">    prior_landuse: float or numpy.ndarray</span>
+<span class="sd">        prior land use subfactor, see `cfactor.subfactors.compute_plu`</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float or numpy.ndarray</span>
+<span class="sd">        soil loss ratio</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="n">soil_cover</span><span class="p">,</span> <span class="n">crop_cover</span><span class="p">,</span> <span class="n">surface_roughness</span><span class="p">,</span> <span class="n">soil_moisture</span><span class="p">,</span> <span class="n">prior_landuse</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">i</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">))</span> <span class="ow">or</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">i</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;All soil_loss_ratio subfactors must lie between 0 and 1&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">soil_cover</span> <span class="o">*</span> <span class="n">crop_cover</span> <span class="o">*</span> <span class="n">surface_roughness</span> <span class="o">*</span> <span class="n">soil_moisture</span> <span class="o">*</span> <span class="n">prior_landuse</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Fluves.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
