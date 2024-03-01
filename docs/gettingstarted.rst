@@ -39,14 +39,13 @@ Following data is needed for every location/crop and period:
 - cumulative rainfall erosivity (MJ.mm/ha.year)
 - ri: initial soil roughness?
 
-The input data can be typically found in publications and reports e.g. ILVO (2019):
-TO DO: REF
+The input data can be typically found in publications and reports (Cecelja et al., 2019)
 
 Start with importing the package
 
 .. code-block:: python
 
-    import cfactor
+    from cfactor import cfactor
 
 .. note::
     Make sure to activate the conda environment ``conda activate cfactor`` with the
@@ -84,7 +83,7 @@ single period. For example:
                                                         p,
                                                         initial_crop_residu,
                                                         alpha,
-                                                        mode
+                                                        mode)
 
     print(soil_loss_ratio)
     >>> 0.1384131864957308
@@ -164,7 +163,7 @@ like the example below:
     df[['crop_residu', 'harvest_decay_coefficient', \
     'days', 'soil_roughness', 'crop_cover', \
     'surface_roughness', 'soil_cover', \
-    'soil_loss_ratio' = cfactor.calculated_slr(begin_date,
+    'soil_loss_ratio']] = cfactor.calculated_slr(begin_date,
                                                end_date,
                                                df['rain'],
                                                df['temperature'],
@@ -210,3 +209,10 @@ subfactor for a single crop on a certain location. To do this, we need different
                                                         initial_crop_residu,
                                                         alpha,
                                                         mode)
+
+
+References
+----------
+Cecelja, A., Ruysschaert, G., Vanden Nest, T. & Deproost, P. (2019). Verzamelen van data voor de
+verdere verfijning van de RUSLE gewas- en bedrijfsvoeringsfactor C voor de Vlaamse teeltpraktijken
+en erosiebestrijdingsmaatregelen. Rapport in opdracht van Departement Omgeving. 28p.

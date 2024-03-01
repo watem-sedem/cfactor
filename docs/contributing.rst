@@ -110,7 +110,7 @@ these as follows (equivalent for parameters versus returns section):
 
     Returns
     -------
-    df_name: pandas.DataFrame
+    name: pandas.DataFrame
         The DataFrame ...whatever you need to say... and contains the
         following columns:
 
@@ -127,7 +127,7 @@ Similar for a dictionary:
 
     Returns
     -------
-    df_name: dict
+    name: dict
         The dict ...whatever you need to say... and contains:
 
         - *key_1* (int): description 1
@@ -168,14 +168,6 @@ defined in the `PEP8`_ guidelines. Additionally, methods/functions start -
 whenever possible - with an active verb on the action they perform
 (``does_something()``), e.g. ``load_data()``
 
-Variable names follow the `PEP8`_ guidelines, but provide additional context:
-
-- raw textfiles (txt): ``txt_variable``
-- dictionary: ``dict_variable``
-- list: ``lst_variable``
-- numpy array: ``arr_variable``
-- pandas: ``df_variable``
-
 .. _PEP8: https://www.python.org/dev/peps/pep-0008/#naming-conventions
 
 
@@ -198,7 +190,6 @@ To make a new release:
 - On the `release page <releasepage>`_ draft a new release using the latest git tag
 - Copy past the changes from the changelog in the dialog and publish release
 - Check if github actions runs the deployment of docs and pypi
-
 
 .. _releasepage: https://github.com/watem-sedem/cfactor/releases
 .. _setuptoolsscm: https://www.python.org/dev/peps/pep-0008/#naming-conventions
