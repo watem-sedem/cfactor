@@ -145,13 +145,6 @@ Similar for a dictionary:
        every variable in the documentation (and not *variable : type*).
 
 
-Drone CI
-^^^^^^^^
-
-Apart from these tools you can run locally, we use drone continuous
-integration to run these checks also on our servers. See
-https://cloud.drone.io/cn-ws/rfactor/ for the results.
-
 Git lfs
 ^^^^^^^
 
@@ -207,6 +200,6 @@ To make a new release:
 - Check if github actions runs the deployment of docs and pypi
 
 
-.. _releasepage: https://github.com/cn-ws/rfactor/releases
+.. _releasepage: https://github.com/watem-sedem/cfactor/releases
 .. _setuptoolsscm: https://www.python.org/dev/peps/pep-0008/#naming-conventions
 .. _deployci: https://github.com/fluves/pywaterinfo/blob/master/.github/workflows/deploy.yml
