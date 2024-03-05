@@ -6,7 +6,7 @@ labels: documentation
 assignees: ''
 
 ---
-Documentation references (replace with your lines of code): https://github.com/cn-ws/cfactor/blame/master/docs/gettingstarted.rst#L70-L72
+Documentation references (replace with your lines of code): https://github.com/watem-sedem/cfactor/blame/master/docs/gettingstarted.rst#L70-L72
 
 Please use either use option A) or B) and fill in the selected options:
 

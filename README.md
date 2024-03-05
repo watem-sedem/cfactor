@@ -8,16 +8,17 @@ the RUSLE equation, in which gross erosion for an agricultural parcel is estimat
 
 This package make use of `Python` (and a limited number of dependencies such as Numpy).
 To install the package make sure to check out the installation instructions and follow
-the example in the _Get started section_ of the [package documentation](https://cn-ws.github.io/cfactor)
+the example in the _Get started section_ of the [package documentation](https://watem-sedem.github.io/cfactor)
 
 ### Code
 
-The open-source code can be found on [GitHub](https://github.com/cn-ws/cfactor).
+The open-source code can be found on [GitHub](https://github.com/watem-sedem/cfactor).
 
 ### Documentation
 
 The documentation can be found on the [C-factor documentation
 page](https://cn-ws.github.io/cfactor/index.html).
+
 
 ## License
 
